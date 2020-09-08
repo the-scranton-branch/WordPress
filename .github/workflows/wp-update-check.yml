@@ -14,8 +14,8 @@ jobs:
       - name: Setup Lando Server
         run: |
           docker build - < Dockerfile;
-          terminus auth:login --machine-token=${{ secrets.TERMINUS_MACHINE_TOKEN }};
-          terminus site:list --org "Dunder Mifflin"
+          /usr/local/bin/terminus auth:login --machine-token=${{ secrets.TERMINUS_MACHINE_TOKEN }};
+          /usr/local/bin/terminus  site:list --org "Dunder Mifflin"
       - name: Install WP
         run: |
           wp cli version
