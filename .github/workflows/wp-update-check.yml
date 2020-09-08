@@ -1,0 +1,23 @@
+name: Check for WordPress Updates
+
+on:
+  push:
+    branches: [main]
+  # schedule:
+  # * is a special character in YAML so you have to quote this string
+  # - cron: '*/15 * * * *'
+jobs:
+  default:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Lando Server
+        run: |
+        docker build -t devwithlando/pantheon-appserver:latest .
+      - name: Installing Terminus
+        uses: kopepasah/setup-pantheon-terminus@master
+        with:
+          pantheon-machine-token: ${{ secrets.TERMINUS_MACHINE_TOKEN }}
+      - name: Install WP
+        run: |
+          wp cli version
