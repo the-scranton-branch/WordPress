@@ -13,11 +13,9 @@ jobs:
       - uses: actions/checkout@v2
       - name: Setup Lando Server
         run: |
-          docker build - < Dockerfile
-      - name: Installing Terminus
-        uses: kopepasah/setup-pantheon-terminus@master
-        with:
-          pantheon-machine-token: ${{ secrets.TERMINUS_MACHINE_TOKEN }}
+          docker build - < Dockerfile;
+          terminus auth:login --machine-token=${{ secrets.TERMINUS_MACHINE_TOKEN }};
+          terminus site:list --org "Dunder Mifflin"
       - name: Install WP
         run: |
           wp cli version
