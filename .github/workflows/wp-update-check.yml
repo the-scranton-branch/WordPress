@@ -13,7 +13,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: Setup Lando Server
         run: |
-          docker run -it devwithlando/pantheon-appserver:latest
+          docker run -i devwithlando/pantheon-appserver:latest
       - name: Installing Terminus
         uses: kopepasah/setup-pantheon-terminus@master
         with:
