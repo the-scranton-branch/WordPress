@@ -3,3 +3,17 @@ recipe: pantheon
 config:
   webroot: .
   framework: wordpress
+  xdebug: true
+  index: false
+  edge: false
+  cache: false
+
+# Declare env file
+env_file:
+  - .env
+
+# Add symlink to wp_launch_check
+services:
+  appserver:
+    run_as_root:
+      - ln -snf /user/server/github/wp_launch_check /app/.wp-cli/packages/vendor/pantheon-systems/wp_launch_check
