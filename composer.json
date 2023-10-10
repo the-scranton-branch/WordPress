@@ -13,5 +13,10 @@
         "wp-coding-standards/wpcs": "^2.3",
         "pheromone/phpcs-security-audit": "^2.0",
         "dealerdirect/phpcodesniffer-composer-installer": "^0.7.0"
+    },
+    "config": {
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
     }
 }

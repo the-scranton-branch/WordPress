@@ -23,12 +23,12 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: "7.4"
+          php-version: "8.1"
 
       - name: Installing Terminus
         uses: pantheon-systems/terminus-github-actions@main
         with:
-          pantheon-machine-token: ${{ secrets.TERMINUS_MACHINE_TOKEN }}
+          pantheon-machine-token: ${{ secrets.PANTHEON_MACHINE_TOKEN }}
 
       - name: Get Committer Email and Name
         run: |
@@ -57,7 +57,9 @@ jobs:
           git remote add pantheon $CANARY_REPO
 
           # Set to git mode
-          terminus connection:set $CANARY_SITE.$PR_BRANCH_NAME git
+          if terminus env:info $CANARY_SITE.$PR_BRANCH_NAME > /dev/null 2>&1; then
+            terminus connection:set $CANARY_SITE.$PR_BRANCH_NAME git
+          fi
 
           # Fetch full history from pantheon
           git fetch pantheon

@@ -1,10 +1,10 @@
-name: Deploy Branch to Pantheon Canary Multidev
+name: Deploy Downstream Sites
 on:
   pull_request:
     types: [closed]
-    branches: ["master"]
+    branches: ["master", "main"]
   push:
-    branches: ["master"]
+    branches: ["master", "main"]
 
 jobs:
   build:
@@ -23,7 +23,31 @@ jobs:
       - name: Installing Terminus
         uses: kyletaylored/terminus-github-actions@main
         with:
-          pantheon-machine-token: ${{ secrets.TERMINUS_MACHINE_TOKEN }}
+          pantheon-machine-token: ${{ secrets.PANTHEON_MACHINE_TOKEN }}
+
+      - name: Clean up multidev
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            PR_BRANCH_NAME="pr-${{ github.event.pull_request.number }}"
+            CANARY_SITE=$(terminus org:site:list ${ORG_UUID} --format list --upstream ${UPSTREAM_UUID} --field name --tag canary | head -1)
+            if terminus env:info $CANARY_SITE.$PR_BRANCH_NAME > /dev/null 2>&1; then
+              terminus env:delete $CANARY_SITE.$PR_BRANCH_NAME -y --delete-branch
+            fi
+
+            # Check if PR was merged
+            if [ "${{ github.event.pull_request.merged }}" = "true" ]; then
+              echo "The PR was merged, continuing with deployment..."
+            else
+              echo "The PR was closed without merging. Exiting..."
+              exit 78 # Use exit code 78 to halt the workflow without failing
+            fi
+          else
+            echo "This was triggered by a push to master. No multidev to clean up."
+            # Continue with the script for push to master
+          fi
+        env:
+          ORG_UUID: ${{ secrets.PANTHEON_ORG_UUID }}
+          UPSTREAM_UUID: ${{ secrets.PANTHEON_UPSTREAM_UUID }}
 
       - name: Get Deployment Sites
         id: upstream-sites
@@ -49,12 +73,12 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: "7.4"
+          php-version: "8.1"
 
       - name: Installing Terminus
         uses: kyletaylored/terminus-github-actions@main
         with:
-          pantheon-machine-token: ${{ secrets.TERMINUS_MACHINE_TOKEN }}
+          pantheon-machine-token: ${{ secrets.PANTHEON_MACHINE_TOKEN }}
 
       - name: Apply upstream updates
         run: |
