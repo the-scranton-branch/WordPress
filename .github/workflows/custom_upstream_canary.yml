@@ -6,8 +6,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      GITHUB_CONTEXT: ${{ toJson(github) }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4.1.0
@@ -26,7 +24,7 @@ jobs:
           php-version: "7.4"
 
       - name: Installing Terminus
-        uses: pantheon-systems/terminus-github-actions@main
+        uses: kyletaylored/terminus-github-actions@CMSO-1538
         with:
           pantheon-machine-token: ${{ secrets.TERMINUS_MACHINE_TOKEN }}
 
@@ -57,7 +55,9 @@ jobs:
           git remote add pantheon $CANARY_REPO
 
           # Set to git mode
-          terminus connection:set $CANARY_SITE.$PR_BRANCH_NAME git
+          if terminus env:info $CANARY_SITE.$PR_BRANCH_NAME > /dev/null 2>&1; then
+            terminus connection:set $CANARY_SITE.$PR_BRANCH_NAME git
+          fi
 
           # Fetch full history from pantheon
           git fetch pantheon
@@ -80,7 +80,7 @@ jobs:
           echo "MULTIDEV_URL=$MULTIDEV_URL" >> "$GITHUB_ENV"
 
       - name: Comment on PR
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
