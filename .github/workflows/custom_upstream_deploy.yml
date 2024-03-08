@@ -2,9 +2,9 @@ name: Deploy Branch to Pantheon Canary Multidev
 on:
   pull_request:
     types: [closed]
-    branches: ["master"]
+    branches: ["master", "main"]
   push:
-    branches: ["master"]
+    branches: ["master", "main"]
 
 jobs:
   build:
@@ -21,7 +21,7 @@ jobs:
           php-version: "7.4"
 
       - name: Installing Terminus
-        uses: kyletaylored/terminus-github-actions@main
+        uses: kyletaylored/terminus-github-actions@CMSO-1538
         with:
           pantheon-machine-token: ${{ secrets.TERMINUS_MACHINE_TOKEN }}
 
@@ -52,7 +52,7 @@ jobs:
           php-version: "7.4"
 
       - name: Installing Terminus
-        uses: kyletaylored/terminus-github-actions@main
+        uses: kyletaylored/terminus-github-actions@CMSO-1538
         with:
           pantheon-machine-token: ${{ secrets.TERMINUS_MACHINE_TOKEN }}
 
