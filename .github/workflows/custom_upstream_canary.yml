@@ -57,7 +57,9 @@ jobs:
           git remote add pantheon $CANARY_REPO
 
           # Set to git mode
-          terminus connection:set $CANARY_SITE.$PR_BRANCH_NAME git
+          if terminus env:info $CANARY_SITE.$PR_BRANCH_NAME > /dev/null 2>&1; then
+            terminus connection:set $CANARY_SITE.$PR_BRANCH_NAME git
+          fi
 
           # Fetch full history from pantheon
           git fetch pantheon
