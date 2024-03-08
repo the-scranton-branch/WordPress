@@ -5,3 +5,4 @@ config:
   framework: wordpress
   edge: false
   index: false
+  xdebug: false
