@@ -82,7 +82,7 @@ jobs:
           echo "MULTIDEV_URL=$MULTIDEV_URL" >> "$GITHUB_ENV"
 
       - name: Comment on PR
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
