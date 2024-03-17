@@ -1,9 +1,9 @@
 === Pantheon Advanced Page Cache ===
-Contributors: getpantheon, danielbachhuber, kporras07
+Contributors: getpantheon, danielbachhuber, kporras07, jspellman, jazzs3quence, ryanshoover, rwagner00, pwtyler
 Tags: pantheon, cdn, cache
 Requires at least: 4.7
-Tested up to: 6.1
-Stable tag: 1.2.0
+Tested up to: 6.4.3
+Stable tag: 1.5.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -131,26 +131,47 @@ Need a bit more power? In addition to `pantheon_wp_clear_edge_keys()`, there are
 * `pantheon_wp_clear_edge_paths( $paths = array() )` - Purge cache for one or more paths.
 * `pantheon_wp_clear_edge_all()` - Warning! With great power comes great responsibility. Purge the entire cache, but do so wisely.
 
+= Ignoring Specific Post Types =
+
+By default, Pantheon Advanced Page Cache is pretty aggressive in how it clears its surrogate keys. Specifically, any time `wp_insert_post` is called (which can include any time a post of any type is added or updated, even private post types), it will purge a variety of keys including `home`, `front`, `404` and `feed`. To bypass or override this behavior, since 1.5.0 we have a filter allowing an array of post types to ignore to be passed before those caches are purged. By default, the `revision` post type is ignored, but others can be added:
+
+```php
+/**
+ * Add a custom post type to the ignored post types.
+ *
+ * @param array $ignored_post_types The array of ignored post types.
+ * @return array
+ */
+function filter_ignored_posts( $ignored_post_types ) {
+	$ignored_post_types[] = 'my-post-type'; // Ignore my-post-type from cache purges.
+	return $ignored_post_types;
+}
+
+add_filter( 'pantheon_purge_post_type_ignored', 'filter_ignored_posts' );
+```
+
+This will prevent the cache from being purged if the given post type is updated.
+
 == WP-CLI Commands ==
 
 This plugin implements a variety of [WP-CLI](https://wp-cli.org) commands. All commands are grouped into the `wp pantheon cache` namespace.
 
     $ wp help pantheon cache
-    
+
     NAME
-    
+
       wp pantheon cache
-    
+
     DESCRIPTION
-    
+
       Manage the Pantheon Advanced Page Cache.
-    
+
     SYNOPSIS
-    
+
       wp pantheon cache <command>
-    
+
     SUBCOMMANDS
-    
+
       purge-all       Purge the entire page cache.
       purge-key       Purge one or more surrogate keys from cache.
       purge-path      Purge one or more paths from cache.
@@ -291,7 +312,18 @@ Different WordPress actions cause different surrogate keys to be purged, documen
 * Purges surrogate keys: `rest-setting-<name>`
 * Affected views: REST API resource endpoint
 
-## Plugin Integrations ##
+== Surrogate Keys for taxonomy terms ==
+Setting surrogate keys for posts with large numbers of taxonomies (such as WooCommerce products with a large number of global attributes) can suffer from slower queries. Surrogate keys can be skipped for 'product' post types' taxonomy terms (or any other criteria you see fit) with the following filter:
+
+	function custom_should_add_terms($should_add_terms, $wp_query) {
+		if ( $wp_query->is_singular( 'product' ) ) {
+			return false;
+		}
+		return $should_add_terms;
+	}
+	add_filter('pantheon_should_add_terms', 'custom_should_add_terms', 10, 2);
+
+== Plugin Integrations ==
 
 Pantheon Advanced Page Cache integrates with WordPress plugins, including:
 
@@ -302,6 +334,38 @@ Pantheon Advanced Page Cache integrates with WordPress plugins, including:
 See [CONTRIBUTING.md](https://github.com/pantheon-systems/wp-saml-auth/blob/master/CONTRIBUTING.md) for information on contributing.
 
 == Changelog ==
+= 1.5.0 (11 March 2024) =
+* Adds filter `pantheon_purge_post_type_ignored` to allow an array of post types to ignore before purging cache [[#258](https://github.com/pantheon-systems/pantheon-advanced-page-cache/pull/258)]
+* Adds [wpunit-helpers](https://github.com/pantheon-systems/wpunit-helpers) for running/setting up WP Unit tests
+
+= 1.4.2 (October 16, 2023) =
+* Updates Pantheon WP Coding Standards to 2.0 [[#249](https://github.com/pantheon-systems/pantheon-advanced-page-cache/pull/249)]
+* Fixes an issue where a PHP warning was thrown when surrogate keys were emitted from archive pages with multiple post types. [[#252](https://github.com/pantheon-systems/pantheon-advanced-page-cache/pull/252)]
+
+= 1.4.1 (August 8, 2023) =
+* Send the REST API response header to the result and not the REST server [[#237](https://github.com/pantheon-systems/pantheon-advanced-page-cache/pull/237)]. Props [@srtfisher](https://github.com/srtfisher) & [@felixarntz](https://github.com/felixarntz).
+
+= 1.4.0 (August 1, 2023) =
+* Bumped Dependencies [[236](https://github.com/pantheon-systems/pantheon-advanced-page-cache/pull/236)]
+* Add filter `pantheon_should_add_terms` to allow disabling surrogate keys for posts' taxonomy terms [[239](https://github.com/pantheon-systems/pantheon-advanced-page-cache/pull/239)]
+
+= 1.3.0 (April 19, 2023) =
+* Adds support for WordPress Multisite which resolves issue where editing a Post on one subsite clears the home page cache of other sites in the Multisite install if it has a Post containing the same ID [[#228](https://github.com/pantheon-systems/pantheon-advanced-page-cache/pull/228)].
+
+= 1.2.4 (April 13, 2023) =
+* Adds surrogate key to post-type archive pages (e.g. "portfolio") that's specific to that archive(e.g. "portfolio-archive"), and clears that archive where appropriate [[#225](https://github.com/pantheon-systems/pantheon-advanced-page-cache/pull/225)].
+
+= 1.2.3 (April 5, 2023) =
+* Bump tested up to version to 6.2
+
+= 1.2.2 (March 14, 2023) =
+* Adds PHP 8.2 compatibility [[#218](https://github.com/pantheon-systems/pantheon-advanced-page-cache/pull/218)].
+* Bump dependencies [[#204](https://github.com/pantheon-systems/pantheon-advanced-page-cache/pull/204)].
+
+= 1.2.1 (February 23, 2023) =
+* Handle models that are not instances of the `WPGraphQL\Model\Model` class [[#212](https://github.com/pantheon-systems/pantheon-advanced-page-cache/pull/212)].
+* Make dependabot target develop branch [[#209](https://github.com/pantheon-systems/pantheon-advanced-page-cache/pull/209)].
+* Bump dependencies [[#210](https://github.com/pantheon-systems/pantheon-advanced-page-cache/pull/210)] [[#214](https://github.com/pantheon-systems/pantheon-advanced-page-cache/pull/214)].
 
 = 1.2.0 (November 29, 2022) =
 * Adds Github Actions for building tag and deploying to wp.org. Add CONTRIBUTING.md. [[#203](https://github.com/pantheon-systems/pantheon-advanced-page-cache/pull/203)]
@@ -345,3 +409,8 @@ See [CONTRIBUTING.md](https://github.com/pantheon-systems/wp-saml-auth/blob/mast
 
 = 0.1.0 (November 23rd, 2016) =
 * Initial release.
+
+== Upgrade Notice ==
+
+= Latest =
+Note that the Pantheon Advanced Page Cache 1.3.0 release now prefixes keys on a WordPress Multisite (WPMS) with the blog ID. For users who already have this plugin installed on a WPMS, they will need to click the Clear Cache button on the settings page to generate the prefixed keys.
