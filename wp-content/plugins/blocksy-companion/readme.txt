@@ -2,10 +2,10 @@
 Tags: widget, widgets
 Requires at least: 5.2
 Requires PHP: 7.0
-Tested up to: 6.1
+Tested up to: 6.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
-Stable tag: 1.8.67
+Stable tag: 2.0.32
 
 == Description ==
 
@@ -23,6 +23,353 @@ It runs and adds its enhancements only if the Blocksy theme is installed and act
 2. Activate the plugin by going to **Plugins** page in WordPress admin and clicking on **Activate** link.
 
 == Changelog ==
+2.0.32: 2024-03-15
+- Improvement: Correctly escape style attribute in newsletter subscribe block
+
+2.0.31: 2024-03-14
+- Fix: `blocksy_posts` shortcode with slider doesn't wrap images inside links
+
+2.0.30: 2024-03-08
+- Improvement: General fixes and improvements
+
+2.0.29: 2024-03-07
+- Improvement: Ensure all dashboard AJAX actions are protected with nonces
+
+2.0.28: 2024-02-29
+- Improvement: General fixes and improvements
+
+2.0.27: 2024-02-29
+- Improvement: Account header element - overflow issue when email address is very long
+- Improvement: Display proper label for language conditions
+- Improvement: Make sure the header account element is getting the correct user role
+
+2.0.26: 2024-02-22
+- Fix: PHP Warning when using Multi-Vendor Marketplace Lite plugin and account header element
+
+2.0.25: 2024-02-15
+- Improvement: General fixes and improvements
+
+2.0.24: 2024-02-08
+- Improvement: Don't output account modal for logged out users if account is disabled for them
+- Improvement: Harden the check for blc_maybe_is_ssl() function
+- Improvement: Introduce a safe sprintf function to avoid errors on translations
+
+2.0.23: 2024-02-01
+- Improvement: General fixes and improvements
+
+2.0.22: 2024-01-25
+- Improvement: General fixes and improvements
+
+2.0.21: 2024-01-20
+- Improvement: General fixes and improvements
+
+2.0.20: 2024-01-19
+- Improvement: General fixes and improvements
+
+2.0.19: 2024-01-18
+- New: Header account - option to add a menu inside the dropdown
+- Improvement: Header account - user info dropdown options improvements
+
+2.0.18: 2024-01-12
+- Improvement: Correctly load Flexy styles when blocksy_posts shortcode is used in the slider mode
+
+2.0.17: 2024-01-11
+- Improvement: General fixes and improvements
+
+2.0.16: 2024-01-05
+- Improvement: General fixes and improvements
+
+2.0.15: 2024-01-04
+- Improvement: General fixes and improvements
+
+2.0.14: 2023-12-26
+- Improvement: Dont attempt to unslash post meta data upon starter site installation
+
+2.0.13: 2023-12-22
+- Improvement: Demo importer - make sure mega menus are imported correctly
+
+2.0.12: 2023-12-21
+- Improvement: General fixes and improvements
+
+2.0.11: 2023-12-15
+- Improvement: General fixes and improvements
+
+2.0.10: 2023-12-14
+- Improvement: General fixes and improvements
+
+2.0.9: 2023-12-12
+- Improvement: More reliable check for extensions preboot
+
+2.0.8: 2023-12-08
+- Improvement: General fixes and improvements
+
+2.0.7: 2023-12-07
+- Improvement: General fixes and improvements
+
+2.0.6: 2023-12-06
+- Fix: Customizer mode issue if child theme is active
+
+2.0.5: 2023-12-06
+- Improvement: Account drop down on mobile is placed out of bounds
+- Fix: Content Blocks cannot be turned on/off if quick edited
+
+2.0.4: 2023-11-30
+- Improvement: Correctly execute pre boot for extensions in the dashboard
+- Improvement: Introduce Product Taxonomy ID condition rule
+
+2.0.3: 2023-11-29
+- Improvement: Account header element under specific settings makes the Customizer break
+- Fix: Trending posts article font size option doesn't work
+
+2.0.2: 2023-11-27
+- Improvement: Correctly load styles for the newsletter subscribe shortcode
+- Improvement: Ensure extensions pre boot isn't executed on every ajax request
+
+2.0.1: 2023-11-25
+- Improvement: General fixes and improvements related to update
+
+2.0.0: 2023-11-24
+- New: Convert old legacy widgets to block widgets
+- New: Dropdown menu for account widget in header
+- New: Footer builder logo element - add lazy loading attribute to image
+- New: More integrations for newsletter module (Sendinblue, CampaignMonitor, ConvertKit)
+- New: New dashboard extensions screen
+- Improvement: Account modal - integration with Two-Factor plugin
+- Improvement: Account modal - use core registration if WooCommerce registration is disabled
+- Improvement: Automatically load Google analytics on cookies notice approve
+- Improvement: Performance - Faster PHP classes autoloader
+- Improvement: Performance - Smarter load extensions CSS files (only when extensions is activated and present on a page)
+- Improvement: Prefix CSS variables in order to not conflict with other plugins
+- Fix: Prevent errors on SVG's size calculation
+
+2.0.0-beta26: 2023-10-25
+- Improvement: General fixes and improvements
+
+2.0.0-beta25: 2023-10-06
+- Improvement: General fixes and improvements
+
+2.0.0-beta24: 2023-10-06
+- Improvement: General fixes and improvements
+
+2.0.0-beta23: 2023-09-29
+- Improvement: General fixes and improvements
+
+2.0.0-beta22: 2023-09-22
+- Improvement: General fixes and improvements
+
+2.0.0-beta21: 2023-09-15
+- Improvement: General fixes and improvements
+
+2.0.0-beta20: 2023-09-08
+- Improvement: General fixes and improvements
+
+2.0.0-beta19: 2023-09-01
+- Improvement: General fixes and improvements
+
+2.0.0-beta18: 2023-08-28
+- Improvement: General fixes and improvements
+
+2.0.0-beta17: 2023-08-25
+- Improvement: General fixes and improvements
+
+2.0.0-beta16: 2023-08-18
+- Improvement: General fixes and improvements
+
+2.0.0-beta15: 2023-08-11
+- Improvement: General fixes and improvements
+
+2.0.0-beta14: 2023-08-04
+- Improvement: General fixes and improvements
+
+2.0.0-beta13: 2023-07-28
+- Improvement: General fixes and improvements
+
+2.0.0-beta12: 2023-07-21
+- Improvement: General fixes and improvements
+
+2.0.0-beta11: 2023-07-14
+- Improvement: General fixes and improvements
+
+2.0.0-beta10: 2023-07-07
+- Improvement: General fixes and improvements
+
+2.0.0-beta9: 2023-06-30
+- Improvement: General fixes and improvements
+
+2.0.0-beta8: 2023-06-23
+- Improvement: General fixes and improvements
+
+2.0.0-beta7: 2023-06-16
+- Improvement: General fixes and improvements
+
+2.0.0-beta6: 2023-05-26
+- Improvement: General fixes and improvements
+
+2.0.0-beta5: 2023-05-26
+- Improvement: General fixes and improvements
+
+2.0.0-beta4: 2023-05-17
+- Improvement: General fixes and improvements
+
+2.0.0-beta3: 2023-05-12
+- New: Convert old legacy widgets to block widgets
+- New: Dropdown menu for account widget in header
+- New: More integrations for newsletter module (Sendinblue & CampaignMonitor)
+- New: New dashboard extensions screen
+- Improvement: Account modal - use core registration if WooCommerce registration is disabled
+
+1.9.11: 2023-11-09
+- Improvement: Better compatibility with WordPress 6.4
+
+1.9.10: 2023-11-02
+- Fix: Account `blocksy_get_avatar_url()` issue
+
+1.9.9: 2023-11-02
+- Improvement: Comments privacy policy link is not inheriting "Privacy page" option from dashboard
+
+1.9.8: 2023-10-12
+- Improvement: General fixes and improvements
+
+1.9.7: 2023-09-28
+- Fix: Posts widget gets corrupted if we select "no thumbnails"
+
+1.9.6: 2023-09-21
+- Improvement: General fixes and improvements
+
+1.9.5: 2023-09-14
+- Improvement: Conditions module bump limit of 500 users
+- Improvement: Improve rounding logic in sticky shrink logic to better handle fractional header heights
+
+1.9.4: 2023-09-07
+- Improvement: General fixes and improvements
+
+1.9.3: 2023-08-31
+- Improvement: Demo importer better handle WooCommerce imports
+
+1.9.2: 2023-08-24
+- Improvement: Cookies consent button type
+
+1.9.1: 2023-08-17
+- Improvement: Trending posts module - more color and typography options
+- Improvement: Correctly display of loading spinner in account modal
+
+1.9.0: 2023-08-10
+- Improvement: General fixes and improvements
+
+1.8.99: 2023-08-09
+- Improvement: Better scoping of taxonomies in blocksy_posts shortcode while filtering
+- Improvement: Contact element - shortcode support in link field
+- Fix: Import/export options disappear if UI Press Lite plugin is active
+
+1.8.98: 2023-07-27
+- Improvement: General fixes and improvements
+
+1.8.97: 2023-07-19
+- Improvement: General fixes and improvements
+
+1.8.96: 2023-07-13
+- Improvement: General fixes and improvements
+
+1.8.95: 2023-07-05
+- Improvement: General fixes and improvements
+
+1.8.94: 2023-06-29
+- Improvement: Correctly install and activate Blocksy theme from Companion
+
+1.8.93: 2023-06-22
+- Improvement: Ensure account logout action is not broken by WPML
+
+1.8.92: 2023-06-14
+- Improvement: General fixes and improvements
+
+1.8.91: 2023-06-12
+- Improvement: Don't perform HTTP JSON request in order to retrieve Google Fonts list
+- Improvement: Do not allow bypassing comment form if privacy policy is not accepted
+
+1.8.90: 2023-06-03
+- Improvement: Proper detection of Blocksy theme in customizer
+
+1.8.89: 2023-06-01
+- Improvement: Better minimal theme version check flow
+
+1.8.88: 2023-05-25
+- Fix: Socials widget label issue
+
+1.8.87: 2023-05-18
+- Improvement: Starter site custom CSS avoid clashes with Elementor default Kit
+
+1.8.86: 2023-05-11
+- Improvement: Account  Show Password icon does not work on WooCommerce pages
+
+1.8.85: 2023-05-04
+- Improvement: Add autocomplete attribute to account modal input fields
+
+1.8.84: 2023-04-20
+- Improvement: Sticky header increased height calculation for widget area
+- Improvement: Better display logic for taxonomy IDs condition
+- Improvement: Shortcode support in header account label option
+- Fix: Account modal -> registration -> eye icon to show password typed doesn't work
+
+1.8.83: 2023-04-13
+- Fix: Account modal `login page` string issue
+
+1.8.82: 2023-04-06
+- Improvement: Include only public posts for the query in the blocksy_posts shortcode
+
+1.8.81: 2023-03-30
+- Improvement: Account modal don't repeat email field ID
+- Improvement: Smarter loading of Dokan scripts for the registration modal
+- Improvement: Account modal header element shortcode support in "custom link" option
+
+1.8.80: 2023-03-27
+- Improvement: Compatibility with WordPress 6.2
+- Improvement: Never expose real login url in the account modal
+- Improvement: Header account element label not translatable via "String translations" (WPML)
+- Fix: Newsletter module text color option not applying correctly
+
+1.8.79: 2023-03-16
+- Fix: Account modal some strings where not translatable
+
+1.8.78: 2023-03-09
+- Improvement: Prefix XML parser class to not clash with other plugins
+- Improvement: Correctly extract SVG sizes in blocksy_image function
+
+1.8.77: 2023-03-02
+- Improvement: General fixes and improvements
+
+1.8.76: 2023-02-23
+- Improvement: Better detection of user and CPT conditions
+
+1.8.75: 2023-02-15
+- Improvement: General fixes and improvements
+
+1.8.74: 2023-02-15
+- Improvement: General fixes and improvements
+
+1.8.73: 2023-02-09
+- Improvement: Integrate B2B market with account modal
+- Improvement: Newsletter subscribe extensions retrieve correctly all subscribers lists
+- Improvement: More robust import of XML post data in starter sites
+
+1.8.72: 2023-02-02
+- Improvement: General fixes and improvements
+
+1.8.71: 2023-01-26
+- Improvement: General fixes and improvements
+
+1.8.70: 2023-01-26
+- Improvement: Smarter handling of login links in the account modal
+- Improvement: Small improvement for filter argument in posts shortcode
+- Improvement: Dont trigger WooCommerce actions in account modal when it is not active
+- Improvement: Add image size option to posts widget
+
+1.8.69: 2023-01-20
+- Improvement: General fixes and improvements
+
+1.8.68: 2023-01-20
+- Improvement: Escape class attr for blocksy_posts shortcode
+- Improvement: Introduce filter for controlling obfuscation process in the contacts link item
+
 1.8.67: 2023-01-19
 - Improvement: Ensure admin_body_class filter is called correctly
 - Improvement: Earlier computation of trending posts results

@@ -92,7 +92,7 @@ export const loadPage = (args = {}) => {
 				'beforeend',
 				`<a href="${post.url}">
                         ${post.image}
-                        <span class="ct-item-title">
+                        <span class="ct-post-title">
                          ${post.title}
                         </span>
                     </a>`

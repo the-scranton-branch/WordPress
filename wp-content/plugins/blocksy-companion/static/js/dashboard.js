@@ -4,15 +4,25 @@ import ctEvents from 'ct-events'
 
 import { __ } from 'ct-i18n'
 
-import Extensions from './screens/Extensions'
-import DemoInstall from './screens/DemoInstall'
-import SiteExport from './screens/SiteExport'
-import DemoToInstall from './screens/DemoInstall/DemoToInstall'
+import Extensions from './dashboard/screens/Extensions'
+
+import Extension from './dashboard/screens/Extension'
+
+import DemoInstall from './dashboard/screens/DemoInstall'
+import SiteExport from './dashboard/screens/SiteExport'
+import DemoToInstall from './dashboard/screens/DemoInstall/DemoToInstall'
+
+import { getRawExtsStatus } from './dashboard/screens/Extensions/useExtsStatus'
 
 ctEvents.on('ct:dashboard:routes', (r) => {
 	r.push({
-		Component: () => <Extensions />,
+		Component: (props) => <Extensions {...props} />,
 		path: '/extensions',
+	})
+
+	r.push({
+		Component: (props) => <Extension {...props} />,
+		path: '/extensions/:extension',
 	})
 
 	if (ctDashboardLocalizations.plugin_data.has_demo_install === 'yes') {
@@ -40,6 +50,22 @@ ctEvents.on('ct:dashboard:navigation-links', (r) => {
 	r.push({
 		text: __('Extensions', 'blocksy-companion'),
 		path: '/extensions',
+
+		onClick: (e) => {
+			if (location.hash.indexOf('extensions') > -1) {
+				e.preventDefault()
+			}
+		},
+
+		getProps: ({ isPartiallyCurrent, isCurrent }) => {
+			return {
+				...(isPartiallyCurrent || isCurrent
+					? {
+							'aria-current': 'page',
+					  }
+					: {}),
+			}
+		},
 	})
 })
 

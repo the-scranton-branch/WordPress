@@ -5,95 +5,96 @@ import {
 	useState,
 	Fragment,
 } from '@wordpress/element'
-import { __ } from 'ct-i18n'
+import ctEvents from 'ct-events'
+
+import { OptionsPanel } from 'blocksy-options'
+import nanoid from 'nanoid'
+
 import classnames from 'classnames'
+import { __, sprintf } from 'ct-i18n'
+import Overlay from '../../../../../static/js/helpers/Overlay'
 
-import EditSettings from './EditSettings'
-import useExtensionReadme from '../../../../../static/js/helpers/useExtensionReadme'
-import useActivationAction from '../../../../../static/js/helpers/useActivationAction'
-
-const ProductReviews = ({ extsSyncLoading, extension, onExtsSync }) => {
-	const [isLoading, activationAction] = useActivationAction(extension, () =>
-		onExtsSync()
-	)
-
-	const [showReadme, readme] = useExtensionReadme(extension)
+const ProductReviews = ({ setExtsStatus, extension, onExtsSync }) => {
+	const [settings, setSettings] = useState(null)
 
 	return (
-		<li className={classnames({ active: !!extension.__object })}>
-			<h4 className="ct-extension-title">
-				{extension.config.name}
+		<div className={classnames('ct-extension-options ct-product-reviews-options')}>
+			<h4>{__('Product Reviews Settings', 'blocksy-companion')}</h4>
 
-				{isLoading && (
-					<svg width="15" height="15" viewBox="0 0 100 100">
-						<g transform="translate(50,50)">
-							<g transform="scale(1)">
-								<circle cx="0" cy="0" r="50" fill="#687c93" />
-								<circle
-									cx="0"
-									cy="-26"
-									r="12"
-									fill="#ffffff"
-									transform="rotate(161.634)">
-									<animateTransform
-										attributeName="transform"
-										type="rotate"
-										calcMode="linear"
-										values="0 0 0;360 0 0"
-										keyTimes="0;1"
-										dur="1s"
-										begin="0s"
-										repeatCount="indefinite"
-									/>
-								</circle>
-							</g>
-						</g>
-					</svg>
+			<p className="ct-modal-description">
+				{__(
+					'Configure the slugs for single and category pages of the product review custom post type.',
+					'blocksy-companion'
 				)}
-			</h4>
+			</p>
 
-			{extension.config.description && (
-				<div className="ct-extension-description">
-					{extension.config.description}
-				</div>
-			)}
+			<form>
+				<OptionsPanel
+					onChange={(optionId, optionValue) =>
+						setSettings((settings) => ({
+							...settings,
+							[optionId]: optionValue,
+						}))
+					}
+					options={{
+						single_slug: {
+							type: 'text',
+							value: '',
+							label: __('Single Slug', 'blocksy-companion'),
+						},
 
-			<div className="ct-extension-actions">
+						category_slug: {
+							type: 'text',
+							value: '',
+							label: __('Category Slug', 'blocksy-companion'),
+						},
+					}}
+					value={{
+						...extension.data.settings,
+						...(settings || {}),
+					}}
+					hasRevertButton={false}
+				/>
+
 				<button
-					className={classnames(
-						extension.__object ? 'ct-button' : 'ct-button-primary'
-					)}
-					data-button="white"
-					disabled={isLoading}
-					onClick={() => {
-						activationAction()
+					className="ct-button-primary"
+					disabled={!settings}
+					onClick={(e) => {
+						e.preventDefault()
+
+						if (!settings) {
+							return
+						}
+
+						const newSettings = {
+							...extension.data.settings,
+							...settings,
+						}
+
+						setExtsStatus((extStatus) => ({
+							...extStatus,
+							[extension.name]: {
+								...extStatus[extension.name],
+								data: {
+									...extStatus[extension.name].data,
+									settings: newSettings,
+								},
+							},
+						}))
+
+						onExtsSync({
+							extAction: {
+								type: 'persist',
+								settings: newSettings,
+							},
+						})
+
+						setSettings(null)
 					}}>
-					{extension.__object
-						? __('Deactivate', 'blocksy-companion')
-						: __('Activate', 'blocksy-companion')}
+					{__('Save Settings', 'blocksy-companion')}
 				</button>
-
-				{extension.__object && (
-					<EditSettings
-						extsSyncLoading={extsSyncLoading}
-						extensionData={extension.data}
-						onExtsSync={onExtsSync}
-					/>
-				)}
-
-				{extension.readme && (
-					<button
-						onClick={() => showReadme()}
-						data-button="white"
-						className="ct-minimal-button ct-instruction">
-						<svg width="16" height="16" viewBox="0 0 24 24">
-							<path d="M12,2C6.477,2,2,6.477,2,12s4.477,10,10,10s10-4.477,10-10S17.523,2,12,2z M12,17L12,17c-0.552,0-1-0.448-1-1v-4 c0-0.552,0.448-1,1-1h0c0.552,0,1,0.448,1,1v4C13,16.552,12.552,17,12,17z M12.5,9h-1C11.224,9,11,8.776,11,8.5v-1 C11,7.224,11.224,7,11.5,7h1C12.776,7,13,7.224,13,7.5v1C13,8.776,12.776,9,12.5,9z" />
-						</svg>
-					</button>
-				)}
-			</div>
-			{readme}
-		</li>
+			</form>
+		</div>
 	)
 }
 

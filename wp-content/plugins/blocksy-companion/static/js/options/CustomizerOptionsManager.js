@@ -19,6 +19,7 @@ const CustomizerOptionsManager = () => {
 	const [isDraggedOver, setIsDraggerOver] = useState(false)
 
 	const [isExporting, setIsExporting] = useState(false)
+	const [isImporting, setIsImporting] = useState(false)
 	const [dataToExport, setDataToExport] = useState(['options'])
 
 	const inputRef = useRef()
@@ -64,17 +65,19 @@ const CustomizerOptionsManager = () => {
 		dropZoneRef.current.addEventListener('drop', onDrop, false)
 
 		return () => {
-			dropZoneRef.current.removeEventListener(
-				'dragover',
-				onDragOver,
-				false
-			)
-			dropZoneRef.current.removeEventListener(
-				'dragleave',
-				onDragLeave,
-				false
-			)
-			dropZoneRef.current.removeEventListener('drop', onDrop, false)
+			if (dropZoneRef.current) {
+				dropZoneRef.current.removeEventListener(
+					'dragover',
+					onDragOver,
+					false
+				)
+				dropZoneRef.current.removeEventListener(
+					'dragleave',
+					onDragLeave,
+					false
+				)
+				dropZoneRef.current.removeEventListener('drop', onDrop, false)
+			}
 		}
 	}, [])
 
@@ -96,7 +99,7 @@ const CustomizerOptionsManager = () => {
 
 				<section>
 					<button
-						className="button"
+						className="button-primary"
 						onClick={(e) => {
 							e.preventDefault()
 							setIsExporting(true)
@@ -122,22 +125,24 @@ const CustomizerOptionsManager = () => {
 
 				<section>
 					<div className="ct-file-upload">
-						<button
-							type="button"
-							className={classnames('button ct-upload-button', {
-								active: isDraggedOver,
-							})}
-							ref={dropZoneRef}
-							onClick={() => {
-								inputRef.current.click()
-							}}>
-							{futureConfig
-								? futureConfig.name
-								: __(
-										'Click or drop to upload a file...',
-										'blocksy-companion'
-								  )}
-						</button>
+						<div className="ct-attachment">
+							<button
+								type="button"
+								className={classnames('ct-upload-button', {
+									active: isDraggedOver,
+								})}
+								ref={dropZoneRef}
+								onClick={() => {
+									inputRef.current.click()
+								}}>
+								{futureConfig
+									? futureConfig.name
+									: __(
+											'Click or drop to upload a file...',
+											'blocksy-companion'
+									  )}
+							</button>
+						</div>
 
 						<input
 							ref={inputRef}
@@ -152,13 +157,18 @@ const CustomizerOptionsManager = () => {
 						/>
 
 						<button
-							className="button"
+							className={classnames('button-primary', {
+								'ct-loading': isImporting,
+							})}
+							disabled={!futureConfig}
 							onClick={(e) => {
 								e.preventDefault()
 
 								if (!futureConfig) {
 									return
 								}
+
+								setIsImporting(true)
 
 								var reader = new FileReader()
 								reader.readAsText(futureConfig, 'UTF-8')
@@ -194,7 +204,40 @@ const CustomizerOptionsManager = () => {
 									} catch (e) {}
 								}
 							}}>
-							{__('Import Customizations', 'blocksy-companion')}
+							{isImporting ? (
+								<svg
+									width="14"
+									height="14"
+									viewBox="0 0 100 100">
+									<g transform="translate(50,50)">
+										<g transform="scale(1)">
+											<circle
+												cx="0"
+												cy="0"
+												r="50"
+												fill="currentColor"></circle>
+											<circle
+												cx="0"
+												cy="-26"
+												r="12"
+												fill="var(--ui-accent-color)"
+												transform="rotate(161.634)">
+												<animateTransform
+													attributeName="transform"
+													type="rotate"
+													calcMode="linear"
+													values="0 0 0;360 0 0"
+													keyTimes="0;1"
+													dur="1s"
+													begin="0s"
+													repeatCount="indefinite"></animateTransform>
+											</circle>
+										</g>
+									</g>
+								</svg>
+							) : (
+								__('Import Customizations', 'blocksy-companion')
+							)}
 						</button>
 					</div>
 				</section>
@@ -218,7 +261,7 @@ const CustomizerOptionsManager = () => {
 
 							<section>
 								<button
-									className="button"
+									className="button-primary"
 									onClick={(e) => {
 										e.preventDefault()
 										setIsCopyingOptions('child')
@@ -238,7 +281,7 @@ const CustomizerOptionsManager = () => {
 
 							<section>
 								<button
-									className="button"
+									className="button-primary"
 									onClick={(e) => {
 										e.preventDefault()
 										setIsCopyingOptions('parent')
@@ -260,10 +303,6 @@ const CustomizerOptionsManager = () => {
 				onDismiss={() => setIsCopyingOptions(false)}
 				render={() => (
 					<div className="ct-modal-content">
-						<svg width="35" height="35" viewBox="0 0 66 66">
-							<path d="M66 33.1c0 2.8-.4 5.5-1.1 8.2 0 0-1.7-.6-1.9-.6 3.4-13.1-2.2-27.4-14.5-34.5C41.3 2 33 .9 25 3.1c-3.5.9-6.7 2.4-9.5 4.4L20 12 6 15 9 1l5 5c3.1-2.2 6.6-3.9 10.5-4.9 2.7-.7 5.4-1.1 8-1.1 5.9-.1 11.7 1.4 17 4.4C60.1 10.5 66 21.7 66 33.1zm-49 6.3l2.4-3c-.3-1.2-.4-2.3-.4-3.4s.1-2.2.4-3.3l-2.4-3 2.5-4.3 3.8.5c1.6-1.6 3.6-2.7 5.8-3.3l1.4-3.6h5l1.4 3.6c2.2.6 4.2 1.8 5.8 3.3l3.8-.5 2.5 4.3-2.4 3c.3 1.1.4 2.2.4 3.3s-.1 2.2-.4 3.3l2.4 3-2.5 4.3-3.8-.5c-1.6 1.6-3.6 2.7-5.8 3.3L35.4 50h-5L29 46.4c-2.2-.6-4.2-1.8-5.8-3.3l-3.8.5-2.4-4.2zm8-6.4c0 4.4 3.6 8 8 8s8-3.6 8-8-3.6-8-8-8-8 3.6-8 8zm25.9 25.3c-3 2.1-6.3 3.7-9.9 4.7-8 2.1-16.4 1-23.5-3.1C5.2 52.8-.4 38.5 3 25.4c-.7-.1-1.3-.3-2-.5-.7 2.7-1 5.3-1 8 0 11.4 5.9 22.5 16.5 28.6 7.6 4.4 16.5 5.6 25 3.3 4-1.1 7.6-2.8 10.8-5.2l4.6 4.6 3-14-14 3 5 5.1z" />
-						</svg>
-
 						<h2 className="ct-modal-title">
 							{!ct_customizer_localizations.is_parent_theme &&
 								__(
@@ -358,7 +397,9 @@ const CustomizerOptionsManager = () => {
 							)}
 						</p>
 
-						<div className="ct-export-options">
+						<div
+							className="ct-checkboxes-container"
+							data-type="grid:bordered">
 							{['options', 'widgets'].map((component) => (
 								<div
 									className="ct-checkbox-container"
@@ -378,18 +419,6 @@ const CustomizerOptionsManager = () => {
 												: [...dataToExport, component]
 										)
 									}}>
-									{
-										{
-											options: __(
-												'Customizer settings',
-												'blocksy-companion'
-											),
-											widgets: __(
-												'Widgets settings',
-												'blocksy-companion'
-											),
-										}[component]
-									}
 									<span
 										className={classnames('ct-checkbox', {
 											active: dataToExport.includes(
@@ -405,6 +434,18 @@ const CustomizerOptionsManager = () => {
 												points="1.2,4.8 4.4,7.9 9.9,1.2 "></polyline>
 										</svg>
 									</span>
+									{
+										{
+											options: __(
+												'Customizer settings',
+												'blocksy-companion'
+											),
+											widgets: __(
+												'Widgets settings',
+												'blocksy-companion'
+											),
+										}[component]
+									}
 								</div>
 							))}
 						</div>
@@ -458,8 +499,7 @@ const CustomizerOptionsManager = () => {
 															var blob = new Blob(
 																[data.data],
 																{
-																	type:
-																		'application/octet-stream;charset=utf-8',
+																	type: 'application/octet-stream;charset=utf-8',
 																}
 															)
 

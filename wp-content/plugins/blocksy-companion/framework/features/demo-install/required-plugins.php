@@ -55,6 +55,8 @@ class DemoInstallPluginsInstaller {
 				if (empty(get_option('woocommerce_db_version'))) {
 					update_option('woocommerce_db_version', '0.0.0');
 				}
+
+				$this->maybe_fix_woo_db_tables();
 			}
 
 			if ($single_plugin === 'stackable-ultimate-gutenberg-blocks') {
@@ -87,7 +89,7 @@ class DemoInstallPluginsInstaller {
 
 			$this->plugin_activation($single_plugin);
 		}
-
+			
 		if ($this->has_streaming) {
 			Plugin::instance()->demo->emit_sse_message([
 				'action' => 'complete',
@@ -95,6 +97,16 @@ class DemoInstallPluginsInstaller {
 			]);
 
 			exit;
+		}
+	}
+
+	public function maybe_fix_woo_db_tables() {
+		if (
+			class_exists('WC_Install')
+			&&
+			method_exists('WC_Install', 'verify_base_tables')
+		) {
+			$missing_tables = \WC_Install::verify_base_tables( true, true );
 		}
 	}
 

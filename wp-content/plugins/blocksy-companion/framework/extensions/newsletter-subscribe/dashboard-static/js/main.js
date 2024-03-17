@@ -1,15 +1,27 @@
-import {
-	createElement,
-	Component,
-	useEffect,
-	useState,
-	Fragment,
-} from '@wordpress/element'
-import ctEvents from 'ct-events'
+import { createElement } from '@wordpress/element'
+import { addFilter } from '@wordpress/hooks'
 
 import NewsletterSubscribe from './NewsletterSubscribe'
 
-ctEvents.on('ct:extensions:card', ({ CustomComponent, extension }) => {
-	if (extension.name !== 'newsletter-subscribe') return
-	CustomComponent.extension = NewsletterSubscribe
-})
+addFilter(
+	'blocksy.extensions.current_extension_content',
+	'blocksy',
+	(contentDescriptor, { extension, onExtsSync }) => {
+		if (extension.name !== 'newsletter-subscribe') return contentDescriptor
+
+		return {
+			...contentDescriptor,
+			...(extension.data.api_key
+				? {}
+				: {
+						activationStrategy: 'from-custom-content',
+				  }),
+			content: (
+				<NewsletterSubscribe
+					extension={extension}
+					onExtsSync={onExtsSync}
+				/>
+			),
+		}
+	}
+)

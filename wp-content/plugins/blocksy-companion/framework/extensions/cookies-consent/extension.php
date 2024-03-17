@@ -16,11 +16,6 @@ class BlocksyExtensionCookiesConsent {
 	}
 
 	public function __construct() {
-		add_filter('blocksy:footer:offcanvas-drawer', function ($els) {
-			$els[] = blocksy_ext_cookies_consent_output();
-			return $els;
-		});
-
 		add_filter('blocksy-async-scripts-handles', function ($d) {
 			$d[] = 'blocksy-ext-cookies-consent-scripts';
 			return $d;
@@ -61,13 +56,6 @@ class BlocksyExtensionCookiesConsent {
 				return;
 			}
 
-			wp_enqueue_style(
-				'blocksy-ext-cookies-consent-styles',
-				BLOCKSY_URL . 'framework/extensions/cookies-consent/static/bundle/main.min.css',
-				['ct-main-styles'],
-				$data['Version']
-			);
-
 			wp_enqueue_script(
 				'blocksy-ext-cookies-consent-scripts',
 				BLOCKSY_URL . 'framework/extensions/cookies-consent/static/bundle/main.js',
@@ -77,11 +65,82 @@ class BlocksyExtensionCookiesConsent {
 			);
 		}, 50);
 
+		add_filter('blocksy:general:ct-scripts-localizations', function ($data) {
+			$data['dynamic_styles']['cookie_notification'] = blocksy_cdn_url(
+				BLOCKSY_URL . 'framework/extensions/cookies-consent/static/bundle/main.min.css'
+			);
+
+			return $data;
+		});
+
 		add_action(
 			'blocksy:global-dynamic-css:enqueue',
 			'BlocksyExtensionCookiesConsent::add_global_styles',
 			10, 3
 		);
+
+		add_action(
+			'pre_comment_on_post',
+			function ($post_id) {
+				$data = wp_unslash($_POST);
+
+				if (! isset($data['comment_post_ID'])) {
+					return;
+				}
+
+				if (
+					! isset($data['ct_has_gdprconfirm'])
+					||
+					$data['ct_has_gdprconfirm'] !== 'yes'
+				) {
+					return;
+				}
+
+				if (
+					! isset($data['gdprconfirm'])
+					||
+					$data['gdprconfirm'] !== 'on'
+				) {
+					wp_die(
+						'<p>' . __('Please accept the Privacy Policy in order to comment.', 'blocksy-companion') . '</p>',
+						__('Comment Submission Failure', 'blocksy-companion'),
+						array(
+							'response' => $data,
+							'back_link' => true,
+						)
+					);
+				}
+			}
+		);
+
+		add_action('wp', function() {
+			add_filter('woocommerce_product_review_comment_form_args', [$this, 'change_comment_form']);
+		}, 999);
+
+		add_action('wp_ajax_blc_load_cookies_consent_data', [
+			$this,
+			'blc_load_cookies_consent_data',
+		]);
+
+		add_action(
+			'wp_ajax_nopriv_blc_load_cookies_consent_data',
+			[$this, 'blc_load_cookies_consent_data']
+		);
+	}
+
+	public function blc_load_cookies_consent_data() {
+		$scripts = apply_filters('blocksy:cookies-consent:scripts-to-load', [], PHP_INT_MAX);
+
+		wp_send_json_success([
+			'scripts' => $scripts,
+			'consent_output' => blocksy_ext_cookies_consent_output(),
+		]);
+	}
+
+	public function change_comment_form($comment_form) {
+		$comment_form['comment_field'] .= blocksy_ext_cookies_checkbox('reviews');
+
+		return $comment_form;
 	}
 
 	static public function add_global_styles($args) {
@@ -100,13 +159,10 @@ class BlocksyExtensionCookiesConsent {
 	}
 
 	public function add_options_panel($options) {
-		$options['cookie_consent_ext'] = blc_call_fn(
-			[
-				'fn' => 'blocksy_get_options',
-				'default' => 'array'
-			],
+		$options['cookie_consent_ext'] = blocksy_get_options(
 			dirname(__FILE__) . '/customizer.php',
-			[], false
+			[],
+			false
 		);
 
 		return $options;

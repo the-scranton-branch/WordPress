@@ -5,8 +5,7 @@ import {
 	useState,
 } from '@wordpress/element'
 import { __ } from 'ct-i18n'
-import { Switch, Select } from 'blocksy-options'
-import cls from 'classnames'
+import { Switch } from 'blocksy-options'
 import ConditionsManager from './ConditionsManager'
 import { Overlay } from 'blocksy-options'
 
@@ -25,6 +24,11 @@ const DisplayCondition = ({
 			'Add one or more conditions to display the transparent header.',
 			'blocksy-companion'
 		),
+
+		addConditionButtonLabel = __(
+			'Add Display Condition',
+			'blocksy-companion'
+		),
 	},
 	value,
 	onChange,
@@ -38,6 +42,7 @@ const DisplayCondition = ({
 				filter={filter}
 				value={value}
 				onChange={onChange}
+				addConditionButtonLabel={addConditionButtonLabel}
 			/>
 		)
 	}
@@ -52,7 +57,9 @@ const DisplayCondition = ({
 					setIsEditing(true)
 					setLocalValue(null)
 				}}>
-				{__('Add/Edit Conditions', 'blocksy-companion')}
+				{Object.keys(value).length > 0
+					? __('Edit Conditions', 'blocksy-companion')
+					: __('Add Conditions', 'blocksy-companion')}
 			</button>
 
 			<Overlay
@@ -74,6 +81,9 @@ const DisplayCondition = ({
 								onChange={(value) => {
 									setLocalValue(value)
 								}}
+								addConditionButtonLabel={
+									addConditionButtonLabel
+								}
 							/>
 						</div>
 

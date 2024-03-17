@@ -8,13 +8,13 @@ ctEvents.on(
 			cookieContentColor: [
 				{
 					selector: '.cookie-notification',
-					variable: 'color',
+					variable: 'theme-text-color',
 					type: 'color:default',
 				},
 
 				{
 					selector: '.cookie-notification',
-					variable: 'colorHover',
+					variable: 'theme-link-hover-color',
 					type: 'color:hover',
 				},
 			],
@@ -28,13 +28,13 @@ ctEvents.on(
 			cookieButtonText: [
 				{
 					selector: '.cookie-notification .ct-cookies-accept-button',
-					variable: 'buttonTextInitialColor',
+					variable: 'theme-button-text-initial-color',
 					type: 'color:default',
 				},
 
 				{
 					selector: '.cookie-notification .ct-cookies-accept-button',
-					variable: 'buttonTextHoverColor',
+					variable: 'theme-button-text-hover-color',
 					type: 'color:hover',
 				},
 			],
@@ -42,13 +42,13 @@ ctEvents.on(
 			cookieButtonBackground: [
 				{
 					selector: '.cookie-notification .ct-cookies-accept-button',
-					variable: 'buttonInitialColor',
+					variable: 'theme-button-background-initial-color',
 					type: 'color:default',
 				},
 
 				{
 					selector: '.cookie-notification .ct-cookies-accept-button',
-					variable: 'buttonHoverColor',
+					variable: 'theme-button-background-hover-color',
 					type: 'color:hover',
 				},
 			],
@@ -56,13 +56,13 @@ ctEvents.on(
 			cookieDeclineButtonText: [
 				{
 					selector: '.cookie-notification .ct-cookies-decline-button',
-					variable: 'buttonTextInitialColor',
+					variable: 'theme-button-text-initial-color',
 					type: 'color:default',
 				},
 
 				{
 					selector: '.cookie-notification .ct-cookies-decline-button',
-					variable: 'buttonTextHoverColor',
+					variable: 'theme-button-text-hover-color',
 					type: 'color:hover',
 				},
 			],
@@ -70,13 +70,13 @@ ctEvents.on(
 			cookieDeclineButtonBackground: [
 				{
 					selector: '.cookie-notification .ct-cookies-decline-button',
-					variable: 'buttonInitialColor',
+					variable: 'theme-button-background-initial-color',
 					type: 'color:default',
 				},
 
 				{
 					selector: '.cookie-notification .ct-cookies-decline-button',
-					variable: 'buttonHoverColor',
+					variable: 'theme-button-background-hover-color',
 					type: 'color:hover',
 				},
 			],

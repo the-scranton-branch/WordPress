@@ -32,9 +32,14 @@ class DemoInstallFinalActions {
 
 		$this->replace_urls();
 
+		if (class_exists('\FluentForm\App\Hooks\Handlers\ActivationHandler')) {
+			$fluentFormActivation = new \FluentForm\App\Hooks\Handlers\ActivationHandler();
+			$fluentFormActivation->migrate();
+		}
+
 		do_action('customize_save_after');
 		do_action('blocksy:dynamic-css:refresh-caches');
-		Plugin::instance()->cache_manager->run_cache_purge();
+		do_action('blocksy:cache-manager:purge-all');
 
 		if (class_exists('WC_REST_System_Status_Tools_V2_Controller')) {
 			if (! defined('WP_CLI')) {

@@ -4,16 +4,64 @@ namespace Blocksy;
 
 class Dashboard {
 	public function __construct() {
+		add_filter(
+			'blocksy:dashboard:redirect-after-activation',
+			function ($url) {
+				return add_query_arg(
+					'page',
+					'ct-dashboard',
+					admin_url('admin.php')
+				);
+			}
+		);
+
+		add_filter(
+			'blocksy_add_menu_page',
+			function ($res, $options) {
+				add_menu_page(
+					$options['title'],
+					$options['menu-title'],
+					$options['permision'],
+					$options['top-level-handle'],
+					$options['callback'],
+					$options['icon-url'],
+					2
+				);
+
+				add_submenu_page(
+					$options['top-level-handle'],
+					$options['title'],
+					__('Dashboard', 'blocksy-companion'),
+					$options['permision'],
+					$options['top-level-handle']
+				);
+
+				return true;
+			},
+			10, 2
+		);
+
 		add_action(
 			'admin_menu',
 			[$this, 'setup_framework_page'],
 			5
 		);
 
+		add_filter(
+			'blocksy:dashboard:redirect-after-activation',
+			function ($url) {
+				return add_query_arg(
+					'page',
+					'ct-dashboard',
+					admin_url('admin.php')
+				);
+			}
+		);
+
 		add_action(
 			'admin_menu',
 			function () {
-				if (function_exists('blocksy_get_wp_parent_theme')) {
+				if (Plugin::instance()->check_if_blocksy_is_activated()) {
 					return;
 				}
 
@@ -38,7 +86,7 @@ class Dashboard {
 		);
 
 		add_action('admin_body_class', function ($class) {
-			if (! function_exists('blocksy_get_wp_parent_theme')) {
+			if (! Plugin::instance()->check_if_blocksy_is_activated()) {
 				return $class;
 			}
 
@@ -70,6 +118,8 @@ class Dashboard {
 
 			blc_fs()->add_filter('hide_freemius_powered_by', '__return_true');
 
+			blc_fs()->add_filter( 'show_deactivation_subscription_cancellation', '__return_false' );
+
 			blc_fs()->add_filter(
 				'connect-message_on-premium',
 				function ($text) {
@@ -96,7 +146,7 @@ class Dashboard {
 					$is_network_upgrade_mode = ( fs_is_network_admin() && blc_fs()->is_network_upgrade_mode() );
 					$slug = blc_fs()->get_slug();
 					$is_gdpr_required = \FS_GDPR_Manager::instance()->is_required();
-					$hey_x_text = esc_html( sprintf( fs_text_x_inline( 'Hey %s,', 'greeting', 'hey-x', $slug ), $user_first_name ) );
+					$hey_x_text = esc_html( blc_safe_sprintf( fs_text_x_inline( 'Hey %s,', 'greeting', 'hey-x', $slug ), $user_first_name ) );
 
 					$default_optin_message = $is_gdpr_required ?
 						fs_text_inline( 'Never miss an important update - opt in to our security & feature updates notifications, educational content, offers, and non-sensitive diagnostic tracking with %4$s. If you skip this, that\'s okay! %1$s will still work just fine.', 'connect-message_on-update', $slug ) :
@@ -109,7 +159,7 @@ class Dashboard {
 						/* translators: %s: name (e.g. Hey John,) */
 						'<span>' . $hey_x_text . '</span>'
 					) .
-					sprintf(
+					blc_safe_sprintf(
 						esc_html( $default_optin_message ),
 						'<b>' . esc_html( blc_fs()->get_plugin_name() ) . '</b>',
 						'<b>' . $user_login . '</b>',
@@ -123,8 +173,7 @@ class Dashboard {
 			blc_fs()->add_action('connect/before', function () {
 				$path = dirname(__FILE__) . '/views/optin.php';
 
-				echo blc_call_fn(
-					['fn' => 'blocksy_render_view'],
+				echo blocksy_render_view(
 					$path,
 					[]
 				);
@@ -166,8 +215,17 @@ class Dashboard {
 						$connect_template = ob_get_clean();
 					}
 
+					$current_plan = blc_get_capabilities()->get_plan();
+
+					// $current_plan = 'free';
+
 					$result = [
-						'is_pro' => blc_fs()->can_use_premium_code(),
+						'is_pro' => $current_plan !== 'free',
+						'current_plan' => $current_plan,
+
+						'pro_starter_sites' => blc_get_capabilities()->get_features()['pro_starter_sites'],
+						'pro_starter_sites_enhanced' => blc_get_capabilities()->get_features()['pro_starter_sites_enhanced'],
+
 						'is_anonymous' => $is_anonymous,
 						'connect_template' => $connect_template
 					];
@@ -223,7 +281,7 @@ class Dashboard {
 			'ct-options-scripts'
 		]);
 
-		if (function_exists('blocksy_get_wp_parent_theme')) {
+		if (Plugin::instance()->check_if_blocksy_is_activated()) {
 			wp_enqueue_script(
 				'blocksy-dashboard-scripts',
 				BLOCKSY_URL . 'static/bundle/dashboard.js',
@@ -249,15 +307,31 @@ class Dashboard {
 			);
 
 			$slug = 'blocksy';
+
+			$localize_data = [
+				'themeIsInstalled' => (
+					!! wp_get_theme($slug)
+					&&
+					! wp_get_theme($slug)->errors()
+				),
+				'activate'=> current_user_can('switch_themes') ? wp_nonce_url(admin_url('themes.php?action=activate&amp;stylesheet=' . $slug), 'switch-theme_' . $slug) : null
+			];
+
+			$blocksy_data = Plugin::instance()->is_blocksy_data;
+
+			if ($blocksy_data && $blocksy_data['is_correct_theme']) {
+				$localize_data['theme_version_mismatch'] = true;
+				$localize_data['run_updates'] = self_admin_url('update-core.php');
+			}
+
 			wp_localize_script(
 				'blocksy-dashboard-scripts',
 				'ctDashboardLocalizations',
-				[
-					'activate'=> current_user_can('switch_themes') ? wp_nonce_url(admin_url('themes.php?action=activate&amp;stylesheet=' . $slug), 'switch-theme_' . $slug) : null,
-				]
+				$localize_data
 			);
-		}
 
+			wp_dequeue_style('ct-dashboard-styles');
+		}
 
 		wp_enqueue_style(
 			'blocksy-dashboard-styles',
@@ -268,11 +342,7 @@ class Dashboard {
 	}
 
 	public function setup_framework_page() {
-		if (function_exists('blocksy_get_wp_parent_theme')) {
-			return;
-		}
-
-		if (! current_user_can('activate_plugins')) {
+		if (! current_user_can('manage_options')) {
 			return;
 		}
 
@@ -281,16 +351,15 @@ class Dashboard {
 		$options = [
 			'title' => __('Blocksy', 'blocksy-companion'),
 			'menu-title' => __('Blocksy', 'blocksy-companion'),
-			'permision' => 'activate_plugins',
+			'permision' => 'manage_options',
 			'top-level-handle' => 'ct-dashboard',
 			'callback' => [$this, 'welcome_page_template'],
 			'icon-url' => apply_filters(
 				'blocksy:dashboard:icon-url',
-				BLOCKSY_URL . 'static/img/navigation.svg'
+				'data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIGlkPSJMYXllcl8xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB4PSIwcHgiIHk9IjBweCIKCSB2aWV3Qm94PSIwIDAgMzUgMzUiIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgMCAwIDM1IDM1OyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+CjxwYXRoIGQ9Ik0yMS42LDIxLjNjMCwwLjYtMC41LDEuMS0xLjEsMS4xaC0zLjVsLTAuOS0yLjJoNC40QzIxLjEsMjAuMiwyMS42LDIwLjcsMjEuNiwyMS4zeiBNMjAuNiwxMy41aC00LjRsMC45LDIuMmgzLjUKCWMwLjYsMCwxLjEtMC41LDEuMS0xLjFDMjEuNiwxNCwyMS4xLDEzLjUsMjAuNiwxMy41eiBNMzUsMTcuNUMzNSwyNy4yLDI3LjIsMzUsMTcuNSwzNUM3LjgsMzUsMCwyNy4yLDAsMTcuNUMwLDcuOCw3LjgsMCwxNy41LDAKCUMyNy4yLDAsMzUsNy44LDM1LDE3LjV6IE0yNSwxNy45YzAuNy0wLjksMS4xLTIuMSwxLjEtMy40YzAtMS4yLTAuNC0yLjQtMS4xLTMuM2MtMS0xLjQtMi42LTIuMy00LjQtMi4zYzAsMC0wLjEsMC0wLjEsMHYwSDkuOQoJYy0wLjMsMC0wLjUsMC4zLTAuNCwwLjVsMi42LDYuMkg5LjljLTAuMywwLTAuNSwwLjMtMC40LDAuNUwxNCwyNi45aDYuNWMzLjEsMCw1LjYtMi41LDUuNi01LjZDMjYuMiwyMCwyNS44LDE4LjksMjUsMTcuOQoJQzI1LjEsMTcuOSwyNS4xLDE3LjksMjUsMTcuOXoiLz4KPC9zdmc+Cg=='
 			),
 			'position' => 2,
 		];
-
 
 		add_menu_page(
 			$options['title'],
@@ -331,5 +400,26 @@ class Dashboard {
 		}
 
 		echo '<div id="ct-dashboard"></div>';
+	}
+}
+
+if (! function_exists('blocksy_render_view')) {
+	function blocksy_render_view(
+		$file_path,
+		$view_variables = [],
+		$default_value = ''
+	) {
+		if (! is_file($file_path)) {
+			return $default_value;
+		}
+
+		// phpcs:ignore WordPress.PHP.DontExtract.extract_extract
+		extract($view_variables, EXTR_REFS);
+		unset($view_variables);
+
+		ob_start();
+		require $file_path;
+
+		return ob_get_clean();
 	}
 }

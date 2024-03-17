@@ -1,69 +1,63 @@
-[class*="ct-newsletter-subscribe"] {
-	
-	form {
-		display: grid;
-		grid-gap: 15px;
+.ct-newsletter-subscribe-form {
+	display: grid;
+	gap: var(--theme-form-field-gap, 10px);
 
-		&[data-fields='1'] {
-			@include media-breakpoint-up(md) {
-				grid-template-columns: 65% 1fr;
-			}
-		}
+	--theme-link-initial-color: var(--text-color, var(--theme-text-color));
 
-		&[data-fields='2'] {
-			@include media-breakpoint-up(md) {
-				grid-template-columns: 32.5% 32.5% 1fr;
-			}
-		}
-
-		button {
-			width: 100%;
-			min-height: var(--form-field-height, 40px);
+	&[data-columns="2"] {
+		@include media-breakpoint-up(md) {
+			grid-template-columns: 1fr auto;
 		}
 	}
 
-	.gdpr-confirm-policy {
-		order: 1;
-		margin: 0;
+	&[data-columns="3"] {
+		@include media-breakpoint-up(md) {
+			grid-template-columns: 1fr 1fr auto;
+		}
 	}
+
+	.wp-element-button {
+		width: 100%;
+		
+		--theme-button-min-height: var(--theme-form-field-height, 40px);
+		--theme-button-border-radius: var(--theme-form-field-border-radius, 3px);
+	}
+
 
 	.gdpr-confirm-policy,
 	.ct-newsletter-subscribe-message {
 		grid-column: 1/-1;
+		margin: 0;
 	}
-}
 
-
-// boxed container
-.ct-newsletter-subscribe-block,
-.ct-newsletter-subscribe-widget [data-container='boxed'] {
-	padding: var(--padding, 30px);
-	box-shadow: var(--box-shadow, 0px 12px 18px -6px rgba(34, 56, 101, 0.04));
-}
-
-
-// messages
-.ct-newsletter-subscribe-message {
-	order: 2;
-	display: none;
-
-	a {
-		text-decoration: underline;
-	}
-}
-
-.subscribe-error,
-.subscribe-success {
 	.ct-newsletter-subscribe-message {
-		display: block;
+		display: none;
+
+		a {
+			text-decoration: underline;
+		}
 	}
-}
 
-.subscribe-error .ct-newsletter-subscribe-message {
-	color: #e42b2b;
-	font-size: 14px;
-}
+	&.subscribe-error,
+	&.subscribe-success {
 
-.subscribe-success > *:not(.ct-newsletter-subscribe-message) {
-	display: none;
+		.ct-newsletter-subscribe-message {
+			display: block;
+		}
+	}
+
+	&.subscribe-error {
+
+		.ct-newsletter-subscribe-message {
+			color: #e42b2b;
+			font-size: 14px;
+		}
+	}
+
+	&.subscribe-success {
+
+		*:not(.ct-newsletter-subscribe-message) {
+			display: none;
+		}
+	}
 }

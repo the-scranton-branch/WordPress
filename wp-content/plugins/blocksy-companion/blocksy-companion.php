@@ -3,7 +3,7 @@
 /*
 Plugin Name: Blocksy Companion
 Description: This plugin is the companion for the Blocksy theme, it runs and adds its enhacements only if the Blocksy theme is installed and active.
-Version: 1.8.67
+Version: 2.0.32
 Author: CreativeThemes
 Author URI: https://creativethemes.com
 Text Domain: blocksy-companion
@@ -38,7 +38,7 @@ if ( function_exists( 'blc_fs' ) || class_exists( '\\Blocksy\\Plugin' ) ) {
     }
 } else {
     
-    if ( !function_exists( 'blc_fs' ) && file_exists( dirname( __FILE__ ) . '/freemius/start.php' ) ) {
+    if ( !function_exists( 'blc_fs' ) && file_exists( dirname( __FILE__ ) . '/freemius/start.php' ) && is_admin() ) {
         global  $blc_fs ;
         
         if ( !isset( $blc_fs ) ) {
@@ -49,7 +49,7 @@ if ( function_exists( 'blc_fs' ) || class_exists( '\\Blocksy\\Plugin' ) ) {
             $has_account = true;
             $instance = \Freemius::instance( 5115, 'blocksy-companion', true );
             
-            if ( in_array( 'white-label', get_option( 'blocksy_active_extensions', [] ) ) && $instance->is_plan( 'agency' ) ) {
+            if ( in_array( 'white-label', get_option( 'blocksy_active_extensions', [] ) ) && ($instance->is_plan( 'agency' ) || $instance->is_plan( 'agency_v2' )) ) {
                 $settings = get_option( 'blocksy_ext_white_label_settings', [] );
                 if ( $settings && isset( $settings['hide_billing_account'] ) && $settings['hide_billing_account'] ) {
                     $has_account = false;
@@ -83,6 +83,9 @@ if ( function_exists( 'blc_fs' ) || class_exists( '\\Blocksy\\Plugin' ) ) {
             function blc_fs()
             {
                 global  $blc_fs ;
+                // if (! is_admin()) {
+                // throw new Error('Called in frontend!');
+                // }
                 return $blc_fs;
             }
             

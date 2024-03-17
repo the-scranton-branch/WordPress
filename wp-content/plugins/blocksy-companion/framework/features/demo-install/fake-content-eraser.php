@@ -224,7 +224,7 @@ class DemoInstallFakeContentEraser {
 
 		update_option('sidebars_widgets', $all_widgets);
 
-		$widgets = get_theme_mod('sidebars_widgets');
+		$widgets = blocksy_get_theme_mod('sidebars_widgets');
 
 		if (! $widgets) {
 			$widgets = [];

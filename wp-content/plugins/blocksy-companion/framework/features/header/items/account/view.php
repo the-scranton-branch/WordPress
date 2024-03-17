@@ -50,16 +50,21 @@ if (
 	return;
 }
 
-$attr['class'] = trim('ct-header-account ' . blocksy_visibility_classes(
-	blocksy_default_akg(
-		'header_account_visibility',
-		$atts,
-		[
-			'tablet' => true,
-			'mobile' => true,
-		]
-	)
-));
+$attr = array_merge(
+	[
+		'class' => trim('ct-header-account ' . blocksy_visibility_classes(
+			blocksy_default_akg(
+				'header_account_visibility',
+				$atts,
+				[
+					'tablet' => true,
+					'mobile' => true,
+				]
+			)
+		))
+	],
+	$attr
+);
 
 echo blocksy_render_view(
 	dirname(__FILE__) . '/views/' . $path . '.php',
@@ -73,4 +78,3 @@ echo blocksy_render_view(
 		'item_id' => $item_id
 	]
 );
-

@@ -44,7 +44,7 @@ foreach ($all_post_types as $custom_post_type => $label) {
 		$taxonomies = get_object_taxonomies($custom_post_type);
 
 		if (count($taxonomies) > 0) {
-			$taxonomy = $taxonomies;
+			$taxonomy = array_slice($taxonomies, 0, 20);
 		} else {
 			$taxonomy = 'nonexistent';
 		}
@@ -111,45 +111,107 @@ $options = [
 					'type' => 'tab',
 					'options' => [
 						[
-							'trending_block_label' => [
-								'label' => __( 'Module Title', 'blocksy-companion' ),
-								'type' => 'text',
-								'design' => 'inline',
-								'value' => __( 'Trending now', 'blocksy-companion' ),
-								'sync' => 'live',
+							[
+								'trending_block_label' => [
+									'label' => __( 'Module Title', 'blocksy-companion' ),
+									'type' => 'text',
+									'design' => 'inline',
+									'value' => __( 'Trending now', 'blocksy-companion' ),
+									'sync' => 'live',
+								],
+
+								'trending_block_label_tag' => [
+									'label' => __( 'Module Title Tag', 'blocksy-companion' ),
+									'type' => 'ct-select',
+									'value' => 'h3',
+									'view' => 'text',
+									'design' => 'inline',
+									'choices' => blocksy_ordered_keys(
+										[
+											'h1' => 'H1',
+											'h2' => 'H2',
+											'h3' => 'H3',
+											'h4' => 'H4',
+											'h5' => 'H5',
+											'h6' => 'H6',
+											'p' => 'p',
+											'span' => 'span',
+										]
+									),
+									'sync' => [
+										'selector' => '.ct-trending-block',
+										'render' => function () {
+											echo blc_get_trending_block();
+										}
+									]
+								],
 							],
 
-							'trending_block_label_tag' => [
-								'label' => __( 'Module Title Tag', 'blocksy-companion' ),
-								'type' => 'ct-select',
-								'value' => 'h3',
-								'view' => 'text',
-								'design' => 'inline',
-								'divider' => 'bottom:full',
-								'choices' => blocksy_ordered_keys(
-									[
-										'h1' => 'H1',
-										'h2' => 'H2',
-										'h3' => 'H3',
-										'h4' => 'H4',
-										'h5' => 'H5',
-										'h6' => 'H6',
-										'span' => 'span',
-									]
-								),
-								'sync' => [
-									'selector' => '.ct-trending-block',
-									'render' => function () {
-										echo blc_get_trending_block();
-									}
+							blc_site_has_feature()
+								? [
+									'trending_block_icon_source' => [
+										'label' => __(
+											'Module Title Icon Source',
+											'blocksy-companion'
+										),
+										'type' => 'ct-radio',
+										'value' => 'default',
+										'view' => 'text',
+										'design' => 'block',
+										'divider' => 'top',
+										'sync' => [
+											'selector' => '.ct-trending-block',
+											'render' => function () {
+												echo blc_get_trending_block();
+											}
+										],
+										'choices' => [
+											'default' => __(
+												'Default',
+												'blocksy-companion'
+											),
+											'custom' => __(
+												'Custom',
+												'blocksy-companion'
+											),
+										],
+									],
+
+									blocksy_rand_md5() => [
+										'type' => 'ct-condition',
+										'condition' => [
+											'trending_block_icon_source' => 'custom',
+										],
+										'options' => [
+											'trending_block_custom_icon' => [
+												'type' => 'icon-picker',
+												'label' => __(
+													'Icon',
+													'blocksy-companion'
+												),
+												'design' => 'inline',
+												'divider' => 'top',
+												'value' => [
+													'icon' => 'fas fa-fire',
+												],
+												'sync' => [
+													'selector' => '.ct-trending-block',
+													'render' => function () {
+														echo blc_get_trending_block();
+													}
+												]
+											],
+										],
+									],
 								]
-							],
+								: [],
 
 							'trending_block_post_type' => count($all_post_types) > 1 ? [
 								'label' => __( 'Post Type', 'blocksy-companion' ),
 								'type' => 'ct-select',
 								'value' => 'post',
 								'design' => 'inline',
+								'divider' => 'top:full',
 								'setting' => [ 'transport' => 'postMessage' ],
 								'choices' => blocksy_ordered_keys($all_post_types),
 								'sync' => [
@@ -200,7 +262,7 @@ $options = [
 										'label' => __( 'Posts ID', 'blocksy-companion' ),
 										'type' => 'text',
 										'design' => 'inline',
-										'desc' => sprintf(
+										'desc' => blc_safe_sprintf(
 											__('Separate posts ID by comma. How to find the %spost ID%s.', 'blocksy-companion'),
 											'<a href="https://www.wpbeginner.com/beginners-guide/how-to-find-post-category-tag-comments-or-user-id-in-wordpress/" target="_blank">',
 											'</a>'
@@ -283,7 +345,7 @@ $options = [
 							],
 						],
 
-						function_exists('blc_fs') && blc_fs()->can_use_premium_code() ? [
+						blc_site_has_feature() ? [
 							'trending_block_location' => [
 								'label' => __('Display Location', 'blocksy-companion'),
 								'type' => 'ct-select',
@@ -334,9 +396,68 @@ $options = [
 					'type' => 'tab',
 					'options' => [
 
+						'trendingBlockHeadingFont' => [
+							'type' => 'ct-typography',
+							'label' => __( 'Module Title Font', 'blocksy-companion' ),
+							'value' => blocksy_typography_default_values([
+								'size' => '15px',
+							]),
+							'setting' => [ 'transport' => 'postMessage' ],
+						],
+
+						'trendingBlockHeadingFontColor' => [
+							'label' => __( 'Module Title Color', 'blocksy-companion' ),
+							'type'  => 'ct-color-picker',
+							'design' => 'block:right',
+							'responsive' => true,
+							'sync' => 'live',
+							'divider' => 'bottom',
+							'value' => [
+								'default' => [
+									'color' => Blocksy_Css_Injector::get_skip_rule_keyword('DEFAULT'),
+								],
+							],
+
+							'pickers' => [
+								[
+									'title' => __( 'Initial', 'blocksy-companion' ),
+									'id' => 'default',
+									'inherit' => [
+										'var(--theme-heading-1-color, var(--theme-headings-color))' => [
+											'trending_block_label_tag' => 'h1'
+										],
+
+										'var(--theme-heading-2-color, var(--theme-headings-color))' => [
+											'trending_block_label_tag' => 'h2'
+										],
+
+										'var(--theme-heading-3-color, var(--theme-headings-color))' => [
+											'trending_block_label_tag' => 'h3'
+										],
+
+										'var(--theme-heading-4-color, var(--theme-headings-color))' => [
+											'trending_block_label_tag' => 'h4'
+										],
+
+										'var(--theme-heading-5-color, var(--theme-headings-color))' => [
+											'trending_block_label_tag' => 'h5'
+										],
+
+										'var(--theme-heading-6-color, var(--theme-headings-color))' => [
+											'trending_block_label_tag' => 'h6'
+										],
+
+										'var(--theme-text-color)' => [
+											'trending_block_label_tag' => 'span|p'
+										],
+									]
+								],
+							],
+						],
+
 						'trendingBlockPostsFont' => [
 							'type' => 'ct-typography',
-							'label' => __( 'Posts Font', 'blocksy-companion' ),
+							'label' => __( 'Posts Title Font', 'blocksy-companion' ),
 							'value' => blocksy_typography_default_values([
 								'size' => '15px',
 								'variation' => 'n5',
@@ -345,10 +466,9 @@ $options = [
 						],
 
 						'trendingBlockFontColor' => [
-							'label' => __( 'Font Color', 'blocksy-companion' ),
+							'label' => __( 'Posts Title Font Color', 'blocksy-companion' ),
 							'type'  => 'ct-color-picker',
 							'design' => 'block:right',
-							'divider' => 'top',
 							'responsive' => true,
 							'sync' => 'live',
 							'value' => [
@@ -365,13 +485,45 @@ $options = [
 								[
 									'title' => __( 'Initial', 'blocksy-companion' ),
 									'id' => 'default',
-									'inherit' => 'var(--color)'
+									'inherit' => 'var(--theme-text-color)'
 								],
 
 								[
 									'title' => __( 'Hover', 'blocksy-companion' ),
 									'id' => 'hover',
-									'inherit' => 'var(--linkHoverColor)'
+									'inherit' => 'var(--theme-link-hover-color)'
+								],
+							],
+						],
+
+						'trendingBlockArrowsColor' => [
+							'label' => __( 'Arrows Color', 'blocksy-companion' ),
+							'type'  => 'ct-color-picker',
+							'design' => 'block:right',
+							'responsive' => true,
+							'divider' => 'top',
+							'sync' => 'live',
+							'value' => [
+								'default' => [
+									'color' => Blocksy_Css_Injector::get_skip_rule_keyword('DEFAULT'),
+								],
+
+								'hover' => [
+									'color' => Blocksy_Css_Injector::get_skip_rule_keyword('DEFAULT'),
+								],
+							],
+
+							'pickers' => [
+								[
+									'title' => __( 'Initial', 'blocksy-companion' ),
+									'id' => 'default',
+									'inherit' => 'var(--theme-text-color)'
+								],
+
+								[
+									'title' => __( 'Hover', 'blocksy-companion' ),
+									'id' => 'hover',
+									'inherit' => 'var(--theme-link-hover-color)'
 								],
 							],
 						],
@@ -386,7 +538,7 @@ $options = [
 							'value' => blocksy_background_default_value([
 								'backgroundColor' => [
 									'default' => [
-										'color' => 'var(--paletteColor5)',
+										'color' => 'var(--theme-palette-color-5)',
 									],
 								],
 							])

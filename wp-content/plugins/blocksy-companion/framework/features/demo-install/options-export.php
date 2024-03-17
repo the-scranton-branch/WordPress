@@ -6,7 +6,13 @@ class DemoInstallOptionsExport {
 	public function get_exported_options_keys() {
 		return [
 			'blocksy_ext_mailchimp_credentials',
-			'blocksy_active_extensions'
+			'blocksy_ext_post_types_extra_settings',
+			'blocksy_ext_woocommerce_extra_settings',
+			'blocksy_active_extensions',
+
+			// TranslatePress
+			'trp_settings',
+			'trp_advanced_settings'
 		];
 	}
 
@@ -96,9 +102,39 @@ class DemoInstallOptionsExport {
 			}
 		}
 
-		return $data;
+		if (class_exists('\FluentForm\App\Hooks\Handlers\ActivationHandler')) {
+			$form = \FluentForm\App\Models\Form::with(['formMeta'])->get();
 
-		return serialize($data);
+			$forms = [];
+
+			foreach ($form as $item) {
+				$form = json_decode($item);
+
+				$formMetaFiltered = array_filter($form->form_meta, function ($item) {
+					return ($item->meta_key !== '_total_views');
+				});
+
+				$form->metas = $formMetaFiltered;
+				$form->form_fields = json_decode($form->form_fields);
+
+				$forms[] = $form;
+			}
+
+			$data['fluent_form_forms'] = json_decode(
+				json_encode(array_values($forms)),
+				true
+			);
+		}
+
+		if (function_exists('wc_get_attribute_taxonomies')) {
+			$attribute_taxonomies = wc_get_attribute_taxonomies();
+
+			$data['woocommerce_attribute_taxonomies'] = json_decode(json_encode(
+				array_values(wc_get_attribute_taxonomies())
+			));
+		}
+
+		return $data;
 	}
 
 	public function export_pages_ids_options() {

@@ -46,42 +46,60 @@ class DemoInstall {
 		// add_filter( 'woocommerce_prevent_automatic_wizard_redirect', '__return_false' );
 	}
 
+	public function get_demo_remote_url($args = []) {
+		$endpoint = 'https://demo.creativethemes.com/';
+		// $endpoint = 'http://localhost:3008/';
+		return $endpoint . '?' . http_build_query($args);
+	}
+
 	public function blocksy_demo_install_child_theme() {
+		$this->check_nonce();
+
 		$m = new DemoInstallChildThemeInstaller();
 		$m->import();
 	}
 
 	public function blocksy_demo_erase_content() {
+		$this->check_nonce();
 		$plugins = new DemoInstallContentEraser();
 		$plugins->import();
 	}
 
 	public function blocksy_demo_install_widgets() {
+		$this->check_nonce();
 		$plugins = new DemoInstallWidgetsInstaller();
 		$plugins->import();
 	}
 
 	public function blocksy_demo_install_options() {
+		$this->check_nonce();
+
 		$plugins = new DemoInstallOptionsInstaller();
 		$plugins->import();
 	}
 
 	public function blocksy_demo_install_content() {
+		$this->check_nonce();
+
 		$plugins = new DemoInstallContentInstaller();
 		$plugins->import();
 	}
 
 	public function blocksy_demo_activate_plugins() {
+		$this->check_nonce();
 		$plugins = new DemoInstallPluginsInstaller();
 		$plugins->import();
 	}
 
 	public function blocksy_demo_fake_step() {
+		$this->check_nonce();
 		$plugins = new DemoInstallFakeContentEraser();
 		$plugins->import();
 	}
 
 	public function blocksy_demo_register_current_demo() {
+		$this->check_nonce();
+
 		$this->start_streaming();
 
 		if (! isset($_REQUEST['demo_name']) || !$_REQUEST['demo_name']) {
@@ -113,6 +131,8 @@ class DemoInstall {
 	}
 
 	public function blocksy_demo_deregister_current_demo() {
+		$this->check_nonce();
+
 		$this->start_streaming();
 
 		update_option('blocksy_ext_demos_current_demo', null);
@@ -126,11 +146,15 @@ class DemoInstall {
 	}
 
 	public function blocksy_demo_deactivate_plugins() {
+		$this->check_nonce();
+
 		$plugins = new DemoInstallPluginsUninstaller();
 		$plugins->import();
 	}
 
 	public function blocksy_demo_install_finish() {
+		$this->check_nonce();
+
 		$finish = new DemoInstallFinalActions();
 		$finish->import();
 	}
@@ -155,13 +179,16 @@ class DemoInstall {
 			]
 		);
 
-		$request = wp_remote_get('https://demo.creativethemes.com/?' . http_build_query([
-			'route' => 'get_single',
-			'demo' => $args['demo'] . ':' . $args['builder'],
-			'field' => $args['field']
-		]), [
-			'sslverify' => false
-		]);
+		$request = wp_remote_get(
+			$this->get_demo_remote_url([
+				'route' => 'get_single',
+				'demo' => $args['demo'] . ':' . $args['builder'],
+				'field' => $args['field']
+			]),
+			[
+				'sslverify' => false
+			]
+		);
 
 		if (is_wp_error($request)) {
 			return false;
@@ -179,14 +206,22 @@ class DemoInstall {
 	}
 
 	public function fetch_all_demos() {
-		$request = wp_remote_get('https://demo.creativethemes.com/?route=get_all', [
-			'sslverify' => false
-		]);
-
-		// $request = wp_remote_get('https://demo.creativethemes.BROKEN/?route=get_all');
+		$request = wp_remote_get(
+			$this->get_demo_remote_url([
+				'route' => 'get_all'
+			]),
+			['sslverify' => false]
+		);
 
 		if (is_wp_error($request)) {
-			return false;
+			return $request;
+		}
+
+		if (wp_remote_retrieve_response_code($request) !== 200) {
+			return new \WP_Error(
+				'demo_fetch_failed',
+				'Failed to fetch demos with status code ' . wp_remote_retrieve_response_code($request)
+			);
 		}
 
 		$body = wp_remote_retrieve_body($request);
@@ -197,23 +232,53 @@ class DemoInstall {
 			return false;
 		}
 
-		return $body;
+		$data = get_plugin_data(BLOCKSY__FILE__);
+
+		$result = [];
+
+		foreach ($body as $single_demo) {
+			if (! isset($single_demo['required_companion_version'])) {
+				$result[] = $single_demo;
+				continue;
+			}
+
+			if (version_compare(
+				$data['Version'],
+				$single_demo['required_companion_version'],
+				'>='
+			)) {
+				$result[] = $single_demo;
+			}
+		}
+
+		return $result;
 	}
 
 	public function blocksy_demo_list() {
+		$this->check_nonce();
+
 		$demos = $this->fetch_all_demos();
 
-		if (! $demos) {
-			wp_send_json_error();
+		if (! $demos || is_wp_error($demos)) {
+			wp_send_json_error([
+				'demos' => [],
+				'demo_error' => is_wp_error($demos) ? $demos->get_error_message() : ''
+			]);
 		}
 
-		$plugins = [
-			'coblocks' => false,
-			'contact-form-7' => false,
-			'woocommerce' => false,
-			'brizy' => false,
-			'elementor' => false,
-		];
+		$plugins = [];
+
+		foreach ($demos as $demo_index => $demo) {
+			foreach ($demo['plugins'] as $plugin) {
+				if (! isset($plugins[$plugin])) {
+					$plugins[$plugin] = false;
+				}
+			}
+
+			if ($demo_index === 0) {
+				// $demos[0]['is_pro'] = true;
+			}
+		}
 
 		foreach ($plugins as $plugin_name => $status) {
 			$plugins_manager = $this->get_plugins_manager();
@@ -242,6 +307,8 @@ class DemoInstall {
 	}
 
 	public function blocksy_demo_export() {
+		$this->check_nonce();
+
 		if (! current_user_can('edit_theme_options')) {
 			wp_send_json_error();
 		}
@@ -272,21 +339,23 @@ class DemoInstall {
 		$content_data = new DemoInstallContentExport();
 		$content_data = $content_data->export();
 
+		$demo_data = [
+			'name' => $name,
+			'options' => $options_data->export(),
+			'widgets' => $widgets_data,
+			'content' => $content_data,
+
+			'pages_ids_options' => $options_data->export_pages_ids_options(),
+			'created_at' => date('d-m-Y'),
+
+			'url' => $url,
+			'is_pro' => !!$is_pro,
+			'builder' => $builder,
+			'plugins' => $plugins
+		];
+
 		wp_send_json_success([
-			'demo' => [
-				'name' => $name,
-				'options' => $options_data->export(),
-				'widgets' => $widgets_data,
-				'content' => $content_data,
-
-				'pages_ids_options' => $options_data->export_pages_ids_options(),
-				'created_at' => date('d-m-Y'),
-
-				'url' => $url,
-				'is_pro' => !!$is_pro,
-				'builder' => $builder,
-				'plugins' => $plugins
-			]
+			'demo' => $demo_data
 		]);
 	}
 
@@ -294,7 +363,7 @@ class DemoInstall {
 		foreach ($this->ajax_actions as $action) {
 			add_action(
 				'wp_ajax_' . $action,
-				[ $this, $action ]
+				[$this, $action]
 			);
 		}
 	}
@@ -345,5 +414,11 @@ class DemoInstall {
 		// Extra padding.
 		echo ':' . str_repeat( ' ', 2048 ) . "\n\n";
 		flush();
+	}
+
+	public function check_nonce() {
+		if (! check_ajax_referer('ct-dashboard', 'nonce', false)) {
+			wp_send_json_error('nonce');
+		}
 	}
 }

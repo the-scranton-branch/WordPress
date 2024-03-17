@@ -3,9 +3,8 @@
 	grid-template-columns: var(--grid-template-columns);
 	grid-column-gap: 40px;
 	grid-row-gap: 40px;
-
-	border-top: 1px solid #ececec;
-	padding-top: var(--content-vertical-spacing, 60px);
+	border-top: 1px solid var(--theme-border-color);
+	padding-top: var(--theme-content-vertical-spacing, 60px);
 
 	@include media-breakpoint-up (lg) {
 		--grid-template-columns: 1.5fr 1fr 1fr;
@@ -22,10 +21,11 @@
 
 	.ct-icon-container {
 		position: absolute;
-		left: 0;
+		inset-inline-start: 0;
 		top: 0.4em;
 		opacity: 0.8;
-		--icon-size: 13px;
+		
+		--theme-icon-size: 13px;
 	}
 }
 

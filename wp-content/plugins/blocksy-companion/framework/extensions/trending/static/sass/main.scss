@@ -1,4 +1,5 @@
-@import '../../../../../static/sass/common-frontend';
+@import '../../../../../static/sass/frontend/common-frontend/functions';
+@import '../../../../../static/sass/frontend/common-frontend/mixins';
 
 .ct-trending-block {
 	padding: var(--padding, 30px) 0;
@@ -95,16 +96,13 @@
 		}
 	}
 
-	.ct-block-title {
-		--fontSize: 15px;
+	.ct-module-title {
 		grid-column: 1/-1;
 		display: flex;
 		align-items: center;
 		margin-bottom: 10px;
-		--headings-color: var(--color);
 
 		> svg {
-			margin-top: 4px;
 			margin-inline-start: 10px;
 		}
 	}
@@ -112,17 +110,17 @@
 	a {
 		display: flex;
 		align-items: center;
-		--linkInitialColor: var(--color);
+		--theme-link-initial-color: var(--theme-text-color);
 	}
 
-	.ct-image-container {
+	.ct-media-container {
 		flex: 0 0 60px;
 		border-radius: 100%;
 		margin-inline-end: 20px;
 		-webkit-mask-image: -webkit-radial-gradient(white, black);
 	}
 
-	.ct-item-title {
+	.ct-post-title {
 		word-break: break-word;
 	}
 
@@ -137,8 +135,9 @@
 		background: transparent;
 		border-radius: 2px;
 		opacity: 0.5;
-		border: 1px solid var(--color);
-		transition: var(--transition);
+		color: var(--theme-text-color);
+		border: 1px solid currentColor;
+		transition: var(--theme-transition);
 
 		&:before {
 			content: '';
@@ -152,15 +151,15 @@
 		&:hover {
 			opacity: 1;
 			color: #fff;
-			border-color: var(--paletteColor1);
-			background: var(--paletteColor1);
+			border-color: var(--theme-link-hover-color);
+			background: var(--theme-link-hover-color);
 		}
 	}
 
 	.ct-arrow-left {
 		margin-inline-start: auto;
 		margin-inline-end: 8px;
-		padding-left: 1px;
+		padding-inline-start: 1px;
 
 		&:before {
 			transform: rotate(-45deg);
@@ -168,7 +167,7 @@
 	}
 
 	.ct-arrow-right {
-		padding-right: 1px;
+		padding-inline-end: 1px;
 
 		&:before {
 			transform: rotate(135deg);

@@ -16,7 +16,6 @@ $options = [
 				'newsletter_subscribe_title' => [
 					'type' => 'text',
 					'label' => __( 'Title', 'blocksy-companion' ),
-					'field_attr' => [ 'id' => 'widget-title' ],
 					'design' => 'block',
 					'value' => __( 'Newsletter Updates', 'blocksy-companion' ),
 					'disableRevertButton' => true,
@@ -26,7 +25,7 @@ $options = [
 				'newsletter_subscribe_text' => [
 					'label' => __( 'Description', 'blocksy-companion' ),
 					'type' => 'textarea',
-					'value' => __( 'Enter your email address below to subscribe to our newsletter', 'blocksy-companion' ),
+					'value' => __( 'Enter your email address below and subscribe to our newsletter', 'blocksy-companion' ),
 					'design' => 'block',
 					'disableRevertButton' => true,
 					'setting' => [ 'transport' => 'postMessage' ],
@@ -81,7 +80,7 @@ $options = [
 					'value' => 'no',
 					'disableRevertButton' => true,
 					'sync' => blocksy_sync_single_post_container([
-						'loader_selector' => '.ct-newsletter-subscribe-block'
+						'loader_selector' => '.ct-newsletter-subscribe-container'
 					]),
 				],
 
@@ -166,13 +165,13 @@ $options = [
 						[
 							'title' => __( 'Initial', 'blocksy-companion' ),
 							'id' => 'default',
-							'inherit' => 'var(--heading-color, var(--heading-3-color, var(--headings-color)))'
+							'inherit' => 'var(--theme-heading-color, var(--theme-heading-3-color, var(--theme-headings-color)))'
 						],
 					],
 				],
 
 				'newsletter_subscribe_content' => [
-					'label' => __( 'Description Color', 'blocksy-companion' ),
+					'label' => __( 'Text Color', 'blocksy-companion' ),
 					'type'  => 'ct-color-picker',
 					'design' => 'inline',
 					'setting' => [ 'transport' => 'postMessage' ],
@@ -191,13 +190,13 @@ $options = [
 						[
 							'title' => __( 'Initial', 'blocksy-companion' ),
 							'id' => 'default',
-							'inherit' => 'var(--color)'
+							'inherit' => 'var(--theme-text-color)'
 						],
 
 						[
 							'title' => __( 'Hover', 'blocksy-companion' ),
 							'id' => 'hover',
-							'inherit' => 'var(--linkHoverColor)'
+							'inherit' => 'var(--theme-link-hover-color)'
 						],
 					],
 				],
@@ -223,13 +222,13 @@ $options = [
 						[
 							'title' => __( 'Initial', 'blocksy-companion' ),
 							'id' => 'default',
-							'inherit' => 'var(--form-text-initial-color, var(--color))'
+							'inherit' => 'var(--theme-form-text-initial-color, var(--theme-text-color))'
 						],
 
 						[
 							'title' => __( 'Focus', 'blocksy-companion' ),
 							'id' => 'focus',
-							'inherit' => 'var(--form-text-focus-color, var(--color))'
+							'inherit' => 'var(--theme-form-text-focus-color, var(--theme-text-color))'
 						],
 					],
 				],
@@ -254,13 +253,13 @@ $options = [
 						[
 							'title' => __( 'Initial', 'blocksy-companion' ),
 							'id' => 'default',
-							'inherit' => 'var(--form-field-border-initial-color)'
+							'inherit' => 'var(--theme-form-field-border-initial-color)'
 						],
 
 						[
 							'title' => __( 'Focus', 'blocksy-companion' ),
 							'id' => 'focus',
-							'inherit' => 'var(--form-field-border-focus-color)'
+							'inherit' => 'var(--theme-form-field-border-focus-color)'
 						],
 					],
 				],
@@ -311,11 +310,11 @@ $options = [
 
 					'value' => [
 						'default' => [
-							'color' => 'var(--paletteColor1)',
+							'color' => 'var(--theme-palette-color-1)',
 						],
 
 						'hover' => [
-							'color' => 'var(--paletteColor2)',
+							'color' => 'var(--theme-palette-color-2)',
 						],
 					],
 
@@ -342,7 +341,7 @@ $options = [
 					'value' => blocksy_background_default_value([
 						'backgroundColor' => [
 							'default' => [
-								'color' => '#ffffff',
+								'color' => 'var(--theme-palette-color-8)',
 							],
 						],
 					])
@@ -358,14 +357,14 @@ $options = [
 						'width' => 1,
 						'style' => 'none',
 						'color' => [
-							'color' => 'var(--paletteColor5)',
+							'color' => 'var(--theme-palette-color-5)',
 						],
 					],
 					'responsive' => true,
 				],
 
 				'newsletter_subscribe_shadow' => [
-					'label' => __( 'Container Shadow', 'blocksy' ),
+					'label' => __( 'Container Shadow', 'blocksy-companion' ),
 					'type' => 'ct-box-shadow',
 					'responsive' => true,
 					'divider' => 'top',
@@ -389,7 +388,6 @@ $options = [
 					'divider' => 'top',
 					'setting' => [ 'transport' => 'postMessage' ],
 					'value' => blocksy_spacing_value([
-						'linked' => true,
 						'top' => '30px',
 						'left' => '30px',
 						'right' => '30px',
@@ -403,9 +401,7 @@ $options = [
 					'type' => 'ct-spacing',
 					'divider' => 'top',
 					'setting' => [ 'transport' => 'postMessage' ],
-					'value' => blocksy_spacing_value([
-						'linked' => true,
-					]),
+					'value' => blocksy_spacing_value(),
 					'responsive' => true
 				],
 

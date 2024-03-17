@@ -54,19 +54,15 @@ const submitMailchimp = (form) => {
 			data.result === 'error' ? 'subscribe-error' : 'subscribe-success'
 		)
 
-		form.querySelector(
-			'.ct-newsletter-subscribe-message'
-		).innerHTML = data.msg.replace('0 - ', '')
+		form.querySelector('.ct-newsletter-subscribe-message').innerHTML =
+			data.msg.replace('0 - ', '')
 	}
 }
 
-const submitMailerlite = (form) => {
+const submitAjax = (form) => {
 	const body = new FormData(form)
 
-	body.append(
-		'action',
-		'blc_newsletter_subscribe_process_mailerlite_subscribe'
-	)
+	body.append('action', 'blc_newsletter_subscribe_process_ajax_subscribe')
 
 	body.append('GROUP', form.dataset.provider.split(':')[1])
 
@@ -98,8 +94,8 @@ registerDynamicChunk('blocksy_ext_newsletter_subscribe', {
 			submitMailchimp(form)
 		}
 
-		if (form.dataset.provider.indexOf('mailerlite') > -1) {
-			submitMailerlite(form)
+		if (form.dataset.provider.indexOf('mailchimp') === -1) {
+			submitAjax(form)
 		}
 	},
 })

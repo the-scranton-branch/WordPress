@@ -29,11 +29,7 @@ class BlocksyExtensionTrending {
 			$chunks[] = [
 				'id' => 'blocksy_ext_trending',
 				'selector' => '.ct-trending-block [class*="ct-arrow"]',
-				'url' => blc_call_fn(
-					[
-						'fn' => 'blocksy_cdn_url',
-						'default' => BLOCKSY_URL . 'framework/extensions/trending/static/bundle/main.js'
-					],
+				'url' => blocksy_cdn_url(
 					BLOCKSY_URL . 'framework/extensions/trending/static/bundle/main.js'
 				),
 				'trigger' => 'click'
@@ -45,13 +41,10 @@ class BlocksyExtensionTrending {
 		add_filter(
 			'blocksy_extensions_customizer_options',
 			function ($opts) {
-				$opts['trending_posts_ext'] = blc_call_fn(
-					[
-						'fn' => 'blocksy_get_options',
-						'default' => 'array'
-					],
+				$opts['trending_posts_ext'] = blocksy_get_options(
 					dirname(__FILE__) . '/customizer.php',
-					[], false
+					[],
+					false
 				);
 
 				return $opts;
@@ -61,8 +54,8 @@ class BlocksyExtensionTrending {
 		add_action('wp', function () {
 			$location = 'blocksy:template:after';
 
-			if (function_exists('blc_fs') && blc_fs()->can_use_premium_code()) {
-				$location = get_theme_mod(
+			if (blc_site_has_feature()) {
+				$location = blocksy_get_theme_mod(
 					'trending_block_location',
 					'blocksy:content:bottom'
 				);
@@ -73,8 +66,8 @@ class BlocksyExtensionTrending {
 			add_action(
 				$location,
 				function () {
-					if (function_exists('blc_fs') && blc_fs()->can_use_premium_code()) {
-						$conditions = get_theme_mod(
+					if (blc_site_has_feature()) {
+						$conditions = blocksy_get_theme_mod(
 							'trending_block_conditions',
 							[
 								[

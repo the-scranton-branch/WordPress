@@ -7,7 +7,7 @@ if (! function_exists('blocksy_render_archive_cards')) {
 $shortcode_class = 'ct-posts-shortcode';
 
 if (! empty($args['class'])) {
-	$shortcode_class .= ' ' . $args['class'];
+	$shortcode_class .= ' ' . esc_attr($args['class']);
 }
 
 $query_args = [
@@ -16,7 +16,8 @@ $query_args = [
 	'post_type' => explode(',', $args['post_type']),
 	'orderby' => $args['orderby'],
 	'posts_per_page' => $args['limit'],
-	'ignore_sticky_posts' => $args['ignore_sticky_posts'] === 'yes'
+	'ignore_sticky_posts' => $args['ignore_sticky_posts'] === 'yes',
+	'post_status' => 'publish'
 ];
 
 if (! empty($args['meta_value'])) {
@@ -163,6 +164,10 @@ if ($args['view'] === 'slider') {
 		'slide_image_args' => function ($index, $args) use ($posts_to_render) {
 			$post = $posts_to_render[$index];
 			$args['html_atts']['href'] = get_permalink($post);
+			
+			unset($args['html_atts']['data-src']);
+
+			$args['tag_name'] = 'a';
 
 			return $args;
 		},
@@ -186,14 +191,25 @@ if ($args['view'] === 'slider') {
 	if (
 		$args['filtering']
 		&&
+		$args['filtering'] === 'yes'
+		&&
 		function_exists('blc_cpt_extra_filtering_output')
 	) {
 		blc_cpt_extra_filtering_output([
 			'prefix' => $prefix,
 			'post_type' => $preferred_post_type,
-			'links_strategy' => 'current_page'
+			'links_strategy' => 'current_page',
+			'term_ids' => $args['term_ids'] ? $args['term_ids'] : [],
+			'exclude_term_ids' => $args['exclude_term_ids'] ? $args['exclude_term_ids'] : [],
+			'use_children_tax_ids' => $args['filtering_use_children_tax_ids'] === 'yes'
 		]);
 	}
+
+	global $wp_query;
+
+	$previous_query = $wp_query;
+
+	$wp_query = $query;
 
 	echo blocksy_render_archive_cards([
 		'prefix' => $prefix,
@@ -201,8 +217,12 @@ if ($args['view'] === 'slider') {
 		'has_pagination' => $args['has_pagination'] === 'yes'
 	]);
 
+	$wp_query = $previous_query;
+	
 	wp_reset_postdata();
+	
 
 	echo '</div>';
 }
+
 

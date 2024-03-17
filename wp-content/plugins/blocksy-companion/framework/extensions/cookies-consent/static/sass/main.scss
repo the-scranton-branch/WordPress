@@ -1,18 +1,15 @@
-@import '../../../../../static/sass/common-frontend';
+@import '../../../../../static/sass/frontend/common-frontend/functions';
+@import '../../../../../static/sass/frontend/common-frontend/mixins';
 
 .cookie-notification {
 	position: fixed;
-	left: var(--frame-size, 0px);
-	bottom: var(--frame-size, 0px);
+	inset-inline-start: var(--theme-frame-size, 0px);
+	bottom: var(--theme-frame-size, 0px);
 	z-index: 999999;
-	color: var(--color);
-
-	a:hover {
-		color: var(--colorHover);
-	}
+	color: var(--theme-text-color);
 
 	@include media-breakpoint-down (sm) {
-		right: var(--frame-size, 0px);
+		inset-inline-end: var(--theme-frame-size, 0px);
 	}
 
 	> div {
@@ -25,8 +22,6 @@
 			align-items: center;
 		}
 	}
-
-
 
 
 	// type 1
@@ -50,7 +45,6 @@
 			@include media-breakpoint-up (md) {
 				background: var(--backgroundColor);
 				box-shadow: 0px 5px 30px -5px rgba(34, 56, 101, 0.15);
-				// padding: 25px 40px 25px 25px;
 				padding: 30px;
 				border-radius: 3px;
 				max-width: var(--maxWidth);
@@ -61,8 +55,8 @@
 
 	// type 2
 	&[data-type='type-2'] {
-		right: var(--frame-size, 0px);
-		padding-right: var(--scrollbar-width, 0px);
+		inset-inline-end: var(--theme-frame-size, 0px);
+		padding-inline-end: var(--scrollbar-width, 0px);
 		background: var(--backgroundColor);
 
 		@include media-breakpoint-up (md) {
@@ -72,10 +66,6 @@
 				justify-content: center;
 			}
 		}
-
-		// .ct-close {
-		// 	display: none;
-		// }
 	}
 
 
@@ -89,7 +79,6 @@
 
 		a {
 			text-decoration: underline;
-			color: var(--colorHover);
 		}
 
 		@include media-breakpoint-down (sm) {
@@ -102,40 +91,18 @@
 		display: flex;
 		gap: 10px;
 
-		@include media-breakpoint-down (xs) {
-			width: 100%;
-		}
-
 		.ct-button {
-			--buttonFontSize: 13px;
-			--buttonMinHeight: 35px;
-			--padding: 0 20px;
-			--buttonShadow: none;
-			--buttonTransform: none;
+			--theme-button-font-size: 13px;
+			--theme-button-min-height: 35px;
+			--theme-button-padding: 0 20px;
+			--theme-button-shadow: none;
+			--theme-button-transform: none;
 
 			@include media-breakpoint-down (xs) {
 				flex: 1;
 			}
 		}
 	}
-
-	// .ct-toggle-close {
-	// 	position: absolute;
-	// 	top: 0;
-	// 	right: 0;
-	// 	opacity: 0.5;
-	// 	--icon-size: 8px;
-	// 	--icon-color: inherit;
-	// 	// --toggle-button-size: 35px;
-
-	// 	&:hover {
-	// 		opacity: 1;
-	// 	}
-
-	// 	@include media-breakpoint-down (sm) {
-	// 		display: none;
-	// 	}
-	// }
 
 	// animation
 	&.ct-fade-in-start,

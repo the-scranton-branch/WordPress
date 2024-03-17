@@ -1,26 +1,7 @@
 <?php
 
-require_once dirname(__FILE__) . '/includes/BlocksyNewsletterManager.php';
-require_once dirname(__FILE__) . '/includes/BlocksyMailchimpManager.php';
-require_once dirname(__FILE__) . '/includes/BlocksyMailerliteManager.php';
-
 class BlocksyExtensionNewsletterSubscribePreBoot {
 	public function __construct() {
-		add_action(
-			'wp_ajax_blocksy_ext_newsletter_subscribe_maybe_get_lists',
-			[$this, 'get_lists']
-		);
-
-		add_action(
-			'wp_ajax_blocksy_ext_newsletter_subscribe_get_actual_lists',
-			[$this, 'get_actual_lists']
-		);
-
-		add_action(
-			'wp_ajax_blocksy_ext_newsletter_subscribe_maybe_save_credentials',
-			[$this, 'save_credentials']
-		);
-
 		add_filter('blocksy-dashboard-scripts-dependencies', function ($s) {
 			$s[] = 'blocksy-ext-mailchimp-dashboard-scripts';
 			return $s;
@@ -41,19 +22,42 @@ class BlocksyExtensionNewsletterSubscribePreBoot {
 				true
 			);
 		});
+
+		add_action(
+			'wp_ajax_blocksy_ext_newsletter_subscribe_maybe_get_lists',
+			[$this, 'get_lists']
+		);
+
+		add_action(
+			'wp_ajax_blocksy_ext_newsletter_subscribe_get_actual_lists',
+			[$this, 'get_actual_lists']
+		);
+
+		add_action(
+			'wp_ajax_blocksy_ext_newsletter_subscribe_maybe_save_credentials',
+			[$this, 'save_credentials']
+		);
 	}
 
 	public function ext_data() {
-		$m = new BlocksyMailchimpManager();
+		$m = new \Blocksy\Extensions\NewsletterSubscribe\MailchimpProvider();
 		return $m->get_settings();
 	}
 
 	public function save_credentials() {
+		if (! check_ajax_referer('ct-dashboard', 'nonce', false)) {
+			wp_send_json_error('nonce');
+		}
+
 		$this->maybe_save_credentials();
 	}
 
 	public function get_actual_lists() {
-		$m = BlocksyNewsletterManager::get_for_settings();
+		if (! check_ajax_referer('ct-dashboard', 'nonce', false)) {
+			wp_send_json_error('nonce');
+		}
+
+		$m = \Blocksy\Extensions\NewsletterSubscribe\Provider::get_for_settings();
 
 		if (! $m->can()) {
 			wp_send_json_error();
@@ -69,13 +73,17 @@ class BlocksyExtensionNewsletterSubscribePreBoot {
 	}
 
 	public function get_lists() {
+		if (! check_ajax_referer('ct-dashboard', 'nonce', false)) {
+			wp_send_json_error('nonce');
+		}
+
 		$this->maybe_save_credentials(false);
 	}
 
 	public function maybe_save_credentials($save = true) {
 		$provider = $this->get_provider_from_request();
 
-		$m = BlocksyNewsletterManager::get_for_provider($provider);
+		$m = \Blocksy\Extensions\NewsletterSubscribe\Provider::get_for_provider($provider);
 
 		if (! $m->can()) {
 			wp_send_json_error();

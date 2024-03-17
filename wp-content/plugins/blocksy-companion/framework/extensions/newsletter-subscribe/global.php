@@ -1,23 +1,23 @@
 <?php
 
-$forms_type =  get_theme_mod('forms_type', 'classic-forms');
+$forms_type =  blocksy_get_theme_mod('forms_type', 'classic-forms');
 
-blc_call_fn(['fn' => 'blocksy_output_colors'], [
-	'value' => get_theme_mod('newsletter_subscribe_title_color'),
+blocksy_output_colors([
+	'value' => blocksy_get_theme_mod('newsletter_subscribe_title_color'),
 	'default' => [
 		'default' => [ 'color' => Blocksy_Css_Injector::get_skip_rule_keyword('DEFAULT') ],
 	],
 	'css' => $css,
 	'variables' => [
 		'default' => [
-			'selector' => '.ct-newsletter-subscribe-block',
-			'variable' => 'heading-color'
+			'selector' => '.ct-newsletter-subscribe-container',
+			'variable' => 'theme-heading-color'
 		],
 	],
 ]);
 
-blc_call_fn(['fn' => 'blocksy_output_colors'], [
-	'value' => get_theme_mod('newsletter_subscribe_content'),
+blocksy_output_colors([
+	'value' => blocksy_get_theme_mod('newsletter_subscribe_content'),
 	'default' => [
 		'default' => [ 'color' => Blocksy_Css_Injector::get_skip_rule_keyword('DEFAULT') ],
 		'hover' => [ 'color' => Blocksy_Css_Injector::get_skip_rule_keyword('DEFAULT') ],
@@ -25,39 +25,39 @@ blc_call_fn(['fn' => 'blocksy_output_colors'], [
 	'css' => $css,
 	'variables' => [
 		'default' => [
-			'selector' => '.ct-newsletter-subscribe-block',
-			'variable' => 'color'
+			'selector' => '.ct-newsletter-subscribe-container',
+			'variable' => 'text-color'
 		],
 
 		'hover' => [
-			'selector' => '.ct-newsletter-subscribe-block',
-			'variable' => 'linkHoverColor'
+			'selector' => '.ct-newsletter-subscribe-container',
+			'variable' => 'theme-link-hover-color'
 		],
 	],
 ]);
 
-blc_call_fn(['fn' => 'blocksy_output_colors'], [
-	'value' => get_theme_mod('newsletter_subscribe_button'),
+blocksy_output_colors([
+	'value' => blocksy_get_theme_mod('newsletter_subscribe_button'),
 	'default' => [
-		'default' => [ 'color' => 'var(--paletteColor1)' ],
-		'hover' => [ 'color' => 'var(--paletteColor2)' ],
+		'default' => [ 'color' => 'var(--theme-palette-color-1)' ],
+		'hover' => [ 'color' => 'var(--theme-palette-color-2)' ],
 	],
 	'css' => $css,
 	'variables' => [
 		'default' => [
-			'selector' => '.ct-newsletter-subscribe-block',
-			'variable' => 'buttonInitialColor'
+			'selector' => '.ct-newsletter-subscribe-container',
+			'variable' => 'theme-button-background-initial-color'
 		],
 
 		'hover' => [
-			'selector' => '.ct-newsletter-subscribe-block',
-			'variable' => 'buttonHoverColor'
+			'selector' => '.ct-newsletter-subscribe-container',
+			'variable' => 'theme-button-background-hover-color'
 		]
 	],
 ]);
 
-blc_call_fn(['fn' => 'blocksy_output_colors'], [
-	'value' => get_theme_mod('newsletter_subscribe_input_font_color'),
+blocksy_output_colors([
+	'value' => blocksy_get_theme_mod('newsletter_subscribe_input_font_color'),
 	'default' => [
 		'default' => [ 'color' => Blocksy_Css_Injector::get_skip_rule_keyword('DEFAULT') ],
 		'focus' => [ 'color' => Blocksy_Css_Injector::get_skip_rule_keyword('DEFAULT') ],
@@ -65,19 +65,19 @@ blc_call_fn(['fn' => 'blocksy_output_colors'], [
 	'css' => $css,
 	'variables' => [
 		'default' => [
-			'selector' => '.ct-newsletter-subscribe-block',
-			'variable' => 'form-text-initial-color'
+			'selector' => '.ct-newsletter-subscribe-container',
+			'variable' => 'theme-form-text-initial-color'
 		],
 
 		'focus' => [
-			'selector' => '.ct-newsletter-subscribe-block',
-			'variable' => 'form-text-focus-color'
+			'selector' => '.ct-newsletter-subscribe-container',
+			'variable' => 'theme-form-text-focus-color'
 		],
 	],
 ]);
 
-blc_call_fn(['fn' => 'blocksy_output_colors'], [
-	'value' => get_theme_mod('newsletter_subscribe_border_color'),
+blocksy_output_colors([
+	'value' => blocksy_get_theme_mod('newsletter_subscribe_border_color'),
 	'default' => [
 		'default' => [ 'color' => Blocksy_Css_Injector::get_skip_rule_keyword('DEFAULT') ],
 		'focus' => [ 'color' => Blocksy_Css_Injector::get_skip_rule_keyword('DEFAULT') ],
@@ -85,20 +85,20 @@ blc_call_fn(['fn' => 'blocksy_output_colors'], [
 	'css' => $css,
 	'variables' => [
 		'default' => [
-			'selector' => '.ct-newsletter-subscribe-block',
-			'variable' => 'form-field-border-initial-color'
+			'selector' => '.ct-newsletter-subscribe-container',
+			'variable' => 'theme-form-field-border-initial-color'
 		],
 
 		'focus' => [
-			'selector' => '.ct-newsletter-subscribe-block',
-			'variable' => 'form-field-border-focus-color'
+			'selector' => '.ct-newsletter-subscribe-container',
+			'variable' => 'theme-form-field-border-focus-color'
 		],
 	],
 ]);
 
 if ($forms_type !== 'classic-forms' || is_customize_preview()) {
-	blc_call_fn(['fn' => 'blocksy_output_colors'], [
-		'value' => get_theme_mod('newsletter_subscribe_input_background'),
+	blocksy_output_colors([
+		'value' => blocksy_get_theme_mod('newsletter_subscribe_input_background'),
 		'default' => [
 			'default' => [ 'color' => Blocksy_Css_Injector::get_skip_rule_keyword() ],
 			'focus' => [ 'color' => Blocksy_Css_Injector::get_skip_rule_keyword() ],
@@ -106,32 +106,29 @@ if ($forms_type !== 'classic-forms' || is_customize_preview()) {
 		'css' => $css,
 		'variables' => [
 			'default' => [
-				'selector' => '.ct-newsletter-subscribe-block',
-				'variable' => 'form-field-initial-background'
+				'selector' => '.ct-newsletter-subscribe-container',
+				'variable' => 'theme-form-field-background-initial-color'
 			],
 
 			'focus' => [
-				'selector' => '.ct-newsletter-subscribe-block',
-				'variable' => 'form-field-focus-background'
+				'selector' => '.ct-newsletter-subscribe-container',
+				'variable' => 'theme-form-field-background-focus-color'
 			],
 		],
 	]);
 }
 
-blc_call_fn(['fn' => 'blocksy_output_background_css'], [
-	'selector' => '.ct-newsletter-subscribe-block',
+blocksy_output_background_css([
+	'selector' => '.ct-newsletter-subscribe-container',
 	'css' => $css,
 	'tablet_css' => $tablet_css,
 	'mobile_css' => $mobile_css,
-	'value' => get_theme_mod(
+	'value' => blocksy_get_theme_mod(
 		'newsletter_subscribe_container_background',
-		blc_call_fn([
-			'fn' => 'blocksy_background_default_value',
-			'default' => null
-		], [
+		blocksy_background_default_value([
 			'backgroundColor' => [
 				'default' => [
-					'color' => '#ffffff'
+					'color' => 'var(--theme-palette-color-8)'
 				],
 			],
 		])
@@ -139,33 +136,33 @@ blc_call_fn(['fn' => 'blocksy_output_background_css'], [
 	'responsive' => true,
 ]);
 
-blc_call_fn(['fn' => 'blocksy_output_border'], [
+blocksy_output_border([
 	'css' => $css,
 	'tablet_css' => $tablet_css,
 	'mobile_css' => $mobile_css,
-	'selector' => '.ct-newsletter-subscribe-block',
+	'selector' => '.ct-newsletter-subscribe-container',
 	'variableName' => 'newsletter-container-border',
-	'value' => get_theme_mod('newsletter_subscribe_container_border'),
+	'value' => blocksy_get_theme_mod('newsletter_subscribe_container_border'),
 	'skip_none' => true,
 	'default' => [
 		'width' => 1,
 		'style' => 'none',
 		'color' => [
-			'color' => 'var(--paletteColor5)',
+			'color' => 'var(--theme-palette-color-5)',
 		],
 	],
 	'responsive' => true,
 	'skip_none' => true
 ]);
 
-blc_call_fn(['fn' => 'blocksy_output_box_shadow'], [
+blocksy_output_box_shadow([
 	'css' => $css,
 	'tablet_css' => $tablet_css,
 	'mobile_css' => $mobile_css,
-	'selector' => '.ct-newsletter-subscribe-block',
-	'value' => get_theme_mod(
+	'selector' => '.ct-newsletter-subscribe-container',
+	'value' => blocksy_get_theme_mod(
 		'newsletter_subscribe_shadow',
-		blc_call_fn(['fn' => 'blocksy_box_shadow_value'], [
+		blocksy_box_shadow_value([
 			'enable' => true,
 			'h_offset' => 0,
 			'v_offset' => 50,
@@ -180,16 +177,15 @@ blc_call_fn(['fn' => 'blocksy_output_box_shadow'], [
 	'responsive' => true
 ]);
 
-blc_call_fn(['fn' => 'blocksy_output_spacing'], [
+blocksy_output_spacing([
 	'css' => $css,
 	'tablet_css' => $tablet_css,
 	'mobile_css' => $mobile_css,
-	'selector' => '.ct-newsletter-subscribe-block',
+	'selector' => '.ct-newsletter-subscribe-container',
 	'property' => 'padding',
-	'value' => get_theme_mod(
+	'value' => blocksy_get_theme_mod(
 		'newsletter_subscribe_container_spacing',
 		blocksy_spacing_value([
-			'linked' => true,
 			'top' => '30px',
 			'left' => '30px',
 			'right' => '30px',
@@ -198,16 +194,14 @@ blc_call_fn(['fn' => 'blocksy_output_spacing'], [
 	)
 ]);
 
-blc_call_fn(['fn' => 'blocksy_output_spacing'], [
+blocksy_output_spacing([
 	'css' => $css,
 	'tablet_css' => $tablet_css,
 	'mobile_css' => $mobile_css,
-	'selector' => '.ct-newsletter-subscribe-block',
-	'property' => 'border-radius',
-	'value' => get_theme_mod(
+	'selector' => '.ct-newsletter-subscribe-container',
+	'property' => 'theme-border-radius',
+	'value' => blocksy_get_theme_mod(
 		'newsletter_subscribe_container_border_radius',
-		blocksy_spacing_value([
-			'linked' => true,
-		])
+		blocksy_spacing_value()
 	)
 ]);

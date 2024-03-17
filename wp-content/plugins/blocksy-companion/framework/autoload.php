@@ -10,6 +10,7 @@ if (! defined('ABSPATH')) {
  * Blocksy autoloader.
  */
 class Autoloader {
+	private static $classes_map = null;
 
 	/**
 	 * Classes map.
@@ -21,9 +22,17 @@ class Autoloader {
 	 * @var array Classes used by blocksy.
 	 */
 	private static function get_classes_map() {
-		return apply_filters('blocksy_autoloader_classes_map', [
-			'ExtensionsManager' => 'framework/extensions-manager.php',
-			'ExtensionsManagerApi' => 'framework/extensions-manager-api.php',
+		if (self::$classes_map) {
+			return self::$classes_map;
+		}
+
+		self::$classes_map = [
+			'Capabilities' => 'framework/includes/capabilities.php',
+
+			'ExtensionsManager' => 'framework/includes/extensions-manager.php',
+			'ExtensionWithFeatures' => 'framework/includes/extension-with-features.php',
+			'ExtensionsManagerApi' => 'framework/includes/extensions-manager-api.php',
+
 			'Dashboard' => 'framework/dashboard.php',
 			'ThemeIntegration' => 'framework/theme-integration.php',
 			'AccountAuth' => 'framework/features/account-auth.php',
@@ -33,9 +42,11 @@ class Autoloader {
 			'OpenGraphMetaData' => 'framework/features/opengraph-meta-data.php',
 			'HeaderAdditions' => 'framework/features/header.php',
 			'ConditionsManager' => 'framework/features/conditions-manager.php',
+			'ConditionsRulesResolver' => 'framework/features/conditions/rules-resolver.php',
 
 			'Cli' => 'framework/cli.php',
 
+			'SvgHandling' => 'framework/features/svg.php',
 			'DynamicCss' => 'framework/features/dynamic-css.php',
 			'CustomizerOptionsManager' => 'framework/features/customizer-options-manager.php',
 			'DemoInstall' => 'framework/features/demo-install.php',
@@ -57,9 +68,20 @@ class Autoloader {
 			/**
 			 * No namespace
 			 */
-			'_BlocksyWidgetFactory' => 'framework/widgets-manager.php',
 			'_Blocksy_WP_Import' => 'framework/features/demo-install/wp-importer.php',
-		]);
+		];
+
+		$autoload = [];
+
+		if (is_readable(dirname(__FILE__) . '/premium/autoload.php')) {
+			require dirname(__FILE__) . '/premium/autoload.php';
+		}
+
+		foreach ($autoload as $class_name => $file_name) {
+			self::$classes_map[$class_name] = $file_name;
+		}
+
+		return self::$classes_map;
 	}
 
 	/**
@@ -83,7 +105,7 @@ class Autoloader {
 	 * @param string $relative_class_name Class name.
 	 */
 	private static function load_class($relative_class_name) {
-		if (isset( self::get_classes_map()[$relative_class_name])) {
+		if (isset(self::get_classes_map()[$relative_class_name])) {
 			$filename = BLOCKSY_PATH . '/' . self::get_classes_map()[$relative_class_name];
 		} else {
 			$filename = strtolower(

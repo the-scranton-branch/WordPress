@@ -18,6 +18,7 @@ const PostIdPicker = ({ condition, onChange }) => {
 			({
 				post_ids: 'post',
 				page_ids: 'page',
+				product_ids: 'product',
 				custom_post_type_ids: 'ct_cpt',
 			}[condition.rule]),
 		[condition.rule]
@@ -73,6 +74,8 @@ const PostIdPicker = ({ condition, onChange }) => {
 						? __('Select post', 'blocksy-companion')
 						: condition.rule === 'page_ids'
 						? __('Select page', 'blocksy-companion')
+						: condition.rule === 'product_ids'
+						? __('Select product', 'blocksy-companion')
 						: __('Custom Post Type ID', 'blocksy-companion'),
 				choices: [
 					...allPosts

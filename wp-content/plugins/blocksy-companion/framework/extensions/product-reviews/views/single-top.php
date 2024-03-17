@@ -59,7 +59,7 @@ if (count($gallery_images) === 1) {
 		$image_href = $image_href[0];
 	}
 
-	echo blocksy_image([
+	echo blocksy_media([
 		'attachment_id' => $gallery_images[0],
 		'size' => 'full',
 		'ratio' => apply_filters('blocksy:ext:product-reviews:gallery:ratio', '2/1'),
@@ -143,8 +143,8 @@ if (! empty($scores)) {
 	echo '</div>';
 }
 
-$has_read_more = get_theme_mod($prefix . '_has_read_more', 'yes') === 'yes';
-$has_buy_now = get_theme_mod($prefix . '_has_buy_now', 'yes') === 'yes';
+$has_read_more = blocksy_get_theme_mod($prefix . '_has_read_more', 'yes') === 'yes';
+$has_buy_now = blocksy_get_theme_mod($prefix . '_has_buy_now', 'yes') === 'yes';
 
 if ($has_read_more || $has_buy_now) {
 	echo '<div class="ct-product-actions-group">';

@@ -55,7 +55,7 @@ const PanelsManager = () => {
 					let panelLabel =
 						name ||
 						{
-							'type-1': __('Global Header', 'blocksy'),
+							'type-1': __('Global Header', 'blocksy-companion'),
 						}[id] ||
 						id
 
@@ -157,24 +157,25 @@ const PanelsManager = () => {
 											id !== builderValue.id && (
 												<span
 													className="ct-remove-instance"
+													data-tooltip="top"
 													onClick={(e) => {
 														e.preventDefault()
 														e.stopPropagation()
 
 														setIsRemovingSection(id)
 													}}>
-													<i className="ct-tooltip-top">
-														{__(
-															'Remove header',
-															'blocksy-companion'
-														)}
-													</i>
 													<svg
 														width="11px"
 														height="11px"
 														viewBox="0 0 24 24">
 														<path d="M9.6,0l0,1.2H1.2v2.4h21.6V1.2h-8.4l0-1.2H9.6z M2.8,6l1.8,15.9C4.8,23.1,5.9,24,7.1,24h9.9c1.2,0,2.2-0.9,2.4-2.1L21.2,6H2.8z"></path>
 													</svg>
+													<i className="ct-tooltip">
+														{__(
+															'Remove header',
+															'blocksy-companion'
+														)}
+													</i>
 												</span>
 											)}
 									</li>

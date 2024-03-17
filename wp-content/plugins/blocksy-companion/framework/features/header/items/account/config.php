@@ -1,12 +1,14 @@
 <?php
 
 $config = [
-	'name' => __('Account', 'blocksy'),
+	'name' => __('Account', 'blocksy-companion'),
 
     'typography_keys' => ['account_label_font'],
 
 	'selective_refresh' => [
 		'account_state',
+		'loggedin_interaction_type',
+		'dropdown_items',
 		'account_link',
 		'loggedin_media',
 		'account_loggedin_icon',
@@ -25,6 +27,7 @@ $config = [
 
 	'translation_keys' => [
 		['key' => 'login_label'],
+		['key' => 'loggedin_label'],
 		['key' => 'account_custom_page']
 	]
 ];

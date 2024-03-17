@@ -3,7 +3,9 @@ import { formPreSubmitHook } from './account/hooks'
 import { resetCaptchaFor, reCreateCaptchaFor } from './account/captcha'
 import { mountPasswordStrength } from './account/password-strength'
 
-const maybeAddLoadingState = (form) => {
+import { maybeHandleLoginForm } from './account/handlers/login'
+
+export const maybeAddLoadingState = (form) => {
 	const maybeButton = form.querySelector('[name*="submit"]')
 
 	if (!maybeButton) {
@@ -13,7 +15,7 @@ const maybeAddLoadingState = (form) => {
 	maybeButton.classList.add('ct-loading')
 }
 
-const maybeCleanupLoadingState = (form) => {
+export const maybeCleanupLoadingState = (form) => {
 	const maybeButton = form.querySelector('[name*="submit"]')
 
 	if (!maybeButton) {
@@ -46,7 +48,7 @@ export const activateScreen = (
 		el.querySelector(`.ct-${screen}-form form`).reset()
 	}
 
-	el.querySelector('.ct-account-form').classList.remove('ct-error')
+	el.querySelector('.ct-account-modal').classList.remove('ct-error')
 
 	let maybeMessageContainer = el
 		.querySelector(`.ct-${screen}-form`)
@@ -67,7 +69,7 @@ export const activateScreen = (
 	reCreateCaptchaFor(el)
 }
 
-let actuallyInsertError = (container, errorHtml) => {
+export let actuallyInsertError = (container, errorHtml) => {
 	let maybeErrorContainer = container.querySelector(
 		'.ct-form-notification-error'
 	)
@@ -76,7 +78,7 @@ let actuallyInsertError = (container, errorHtml) => {
 		maybeErrorContainer.remove()
 	}
 
-	container.closest('.ct-account-form').classList.remove('ct-error')
+	container.closest('.ct-account-modal').classList.remove('ct-error')
 
 	if (errorHtml) {
 		container.insertAdjacentHTML(
@@ -85,12 +87,12 @@ let actuallyInsertError = (container, errorHtml) => {
 		)
 
 		requestAnimationFrame(() => {
-			container.closest('.ct-account-form').classList.add('ct-error')
+			container.closest('.ct-account-modal').classList.add('ct-error')
 		})
 	}
 }
 
-const maybeAddErrors = (container, html) => {
+export const maybeAddErrors = (container, html) => {
 	let parser = new DOMParser()
 	let doc = parser.parseFromString(html, 'text/html')
 
@@ -110,14 +112,14 @@ const maybeAddErrors = (container, html) => {
 	}
 }
 
-const actuallyInsertMessage = (container, html) => {
+export const actuallyInsertMessage = (container, html) => {
 	let maybeMessageContainer = container.querySelector('.ct-form-notification')
 
 	if (maybeMessageContainer) {
 		maybeMessageContainer.remove()
 	}
 
-	container.closest('.ct-account-form').classList.remove('ct-error')
+	container.closest('.ct-account-modal').classList.remove('ct-error')
 
 	if (html) {
 		container.insertAdjacentHTML(
@@ -155,6 +157,8 @@ export const handleAccountModal = (el) => {
 
 	el.hasListeners = true
 
+	maybeHandleLoginForm(el)
+
 	let maybeLogin = el.querySelector('[name="loginform"]')
 	let maybeRegister = el.querySelector('[name="registerform"]')
 	let maybeLostPassword = el.querySelector('[name="lostpasswordform"]')
@@ -175,7 +179,9 @@ export const handleAccountModal = (el) => {
 			if (
 				e.target.href &&
 				(e.target.href.indexOf('wp-login') > -1 ||
-					(maybeLogin && e.target.href === maybeLogin.action)) &&
+					(maybeLogin && e.target.href === maybeLogin.action) ||
+					e.target.href.indexOf('login') > -1 ||
+					e.target.dataset.login === 'yes') &&
 				e.target.href.indexOf('lostpassword') === -1
 			) {
 				activateScreen(el, { screen: 'login' })
@@ -184,6 +190,14 @@ export const handleAccountModal = (el) => {
 		},
 		true
 	)
+	if (el.querySelectorAll('.show-password-input + .show-password-input')) {
+		el.querySelectorAll(
+			'.show-password-input + .show-password-input'
+		).forEach((el) => {
+			el.remove()
+		})
+	}
+
 	;[...el.querySelectorAll('.show-password-input')].map((eye) => {
 		eye.addEventListener('click', (e) => {
 			eye.previousElementSibling.type =
@@ -192,194 +206,6 @@ export const handleAccountModal = (el) => {
 					: 'password'
 		})
 	})
-
-	if (maybeLogin) {
-		maybeLogin.addEventListener('submit', (e) => {
-			e.preventDefault()
-
-			if (window.ct_customizer_localizations) {
-				return
-			}
-
-			maybeAddLoadingState(maybeLogin)
-
-			let body = new FormData(maybeLogin)
-
-			// let url = maybeLogin.action
-
-			let url = `${ct_localizations.ajax_url}?action=blc_implement_user_login`
-
-			if (window.WFLSVars && !maybeLogin.loginProceed) {
-				body.append('action', 'wordfence_ls_authenticate')
-				url = WFLSVars.ajaxurl
-
-				formPreSubmitHook(maybeLogin).then(() => {
-					fetch(url, {
-						method: maybeLogin.method,
-						body,
-					})
-						.then((response) => response.json())
-						.then((res) => {
-							maybeCleanupLoadingState(maybeLogin)
-							let hasError = !!res.error
-
-							const container =
-								maybeLogin.closest('.ct-login-form')
-							const form = maybeLogin
-								.closest('.ct-login-form')
-								.querySelector('form')
-
-							if (hasError) {
-								actuallyInsertError(container, res.error)
-							}
-
-							if (res.message) {
-								actuallyInsertMessage(form, res.message)
-							}
-
-							if (res.login) {
-								if (res.jwt) {
-									if (!jQuery('#wfls-token').length) {
-										var overlay = jQuery(
-											'<div id="wfls-prompt-overlay-blocksy"></div>'
-										)
-
-										var wrapper = jQuery(
-											'<div id="wfls-prompt-wrapper"></div>'
-										)
-										var label = jQuery(
-											'<label for="wfls-token">2FA Code <a href="javascript:void(0)" class="wfls-2fa-code-help wfls-tooltip-trigger" title="The 2FA Code can be found within the authenticator app you used when first activating two-factor authentication. You may also use one of your recovery codes."><i class="dashicons dashicons-editor-help"></i></a></label>'
-										)
-										var field = jQuery(
-											'<input type="text" name="wfls-token" id="wfls-token" aria-describedby="wfls-token-error" class="input" value="" size="6" autocomplete="off"/>'
-										)
-										var remember = jQuery(
-											'<label for="wfls-remember-device"><input name="wfls-remember-device" type="checkbox" id="wfls-remember-device" class="ct-checkbox" value="1" /> Remember for 30 days</label>'
-										)
-
-										wrapper.append(label)
-										wrapper.append(field)
-
-										if (parseInt(WFLSVars.allowremember)) {
-											wrapper.append(remember)
-										}
-
-										overlay.append(wrapper)
-
-										jQuery(form).prepend(overlay)
-
-										new jQuery.Zebra_Tooltips(
-											jQuery('.wfls-tooltip-trigger')
-										)
-									}
-
-									var jwtField = jQuery('#wfls-token-jwt')
-
-									if (!jwtField.length) {
-										jwtField = jQuery(
-											'<input type="hidden" name="wfls-token-jwt" id="wfls-token-jwt" value=""/>'
-										)
-
-										jQuery(
-											'#wfls-prompt-overlay-blocksy'
-										).append(jwtField)
-									}
-
-									jQuery('#wfls-token-jwt').val(res.jwt)
-								} else {
-									fetch(
-										`${ct_localizations.ajax_url}?action=blc_implement_user_login`,
-										{
-											method: maybeLogin.method,
-											body: new FormData(maybeLogin),
-										}
-									)
-										.then((response) => response.text())
-										.then((html) => {
-											location = maybeLogin.querySelector(
-												'[name="redirect_to"]'
-											).value
-										})
-								}
-							}
-
-							if (res.combined) {
-								maybeLogin.loginProceed = true
-
-								fetch(
-									`${ct_localizations.ajax_url}?action=blc_implement_user_login`,
-									{
-										method: maybeLogin.method,
-										body: new FormData(maybeLogin),
-									}
-								)
-									.then((response) => response.text())
-									.then((html) => {
-										location = maybeLogin.querySelector(
-											'[name="redirect_to"]'
-										).value
-									})
-							}
-
-							if (
-								!hasError ||
-								(hasError &&
-									maybeLogin
-										.closest('.ct-login-form')
-										.querySelector(
-											'.ct-form-notification-error'
-										)
-										.innerHTML.indexOf('Captcha') === -1)
-							) {
-								resetCaptchaFor(
-									maybeLogin.closest('.ct-login-form')
-								)
-							}
-						})
-				})
-
-				return
-			}
-
-			formPreSubmitHook(maybeLogin).then(() => {
-				fetch(url, {
-					method: maybeLogin.method,
-					body,
-				})
-					.then((response) => response.text())
-					.then((html) => {
-						maybeCleanupLoadingState(maybeLogin)
-						const { doc, hasError } = maybeAddErrors(
-							maybeLogin.closest('.ct-login-form'),
-							html
-						)
-
-						if (!hasError) {
-							setTimeout(() => {
-								location = maybeLogin.querySelector(
-									'[name="redirect_to"]'
-								).value
-							}, 2000)
-						}
-
-						if (
-							!hasError ||
-							(hasError &&
-								maybeLogin
-									.closest('.ct-login-form')
-									.querySelector(
-										'.ct-form-notification-error'
-									)
-									.innerHTML.indexOf('Captcha') === -1)
-						) {
-							resetCaptchaFor(
-								maybeLogin.closest('.ct-login-form')
-							)
-						}
-					})
-			})
-		})
-	}
 
 	if (maybeRegister) {
 		maybeRegister.addEventListener('submit', (e) => {

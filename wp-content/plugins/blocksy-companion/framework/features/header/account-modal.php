@@ -4,12 +4,6 @@ if (! isset($current_url)) {
 	$current_url = home_url();
 }
 
-$users_can_register = get_option('users_can_register');
-
-if (get_option('woocommerce_enable_myaccount_registration') === 'yes') {
-	$users_can_register = true;
-}
-
 $form_views = [
 	'login' => '',
 	'register' => '',
@@ -42,8 +36,8 @@ $close_button_type = blocksy_akg('account_close_button_type', $atts, 'type-1');
 	</div>
 
 	<div class="ct-panel-content">
-		<div class="ct-account-form">
-			<?php if ($users_can_register) { ?>
+		<div class="ct-account-modal">
+			<?php if (\Blocksy\Plugin::instance()->account_auth->get_registration_strategy()) { ?>
 				<ul>
 					<li class="active ct-login" tabindex="0">
 						<?php echo __('Login', 'blocksy-companion') ?>
@@ -55,23 +49,25 @@ $close_button_type = blocksy_akg('account_close_button_type', $atts, 'type-1');
 				</ul>
 			<?php } ?>
 
-			<div class="ct-account-panel ct-login-form active">
-				<?php echo $form_views['login'] ?>
-			</div>
-
-			<?php if ($users_can_register) { ?>
-				<div class="ct-account-panel ct-register-form">
-					<?php echo $form_views['register'] ?>
+			<div class="ct-account-forms">
+				<div class="ct-login-form active">
+					<?php echo $form_views['login'] ?>
 				</div>
-			<?php } ?>
 
-			<div class="ct-account-panel ct-forgot-password-form">
-				<?php echo $form_views['lostpassword'] ?>
+				<?php if (\Blocksy\Plugin::instance()->account_auth->get_registration_strategy()) { ?>
+					<div class="ct-register-form">
+						<?php echo $form_views['register'] ?>
+					</div>
+				<?php } ?>
 
-				<a href="<?php echo wp_login_url() ?>" class="ct-back-to-login ct-login">
-					← <?php echo __('Back to login', 'blocksy-companion') ?>
-				</a>
-			</div>
+				<div class="ct-forgot-password-form">
+					<?php echo $form_views['lostpassword'] ?>
+
+					<a href="#" class="ct-back-to-login ct-login">
+						← <?php echo __('Back to login', 'blocksy-companion') ?>
+					</a>
+				</div>
+            </div>
 		</div>
 	</div>
 </div>

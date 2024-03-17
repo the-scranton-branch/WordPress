@@ -9,30 +9,51 @@ ctEvents.on(
 	'ct:customizer:sync:collect-variable-descriptors',
 	(allVariables) => {
 		allVariables.result = {
-			...allVariables.result,
-			trendingBlockContainerSpacing: {
-				selector: '.ct-trending-block',
-				variable: 'padding',
+
+			...typographyOption({
+				id: 'trendingBlockHeadingFont',
+				selector: '.ct-trending-block .ct-module-title',
+			}),
+
+			trendingBlockHeadingFontColor: {
+				selector: '.ct-trending-block .ct-module-title',
+				variable: 'theme-heading-color',
+				type: 'color',
 				responsive: true,
-				unit: '',
 			},
 
 			...typographyOption({
 				id: 'trendingBlockPostsFont',
-				selector: '.ct-trending-block .ct-item-title',
+				selector: '.ct-trending-block .ct-post-title',
 			}),
 
 			trendingBlockFontColor: [
 				{
-					selector: '.ct-trending-block',
-					variable: 'color',
+					selector: '.ct-trending-block a',
+					variable: 'theme-text-color',
 					type: 'color:default',
 					responsive: true,
 				},
 
 				{
-					selector: '.ct-trending-block',
-					variable: 'linkHoverColor',
+					selector: '.ct-trending-block a',
+					variable: 'theme-link-hover-color',
+					type: 'color:hover',
+					responsive: true,
+				},
+			],
+
+			trendingBlockArrowsColor: [
+				{
+					selector: '.ct-trending-block [class*="ct-arrow"]',
+					variable: 'theme-text-color',
+					type: 'color:default',
+					responsive: true,
+				},
+
+				{
+					selector: '.ct-trending-block [class*="ct-arrow"]',
+					variable: 'theme-link-hover-color',
 					type: 'color:hover',
 					responsive: true,
 				},
@@ -43,6 +64,14 @@ ctEvents.on(
 				selector: '.ct-trending-block',
 				responsive: true,
 			}),
+
+			...allVariables.result,
+			trendingBlockContainerSpacing: {
+				selector: '.ct-trending-block',
+				variable: 'padding',
+				responsive: true,
+				unit: '',
+			},
 		}
 	}
 )
@@ -59,7 +88,7 @@ wp.customize('trending_block_visibility', (value) =>
 wp.customize('trending_block_label', (value) =>
 	value.bind((to) => {
 		const title = document.querySelector(
-			'.ct-trending-block .ct-block-title'
+			'.ct-trending-block .ct-module-title'
 		)
 
 		if (title) {

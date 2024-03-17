@@ -175,7 +175,7 @@ class CustomizerOptionsManager {
 			}
 
 			if (function_exists('wp_get_custom_css_post')) {
-				$data['wp_css'] = wp_get_custom_css();
+				$data['wp_css'] = wp_get_custom_css($theme_slug);
 			}
 		}
 

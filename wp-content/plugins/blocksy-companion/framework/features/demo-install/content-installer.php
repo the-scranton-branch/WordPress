@@ -27,6 +27,16 @@ class DemoInstallContentInstaller {
 	}
 
 	public function import() {
+		if (class_exists('\Astra_Sites')) {
+			$astra_sites_instance = \Astra_Sites::get_instance();
+
+			remove_filter(
+				'wp_import_post_data_processed',
+				[$astra_sites_instance, 'wp_slash_after_xml_import'],
+				99, 2
+			);
+		}
+
 		if ($this->has_streaming) {
 			Plugin::instance()->demo->start_streaming();
 
@@ -160,7 +170,7 @@ class DemoInstallContentInstaller {
 		$demo = $demo_name[0];
 		$builder = $demo_name[1];
 
-		$url = 'https://demo.creativethemes.com/?' . http_build_query([
+		$url = \Blocksy\Plugin::instance()->demo->get_demo_remote_url([
 			'route' => 'get_single_xml',
 			'demo' => $demo . ':' . $builder
 		]);
@@ -262,7 +272,7 @@ class DemoInstallContentInstaller {
 			$header_builder->patch_header_value_for($wp_import->processed_terms);
 		}
 
-		$old_nav_menu_locations = get_theme_mod('nav_menu_locations', []);
+		$old_nav_menu_locations = blocksy_get_theme_mod('nav_menu_locations', []);
 		$should_update_nav_menu_locations = false;
 
 		foreach ($old_nav_menu_locations as $location => $menu_id) {
