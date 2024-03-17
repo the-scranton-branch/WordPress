@@ -9,19 +9,29 @@ workflows:
   clear_cache:
     after:
       - description: "Post to Slack after cache clear"
-        script: private/scripts/slack-notification.php
+        script: private/scripts/slack/slack-notification.php
         type: webphp
 
   # Clone Database
   clone_database:
     after:
       - description: "Sanitize the db after each database Clone"
-        script: private/scripts/db-sanitize.php
+        script: private/scripts/db/db-sanitize.php
         type: webphp
 
   # Multidev Creation
   create_cloud_development_environment:
     after:
       - description: "Post to Slack after Multidev creation"
-        script: private/scripts/slack-notification.php
+        script: private/scripts/slack/slack-notification.php
+        type: webphp
+
+  # Deployment
+  deploy:
+    after:
+      - description: "Create New Relic deployment marker"
+        script: private/scripts/newrelic/newrelic-deploy.php
+        type: webphp
+      - description: "Post to Slack after deployment"
+        script: private/scripts/slack/slack-notification.php
         type: webphp

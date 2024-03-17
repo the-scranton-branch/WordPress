@@ -1,12 +1,7 @@
 <?php
 
-// Get Slack API key.
-$secrets = json_decode(file_get_contents('https://dev-dunder-mifflin-legacy-site.pantheonsite.io/quicksilver.php?name=qs'), 1);
-$slack_url = $secrets['slack_url'];
-
 // Customize the message based on the workflow type.  Note that slack_notification.php
 // must appear in your pantheon.yml for each workflow type you wish to send notifications on.
-
 switch ($_POST['wf_type']) {
   case 'deploy':
     // Find out what tag we are on and get the annotation.
@@ -45,22 +40,43 @@ switch ($_POST['wf_type']) {
     break;
 
   case 'deploy_product':
-    // Get Pantheon metadata
-    $req = pantheon_curl('https://api.live.getpantheon.com/sites/self/attributes', NULL, 8443);
-    $meta = json_decode($req['body'], true);
-    $title = $meta['label'];
-    $email = $_POST['user_email'];
-    $text = "\n" . ':ship: Created a new site: ' . $_ENV['PANTHEON_SITE_NAME'] . "\n";
-    $encrypted_email = base64_encode($email);
-    $resetLink = 'https://' . $_ENV['PANTHEON_ENVIRONMENT'] . '-' . $_ENV['PANTHEON_SITE_NAME'] . '.pantheonsite.io/wp-login.php?action=lostpassword&user_login=' . $encrypted_email;
-    $text .= 'Reset Password Link: ' . $resetLink . "\n";
-
+    $text = ':ship: Created a new site: ' . $_ENV['PANTHEON_SITE_NAME'] . "\n";
     break;
 
   default:
     $text = $_POST['qs_description'];
     break;
 }
+
+// Get workflows by type
+$workflows = [];
+$req = pantheon_curl('https://api.live.getpantheon.com/sites/self/environments/self', NULL, 8443);
+$settings = json_decode($req['body'], true);
+if (!empty($settings['quicksilver_configuration'])) {
+  $wf_type = $_POST['wf_type'];
+  if ($tasks = $settings['quicksilver_configuration'][$wf_type]) {
+    // Before
+    if (!empty($tasks['before'])) {
+      foreach ($tasks['before'] as $task) {
+        $workflows[] = $task['description'];
+      }
+    }
+    // After
+    if (!empty($tasks['after'])) {
+      foreach ($tasks['after'] as $task) {
+        $workflows[] = $task['description'];
+      }
+    }
+  }
+}
+
+// Add workflow summary
+$text .= "\n\nWorkflows running:\n\n- " . join("\n- ", $workflows);
+
+
+// Get Slack API key.
+$secrets = json_decode(file_get_contents('https://dev-dunder-mifflin-legacy-site.pantheonsite.io/quicksilver.php?name=scranton-drupal-9'), 1);
+$slack_url = $secrets['slack_url'];
 
 /**
  * Send a notification to slack
@@ -75,7 +91,6 @@ $post = [
   "Workflow" => $_POST['wf_description'],
   "Description" => $_POST['qs_description'],
   "Activity" => $text,
-  "Login" => $login_link,
 ];
 
 // Initiate request

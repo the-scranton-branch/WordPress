@@ -23,7 +23,7 @@ if (defined('PANTHEON_ENVIRONMENT') && (PANTHEON_ENVIRONMENT !== 'live')) {
             // Bootstrap WordPress
             require_once $_SERVER['DOCUMENT_ROOT'] . '/wp-load.php';
             global $wpdb;
-            // Adapted from http://crackingdrupal.com/blog/greggles/creating-sanitized-drupal-database-dump#comment-164
+            // Adapted from rom http://crackingdrupal.com/blog/greggles/creating-sanitized-drupal-database-dump#comment-164
             $wpdb->query("UPDATE wp_users SET user_email = CONCAT(user_login, '@localhost'), user_pass = MD5(CONCAT('MILDSECRET', user_login)), user_activation_key = '';");
             echo "Database sanitization complete.\n";
             break;
