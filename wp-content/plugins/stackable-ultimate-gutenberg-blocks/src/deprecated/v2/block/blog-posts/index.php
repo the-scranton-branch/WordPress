@@ -399,10 +399,6 @@ if ( ! function_exists( 'stackable_blog_posts_rest_fields_v2' ) ) {
      * @since 1.7
      */
     function stackable_blog_posts_rest_fields_v2() {
-		if ( ! has_stackable_v2_frontend_compatibility() && ! has_stackable_v2_editor_compatibility() ) {
-			return;
-		}
-
 		$post_types = get_post_types( array( 'public' => true ), 'objects' );
 		foreach ( $post_types as $post_type => $data ) {
 			if ( $post_type === 'attachment' ) {
@@ -470,7 +466,10 @@ if ( ! function_exists( 'stackable_blog_posts_rest_fields_v2' ) ) {
 			);
 		}
     }
-    add_action( 'rest_api_init', 'stackable_blog_posts_rest_fields_v2' );
+
+	if ( has_stackable_v2_frontend_compatibility() || has_stackable_v2_editor_compatibility() ) {
+		add_action( 'rest_api_init', 'stackable_blog_posts_rest_fields_v2' );
+	}
 }
 
 if ( ! function_exists( 'stackable_featured_image_urls_v2' ) ) {
@@ -642,7 +641,10 @@ if ( ! function_exists( 'stackable_render_block_blog_posts_v2' ) ) {
 		}
 		return $parts[0] . $parts[1] . $block_content . $parts[2];
 	}
-	add_filter( 'render_block', 'stackable_render_block_blog_posts_v2', 10, 2 );
+
+	if ( has_stackable_v2_frontend_compatibility() || has_stackable_v2_editor_compatibility() ) {
+		add_filter( 'render_block_ugb/blog-posts', 'stackable_render_block_blog_posts_v2', 10, 2 );
+	}
 }
 
 if ( ! function_exists( 'stackable_rest_get_terms_v2' ) ) {
@@ -699,10 +701,6 @@ if ( ! function_exists( 'stackable_get_terms_endpoint_v2' ) ) {
 	 * @since 2.0
 	 */
 	function stackable_get_terms_endpoint_v2() {
-		if ( ! has_stackable_v2_frontend_compatibility() && ! has_stackable_v2_editor_compatibility() ) {
-			return;
-		}
-
 		register_rest_route( 'stackable/v2', '/terms', array(
 			'methods' => 'GET',
 			'callback' => 'stackable_rest_get_terms_v2',
@@ -711,52 +709,7 @@ if ( ! function_exists( 'stackable_get_terms_endpoint_v2' ) ) {
 			},
 		) );
 	}
-	add_action( 'rest_api_init', 'stackable_get_terms_endpoint_v2' );
-}
-
-if ( ! function_exists( 'stackable_add_custom_orderby_params_v2' ) ) {
-	/**
-	 * The callback to add `rand` as an option for orderby param in REST API.
-	 * Hook to `rest_{$this->post_type}_collection_params` filter.
-	 *
-	 * @param array $query_params Accepted parameters.
-	 * @return array
-	 *
-	 * @see https://felipeelia.dev/wordpress-rest-api-enable-random-order-of-posts-list/
-	 * @see https://www.timrosswebdevelopment.com/wordpress-rest-api-post-order/
-	 */
-	function stackable_add_custom_orderby_params_v2( $query_params ) {
-		if ( ! in_array( 'rand', $query_params['orderby']['enum'] ) ) {
-			$query_params['orderby']['enum'][] = 'rand';
-		}
-		if ( ! in_array( 'menu_order', $query_params['orderby']['enum'] ) ) {
-			$query_params['orderby']['enum'][] = 'menu_order';
-		}
-		return $query_params;
+	if ( has_stackable_v2_frontend_compatibility() || has_stackable_v2_editor_compatibility() ) {
+		add_action( 'rest_api_init', 'stackable_get_terms_endpoint_v2' );
 	}
-}
-
-if ( ! function_exists( 'stackable_add_custom_orderby_v2' ) ) {
-	/**
-	 * Add `rand` as an option for orderby param in REST API.
-	 * Hook to `rest_{$this->post_type}_collection_params` filter.
-	 *
-	 * @param array $query_params Accepted parameters.
-	 * @return array
-	 *
-	 * @see https://felipeelia.dev/wordpress-rest-api-enable-random-order-of-posts-list/
-	 * @see https://www.timrosswebdevelopment.com/wordpress-rest-api-post-order/
-	 */
-	function stackable_add_custom_orderby_v2() {
-		if ( ! has_stackable_v2_frontend_compatibility() && ! has_stackable_v2_editor_compatibility() ) {
-			return;
-		}
-
-		$post_types = get_post_types( array( 'public' => true ) );
-		foreach ( $post_types as $post_type ) {
-			add_filter( 'rest_' . $post_type . '_collection_params', 'stackable_add_custom_orderby_params_v2' );
-		}
-	}
-
-	add_action( 'rest_api_init', 'stackable_add_custom_orderby_v2' );
 }

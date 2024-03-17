@@ -220,10 +220,16 @@ if ( ! class_exists( 'Stackable_Posts_Block' ) ) {
 					continue;
 				}
 
+				// Compatibility: Do not do this for Thrive themes or else their
+				// builder will produce an error.
+				if ( stripos( $post_type, 'tcb_' ) === 0 ) {
+					continue;
+				}
+
 				// Feature image urls.
 				register_rest_field( $post_type, 'featured_image_urls',
 					array(
-						'get_callback' => array( new Stackable_Posts_Block(), 'get_featured_image_urls' ),
+						'get_callback' => array( 'Stackable_Posts_Block', 'get_featured_image_urls' ),
 						'update_callback' => null,
 						'schema' => array(
 							'description' => __( 'Different sized featured images', STACKABLE_I18N ),
@@ -235,7 +241,7 @@ if ( ! class_exists( 'Stackable_Posts_Block' ) ) {
 				// Excerpt.
 				register_rest_field( $post_type, 'post_excerpt_stackable',
 					array(
-						'get_callback' => array( new Stackable_Posts_Block(), 'get_excerpt' ),
+						'get_callback' => array( 'Stackable_Posts_Block', 'get_excerpt' ),
 						'update_callback' => null,
 						'schema' => array(
 							'description' => __( 'Post excerpt for Stackable', STACKABLE_I18N ),
@@ -247,7 +253,7 @@ if ( ! class_exists( 'Stackable_Posts_Block' ) ) {
 				// Category links.
 				register_rest_field( $post_type, 'category_list',
 					array(
-						'get_callback' => array( new Stackable_Posts_Block(), 'get_category_list' ),
+						'get_callback' => array( 'Stackable_Posts_Block', 'get_category_list' ),
 						'update_callback' => null,
 						'schema' => array(
 							'description' => __( 'Category list links', STACKABLE_I18N ),
@@ -259,7 +265,7 @@ if ( ! class_exists( 'Stackable_Posts_Block' ) ) {
 				// Author name.
 				register_rest_field( $post_type, 'author_info',
 					array(
-						'get_callback' => array( new Stackable_Posts_Block(), 'get_author_info' ),
+						'get_callback' => array( 'Stackable_Posts_Block', 'get_author_info' ),
 						'update_callback' => null,
 						'schema' => array(
 							'description' => __( 'Author information', STACKABLE_I18N ),
@@ -272,7 +278,7 @@ if ( ! class_exists( 'Stackable_Posts_Block' ) ) {
 				register_rest_field( $post_type, 'comments_num',
 					array(
 						'get_callback' => 'stackable_commments_number_v2',
-						'get_callback' => array( new Stackable_Posts_Block(), 'get_comments_number' ),
+						'get_callback' => array( 'Stackable_Posts_Block', 'get_comments_number' ),
 						'update_callback' => null,
 						'schema' => array(
 							'description' => __( 'Number of comments', STACKABLE_I18N ),
@@ -284,7 +290,7 @@ if ( ! class_exists( 'Stackable_Posts_Block' ) ) {
 				// API endpoint for getting all the terms/taxonomies.
 				register_rest_route( 'stackable/v3', '/terms', array(
 					'methods' => 'GET',
-					'callback' => array( new Stackable_Posts_Block(), 'get_terms' ),
+					'callback' => array( 'Stackable_Posts_Block', 'get_terms' ),
 					'permission_callback' => function () {
 						return current_user_can( 'edit_posts' );
 					},
@@ -602,4 +608,48 @@ if ( ! class_exists( 'Stackable_Posts_Block' ) ) {
 
 	new Stackable_Posts_Block();
 }
+
+if ( ! function_exists( 'stackable_add_custom_orderby_params' ) ) {
+	/**
+	 * The callback to add `rand` as an option for orderby param in REST API.
+	 * Hook to `rest_{$this->post_type}_collection_params` filter.
+	 *
+	 * @param array $query_params Accepted parameters.
+	 * @return array
+	 *
+	 * @see https://felipeelia.dev/wordpress-rest-api-enable-random-order-of-posts-list/
+	 * @see https://www.timrosswebdevelopment.com/wordpress-rest-api-post-order/
+	 */
+	function stackable_add_custom_orderby_params( $query_params ) {
+		if ( ! in_array( 'rand', $query_params['orderby']['enum'] ) ) {
+			$query_params['orderby']['enum'][] = 'rand';
+		}
+		if ( ! in_array( 'menu_order', $query_params['orderby']['enum'] ) ) {
+			$query_params['orderby']['enum'][] = 'menu_order';
+		}
+		return $query_params;
+	}
+}
+
+if ( ! function_exists( 'stackable_add_custom_orderby' ) ) {
+	/**
+	 * Add `rand` as an option for orderby param in REST API.
+	 * Hook to `rest_{$this->post_type}_collection_params` filter.
+	 *
+	 * @param array $query_params Accepted parameters.
+	 * @return array
+	 *
+	 * @see https://felipeelia.dev/wordpress-rest-api-enable-random-order-of-posts-list/
+	 * @see https://www.timrosswebdevelopment.com/wordpress-rest-api-post-order/
+	 */
+	function stackable_add_custom_orderby() {
+		$post_types = get_post_types( array( 'public' => true ) );
+		foreach ( $post_types as $post_type ) {
+			add_filter( 'rest_' . $post_type . '_collection_params', 'stackable_add_custom_orderby_params' );
+		}
+	}
+
+	add_action( 'rest_api_init', 'stackable_add_custom_orderby' );
+}
+
 
