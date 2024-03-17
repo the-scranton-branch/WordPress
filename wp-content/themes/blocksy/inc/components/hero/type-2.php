@@ -81,6 +81,11 @@ if ($page_title_bg_type === 'custom_image') {
 	}
 }
 
+$attachment_id = apply_filters(
+	'blocksy:hero:type-2:image:attachment_id',
+	$attachment_id
+);
+
 if (
 	$page_title_bg_type === 'custom_image'
 	||
@@ -143,7 +148,7 @@ if ($prefix === 'courses_single' && function_exists('tutor')) {
 	<?php if ($attachment_id) { ?>
 		<figure>
 			<?php
-				echo blocksy_image(
+				echo blocksy_media(
 					apply_filters('blocksy:hero:type-2:image-args', [
 						'attachment_id' => $attachment_id,
 						// 'size' => 'full',
@@ -153,7 +158,7 @@ if ($prefix === 'courses_single' && function_exists('tutor')) {
 							'full'
 						),
 						'aspect_ratio' => false,
-						'lazyload' => get_theme_mod(
+						'lazyload' => blocksy_get_theme_mod(
 							'has_lazy_load_page_title_image',
 							'yes'
 						) === 'yes'

@@ -117,10 +117,12 @@ $options = [
 					$prefix . 'paginationSpacing' => [
 						'label' => __( 'Pagination Top Spacing', 'blocksy' ),
 						'type' => 'ct-slider',
-						'min' => 0,
-						'max' => 200,
+						'value' => '60px',
+						'units' => blocksy_units_config([
+							[ 'unit' => 'px', 'min' => 0, 'max' => 200 ],
+							['unit' => '', 'type' => 'custom'],
+						]),
 						'responsive' => true,
-						'value' => 60,
 						'sync' => 'live',
 					],
 
@@ -162,7 +164,7 @@ $options = [
 									[
 										'title' => __( 'Text Initial', 'blocksy' ),
 										'id' => 'default',
-										'inherit' => 'var(--color)'
+										'inherit' => 'var(--theme-text-color)'
 									],
 
 									[
@@ -175,7 +177,7 @@ $options = [
 									[
 										'title' => __( 'Accent', 'blocksy' ),
 										'id' => 'hover',
-										'inherit' => 'var(--linkHoverColor)'
+										'inherit' => 'var(--theme-link-hover-color)'
 									],
 								],
 							],
@@ -209,13 +211,13 @@ $options = [
 									[
 										'title' => __( 'Initial', 'blocksy' ),
 										'id' => 'default',
-										'inherit' => 'var(--buttonTextInitialColor)'
+										'inherit' => 'var(--theme-button-text-initial-color)'
 									],
 
 									[
 										'title' => __( 'Hover', 'blocksy' ),
 										'id' => 'hover',
-										'inherit' => 'var(--buttonTextHoverColor)'
+										'inherit' => 'var(--theme-button-text-hover-color)'
 									],
 								],
 							],
@@ -239,13 +241,13 @@ $options = [
 									[
 										'title' => __( 'Initial', 'blocksy' ),
 										'id' => 'default',
-										'inherit' => 'var(--buttonInitialColor)'
+										'inherit' => 'var(--theme-button-background-initial-color)'
 									],
 
 									[
 										'title' => __( 'Hover', 'blocksy' ),
 										'id' => 'hover',
-										'inherit' => 'var(--buttonHoverColor)'
+										'inherit' => 'var(--theme-button-background-hover-color)'
 									],
 								],
 							],
@@ -279,9 +281,7 @@ $options = [
 								'label' => __( 'Border Radius', 'blocksy' ),
 								'type' => 'ct-spacing',
 								'divider' => 'top',
-								'value' => blocksy_spacing_value([
-									'linked' => true,
-								]),
+								'value' => blocksy_spacing_value(),
 								'inputAttr' => [
 									'placeholder' => '4'
 								],

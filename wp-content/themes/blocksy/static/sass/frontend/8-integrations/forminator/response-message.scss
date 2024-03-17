@@ -1,14 +1,14 @@
 .forminator-ui[data-design="none"] {
 	
 	.forminator-response-message {
-		--fontSize: 15px;
+		font-size: 15px;
 		background: #fff;
 		margin-bottom: 30px;
 		padding: 10px 20px 10px 22px;
 		box-shadow: inset 4px 0 0 0 var(--messageIndicator), 0px 5px 15px rgba(0,0,0,.05);
 
 		p {
-			--content-spacing: 10px;
+			--theme-content-spacing: 10px;
 		}
 
 		&[aria-hidden="true"] {
@@ -16,7 +16,7 @@
 		}
 
 		&.forminator-success {
-			--messageIndicator: var(--paletteColor1);
+			--messageIndicator: var(--theme-palette-color-1);
 		}
 
 		&.forminator-error {

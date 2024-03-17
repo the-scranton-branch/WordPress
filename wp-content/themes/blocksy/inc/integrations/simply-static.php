@@ -21,8 +21,10 @@ add_action(
 				$decoded['ajax_url']
 			);
 
-			$decoded['public_url'] = $url_extractor->add_to_extracted_urls(
-				$decoded['public_url']
+			$decoded['public_url'] = str_replace(
+				'index.html',
+				'',
+				$url_extractor->add_to_extracted_urls($decoded['public_url'])
 			);
 
 			$decoded['rest_url'] = $url_extractor->add_to_extracted_urls(
@@ -56,7 +58,7 @@ add_action(
 					$decoded['dynamic_styles_selectors'][0]['url']
 				);
 
-			$result = 'var ct_localizations = ' . json_encode($decoded) . ';' .  implode(
+			$result = 'var ct_localizations = ' . json_encode($decoded, JSON_UNESCAPED_UNICODE) . ';' .  implode(
 				'};',
 				$all_components
 			);
@@ -73,6 +75,16 @@ add_action(
 		\Simply_Static\Setup_Task::add_additional_files_to_db(
 			get_template_directory() . '/static/bundle'
 		);
+
+		if (defined('BLOCKSY_PATH')) {
+			\Simply_Static\Setup_Task::add_additional_files_to_db(
+				BLOCKSY_PATH . '/static/bundle'
+			);
+
+			\Simply_Static\Setup_Task::add_additional_files_to_db(
+				BLOCKSY_PATH . '/framework/premium/static/bundle'
+			);
+		}
 	}
 );
 

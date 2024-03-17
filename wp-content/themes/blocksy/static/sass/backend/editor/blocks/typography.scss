@@ -11,36 +11,38 @@
 	h6,
 	pre,
 	code,
-	// .wp-block-pullquote p,
-	// .wp-block-quote.is-style-large p,
+	figcaption,
+	.entry-meta,
+	.ct-search-box,
+	.ct-breadcrumbs,
 	.wp-block-quote,
 	.wp-block-pullquote {
-		font-family: var(--fontFamily);
-		font-size: var(--fontSize);
-		font-weight: var(--fontWeight);
-		font-style: var(--fontStyle, inherit);
-		line-height: var(--lineHeight);
-		letter-spacing: var(--letterSpacing);
-		text-transform: var(--textTransform);
-		text-decoration: var(--textDecoration);
+		font-family: var(--theme-font-family);
+		font-size: var(--theme-font-size);
+		font-weight: var(--theme-font-weight);
+		font-style: var(--theme-font-style, inherit);
+		line-height: var(--theme-line-height);
+		letter-spacing: var(--theme-letter-spacing);
+		text-transform: var(--theme-text-transform);
+		text-decoration: var(--theme-text-decoration);
 	}
 
 	// buttons
-	.wp-block-button__link {
-		font-family: var(--buttonFontFamily, var(--fontFamily));
-		font-size: var(--buttonFontSize);
-		font-weight: var(--buttonFontWeight);
-		font-style: var(--buttonFontStyle);
-		line-height: var(--buttonLineHeight);
-		letter-spacing: var(--buttonLetterSpacing);
-		text-transform: var(--buttonTextTransform);
-		text-decoration: var(--buttonTextDecoration);
+	.wp-element-button {
+		font-family: var(--theme-button-font-family, var(--theme-font-family));
+		font-size: var(--theme-button-font-size);
+		font-weight: var(--theme-button-font-weight);
+		font-style: var(--theme-button-font-style);
+		line-height: var(--theme-button-line-height);
+		letter-spacing: var(--theme-button-letter-spacing);
+		text-transform: var(--theme-button-text-transform);
+		text-decoration: var(--theme-button-text-decoration);
 	}
 
-	.edit-post-visual-editor__post-title-wrapper > h1 {
-		font-size: 2.44em;
-		font-weight: 700;
-		line-height: 1.4;
-		color: var(--headings-color);
+	.wp-block-button[style*="font-weight"] {
+
+		.wp-element-button {
+			font-weight: inherit;
+		}
 	}
 }

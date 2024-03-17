@@ -1,6 +1,7 @@
 #offcanvas {
-	.ct-panel-content {
-		--margin: 20px 0;
+	.ct-panel-content-inner {
+		// --margin: 20px 0;
+		--margin: 0 0 20px 0;
 
 		> * {
 			margin: var(--margin);

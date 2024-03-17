@@ -29,13 +29,13 @@ $options = [
 				],
 
 				'settings' => apply_filters(
-					'blocksy:header:socials:options:icon', 
+					'blocksy:socials:options:icon',
 					blocksy_get_social_networks_list()
 				),
-				'desc' => sprintf(
+				'desc' => blocksy_safe_sprintf(
 					// translators: placeholder here means the actual URL.
 					__( 'Configure the social links in General ➝ %sSocial Network Accounts%s.', 'blocksy' ),
-					sprintf(
+					blocksy_safe_sprintf(
 						'<a data-trigger-section="general:social_section_options" href="%s">',
 						admin_url('/customize.php?autofocus[section]=general&ct_autofocus=general:social_section_options')
 					),
@@ -133,31 +133,18 @@ $options = [
 				],
 			],
 
-			blocksy_rand_md5() => [
-				'type' => 'ct-divider',
-			],
-
-			'socialsLabelVisibility' => [
-				'label' => __('Label Visibility', 'blocksy'),
-				'type' => 'ct-visibility',
+			'footer_socials_direction' => [
+				'type' => 'ct-radio',
+				'label' => __( 'Items Direction', 'blocksy' ),
+				'view' => 'text',
 				'design' => 'block',
-				'allow_empty' => true,
-				'setting' => ['transport' => 'postMessage'],
-				'value' => [
-					'desktop' => false,
-					'tablet' => false,
-					'mobile' => false,
+				'divider' => 'top:full',
+				'setting' => [ 'transport' => 'postMessage' ],
+				'value' => 'row',
+				'choices' => [
+					'row' => __( 'Horizontal', 'blocksy' ),
+					'column' => __( 'Vertical', 'blocksy' ),
 				],
-
-				'choices' => blocksy_ordered_keys([
-					'desktop' => __('Desktop', 'blocksy'),
-					'tablet' => __('Tablet', 'blocksy'),
-					'mobile' => __('Mobile', 'blocksy'),
-				]),
-			],
-
-			blocksy_rand_md5() => [
-				'type' => 'ct-divider',
 			],
 
 			'footerSocialsAlignment' => [
@@ -165,6 +152,7 @@ $options = [
 				'label' => __( 'Horizontal Alignment', 'blocksy' ),
 				'view' => 'text',
 				'design' => 'block',
+				'divider' => 'top:full',
 				'responsive' => true,
 				'attr' => [ 'data-type' => 'alignment' ],
 				'setting' => [ 'transport' => 'postMessage' ],
@@ -193,26 +181,31 @@ $options = [
 				],
 			],
 
-			'footer_socials_direction' => [
-				'type' => 'ct-radio',
-				'label' => __( 'Items Direction', 'blocksy' ),
-				'view' => 'text',
+			'socialsLabelVisibility' => [
+				'label' => __('Label Visibility', 'blocksy'),
+				'type' => 'ct-visibility',
 				'design' => 'block',
-				'divider' => 'top',
-				'setting' => [ 'transport' => 'postMessage' ],
-				'value' => 'row',
-				'choices' => [
-					'row' => __( 'Horizontal', 'blocksy' ),
-					'column' => __( 'Vertical', 'blocksy' ),
+				'divider' => 'top:full',
+				'allow_empty' => true,
+				'setting' => ['transport' => 'postMessage'],
+				'value' => [
+					'desktop' => false,
+					'tablet' => false,
+					'mobile' => false,
 				],
+
+				'choices' => blocksy_ordered_keys([
+					'desktop' => __('Desktop', 'blocksy'),
+					'tablet' => __('Tablet', 'blocksy'),
+					'mobile' => __('Mobile', 'blocksy'),
+				]),
 			],
 
 			'footer_socials_visibility' => [
 				'label' => __( 'Element Visibility', 'blocksy' ),
 				'type' => 'ct-visibility',
 				'design' => 'block',
-				'divider' => 'top',
-				// 'allow_empty' => true,
+				'divider' => 'top:full',
 				'setting' => [ 'transport' => 'postMessage' ],
 				'value' => [
 					'desktop' => true,
@@ -281,13 +274,13 @@ $options = [
 									[
 										'title' => __( 'Initial', 'blocksy' ),
 										'id' => 'default',
-										'inherit' => 'var(--color)'
+										'inherit' => 'var(--theme-text-color)'
 									],
 
 									[
 										'title' => __( 'Hover', 'blocksy' ),
 										'id' => 'hover',
-										'inherit' => 'var(--linkHoverColor)'
+										'inherit' => 'var(--theme-link-hover-color)'
 									],
 								],
 							],
@@ -320,13 +313,13 @@ $options = [
 							[
 								'title' => __( 'Initial', 'blocksy' ),
 								'id' => 'default',
-								'inherit' => 'var(--color)'
+								'inherit' => 'var(--theme-text-color)'
 							],
 
 							[
 								'title' => __( 'Hover', 'blocksy' ),
 								'id' => 'hover',
-								'inherit' => 'var(--paletteColor2)'
+								'inherit' => 'var(--theme-palette-color-2)'
 							],
 						],
 					],
@@ -361,7 +354,7 @@ $options = [
 							],
 
 							'hover' => [
-								'color' => 'var(--paletteColor1)',
+								'color' => 'var(--theme-palette-color-1)',
 							],
 						],
 
@@ -385,9 +378,7 @@ $options = [
 				'label' => __( 'Margin', 'blocksy' ),
 				'type' => 'ct-spacing',
 				'setting' => [ 'transport' => 'postMessage' ],
-				'value' => blocksy_spacing_value([
-					'linked' => true,
-				]),
+				'value' => blocksy_spacing_value(),
 				'responsive' => true
 			],
 

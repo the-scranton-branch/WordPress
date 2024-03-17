@@ -65,6 +65,12 @@ export const getSingleContentVariablesFor = () => {
 	}
 
 	return {
+		...handleBackgroundOptionFor({
+			id: `${prefix}_background`,
+			selector: `[data-prefix="${prefix}"]`,
+			responsive: true,
+		}),
+
 		...makeVariablesWithCondition(
 			`${prefix}_content_style`,
 			{
@@ -142,7 +148,7 @@ export const getSingleContentVariablesFor = () => {
 						prefix
 					)}`,
 					type: 'spacing',
-					variable: 'boxed-content-spacing',
+					variable: 'theme-boxed-content-spacing',
 					responsive: true,
 					unit: '',
 				},
@@ -152,7 +158,7 @@ export const getSingleContentVariablesFor = () => {
 						prefix
 					)}`,
 					type: 'spacing',
-					variable: 'border-radius',
+					variable: 'theme-boxed-content-border-radius',
 					responsive: true,
 				},
 
@@ -161,7 +167,7 @@ export const getSingleContentVariablesFor = () => {
 						prefix
 					)}`,
 					type: 'box-shadow',
-					variable: 'box-shadow',
+					variable: 'theme-boxed-content-box-shadow',
 					responsive: true,
 				},
 
@@ -169,7 +175,7 @@ export const getSingleContentVariablesFor = () => {
 					selector: `[data-prefix="${prefix}"] ${getSelectorSuffixFor(
 						prefix
 					)}`,
-					variable: 'boxed-content-border',
+					variable: 'theme-boxed-content-border',
 					type: 'border',
 					responsive: true,
 					skip_none: true,

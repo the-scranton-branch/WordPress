@@ -1,7 +1,7 @@
 <?php
 
 if (! function_exists('woocommerce_mini_cart')) {
-    return '';
+	return '';
 }
 
 if (
@@ -75,6 +75,18 @@ $has_cart_dropdown = blocksy_default_akg(
 
 $cart_drawer_type = blocksy_default_akg('cart_drawer_type', $atts, 'dropdown');
 
+// Force dropdown drawer type if option is not visible.
+if (
+	$cart_drawer_type !== 'dropdown'
+	&&
+	apply_filters(
+		'blocksy:header:cart:cart_drawer_type:option',
+		'hidden'
+	) === 'hidden'
+) {
+	$cart_drawer_type = 'dropdown';
+}
+
 $cart_total_class = 'ct-label';
 
 $cart_subtotal_visibility = blocksy_default_akg(
@@ -88,11 +100,6 @@ $cart_subtotal_visibility = blocksy_default_akg(
 );
 
 $cart_total_class .= ' ' . blocksy_visibility_classes($cart_subtotal_visibility);
-$has_subtotal = (
-	blocksy_some_device($cart_subtotal_visibility)
-	||
-	is_customize_preview()
-);
 
 $cart_total_position = blocksy_expand_responsive_value(
 	blocksy_akg('cart_total_position', $atts, 'left')
@@ -166,30 +173,80 @@ $count_output = blocksy_html_tag(
 	'span',
 	[
 		'class' => 'ct-dynamic-count-cart',
-		'data-count' => $has_badge ? $current_count : 0
+		'data-count' => $has_badge ? $current_count : 0,
+		'aria-hidden' => 'true'
 	],
 	$current_count
 );
 
 $totals_output = '';
 
-if ($has_subtotal && WC()->cart) {
+$label_mask = blocksy_expand_responsive_value(
+	blocksy_default_akg('cart_total_label', $atts, '{price}')
+)[$device];
+
+$label_parts = explode(
+	'{price}',
+	$label_mask
+);
+
+if (WC()->cart) {
+	$totals_output = WC()->cart->get_cart_subtotal();
+
 	$totals_output = blocksy_html_tag(
 		'span',
-		[ 'class' => $cart_total_class ],
-		WC()->cart->get_cart_subtotal()
+		[
+			'class' => 'ct-amount'
+		],
+		$totals_output
 	);
 }
 
+$before_totals = isset($label_parts[0]) ? $label_parts[0] : '';
+$after_totals = isset($label_parts[1]) ? $label_parts[1] : '';
+
+$aria_label = __('Shopping cart', 'blocksy');
+
+$label = $before_totals . $totals_output . $after_totals;
+
+if (
+	! empty($before_totals)
+	||
+	! empty($after_totals)
+) {
+	$aria_label = '';
+}
+
+$screen_reader_text = '';
+
+if (! empty($aria_label)) {
+	$screen_reader_text = blocksy_html_tag(
+		'span',
+		[ 'class' => 'screen-reader-text' ],
+		$aria_label
+	);
+}
 ?>
 
 <a class="<?php echo $item_class ?>"
 	href="<?php echo esc_attr($url) ?>"
 	data-label="<?php echo $cart_total_position[$device] ?>"
-	aria-label="<?php echo __('Shopping cart', 'blocksy') ?>"
 	<?php echo $auto_open_output ?>>
 
-	<?php echo $totals_output; ?>
+	<?php
+		echo $screen_reader_text;
+
+		echo blocksy_html_tag(
+			'span',
+			array_merge(
+				[
+					'class' => $cart_total_class,
+					'data-price' => strpos($label_mask, '{price}') !== false ? 'yes' : 'no'
+				],
+			),
+			$label
+		);
+	?>
 
 	<span class="ct-icon-container">
 		<?php
@@ -214,9 +271,24 @@ if ($has_only_item) {
 	return;
 }
 
+global $blocksy_mini_cart_ratio;
+global $blocksy_mini_cart_size;
+
+$blocksy_mini_cart_ratio = blocksy_default_akg('thumb_ratio', $atts, '1/1');
+$blocksy_mini_cart_size = blocksy_default_akg(
+	'image_size',
+	$atts,
+	'woocommerce_thumbnail'
+);
+
 ob_start();
-woocommerce_mini_cart();
+if (isset($render_args['only_cart']) && $render_args['only_cart']) {
+	woocommerce_mini_cart();
+}
 $content = ob_get_clean();
+
+$blocksy_mini_cart_ratio = null;
+$blocksy_mini_cart_size = null;
 
 $cart_otput = blocksy_html_tag(
 	'div',

@@ -23,7 +23,7 @@ ctEvents.on(
 					selector: assembleSelector(
 						getRootSelectorFor({ itemId, panelType: 'footer' })
 					),
-					variable: 'color',
+					variable: 'theme-text-color',
 					type: 'color:default',
 					responsive: true,
 				},
@@ -32,7 +32,7 @@ ctEvents.on(
 					selector: assembleSelector(
 						getRootSelectorFor({ itemId, panelType: 'footer' })
 					),
-					variable: 'linkInitialColor',
+					variable: 'theme-link-initial-color',
 					type: 'color:link_initial',
 					responsive: true,
 				},
@@ -41,7 +41,7 @@ ctEvents.on(
 					selector: assembleSelector(
 						getRootSelectorFor({ itemId, panelType: 'footer' })
 					),
-					variable: 'linkHoverColor',
+					variable: 'theme-link-hover-color',
 					type: 'color:link_hover',
 					responsive: true,
 				},

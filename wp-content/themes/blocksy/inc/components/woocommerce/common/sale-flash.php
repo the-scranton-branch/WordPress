@@ -3,15 +3,20 @@
 add_filter(
 	'woocommerce_sale_flash',
 	function ($text, $post, $product) {
-		$text = get_theme_mod(
+
+		if (strpos($text, '<span class="onsale">') === false) {
+			return $text;
+		}
+		
+		$text = blocksy_get_theme_mod(
 			'sale_badge_default_value',
-			__('SALE!', 'blocksy')
+			__('SALE', 'blocksy')
 		);
 
 		$default_text = $text;
 
-		if (get_theme_mod('sale_badge_value', 'default') === 'custom') {
-			$text = get_theme_mod('sale_badge_custom_value', '-[value]%');
+		if (blocksy_get_theme_mod('sale_badge_value', 'default') === 'custom') {
+			$text = blocksy_get_theme_mod('sale_badge_custom_value', '-{value}%');
 
 			if ($product->is_type('variable')) {
 				$percentages = [];
@@ -45,7 +50,7 @@ add_filter(
 			}
 
 			$text = str_replace(
-				'[value]',
+				'{value}',
 				$percentage,
 				$text
 			);
@@ -59,7 +64,7 @@ add_filter(
 			'span',
 			[
 				'class' => 'onsale',
-				'data-shape' => get_theme_mod('sale_badge_shape', 'type-2')
+				'data-shape' => blocksy_get_theme_mod('sale_badge_shape', 'type-2')
 			],
 			$text
 		);

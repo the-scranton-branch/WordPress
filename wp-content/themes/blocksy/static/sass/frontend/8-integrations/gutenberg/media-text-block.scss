@@ -1,7 +1,7 @@
 .wp-block-media-text {
 	.wp-block-media-text__content {
 		@media (max-width: 600px) {
-			padding: var(--content-spacing);
+			padding: var(--theme-content-spacing);
 		}
 
 		p:last-child {
@@ -11,8 +11,7 @@
 
 	&:not(.has-background) .wp-block-media-text__content {
 		@media (max-width: 600px) {
-			padding-left: 0;
-			padding-right: 0;
+			padding-inline: 0;
 			padding-bottom: 0;
 		}
 	}

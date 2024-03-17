@@ -1,98 +1,104 @@
 <?php
 
 // Color palette
+$paletteDefaults = [];
+$paletteVariables = [];
+
+$palette = blocksy_manager()->colors->get_color_palette();
+
+foreach ($palette as $paletteKey => $paletteValue) {
+	$paletteDefaults[$paletteKey] = [
+		'color' => $paletteValue['color'],
+	];
+
+	$paletteVariables[$paletteKey] = [
+		'variable' => $paletteValue['variable']
+	];
+
+	if (class_exists('\Elementor\Plugin')) {
+		$key = 'blocksy_palette_' . str_replace('color', '', $paletteKey);
+
+		$css->put(
+			':root',
+			'--e-global-color-' . $key . ': var(--' . $paletteValue['variable'] . ')'
+		);
+	}
+}
+
 blocksy_output_colors([
-	'value' => get_theme_mod('colorPalette'),
-	'default' => [
-		'color1' => [ 'color' => '#2872fa' ],
-		'color2' => [ 'color' => '#1559ed' ],
-		'color3' => [ 'color' => '#3A4F66' ],
-		'color4' => [ 'color' => '#192a3d' ],
-		'color5' => [ 'color' => '#e1e8ed' ],
-		'color6' => [ 'color' => '#f2f5f7' ],
-		'color7' => [ 'color' => '#FAFBFC' ],
-		'color8' => [ 'color' => '#ffffff' ],
-	],
+	'value' => $palette,
+	'default' => $paletteDefaults,
 	'css' => $css,
-	'variables' => [
-		'color1' => ['variable' => 'paletteColor1'],
-		'color2' => ['variable' => 'paletteColor2'],
-		'color3' => ['variable' => 'paletteColor3'],
-		'color4' => ['variable' => 'paletteColor4'],
-		'color5' => ['variable' => 'paletteColor5'],
-		'color6' => ['variable' => 'paletteColor6'],
-		'color7' => ['variable' => 'paletteColor7'],
-		'color8' => ['variable' => 'paletteColor8'],
-	],
+	'variables' => $paletteVariables
 ]);
 
 // Colors
 blocksy_output_colors([
-	'value' => get_theme_mod('fontColor'),
+	'value' => blocksy_get_theme_mod('fontColor'),
 	'default' => [
-		'default' => [ 'color' => 'var(--paletteColor3)' ],
+		'default' => [ 'color' => 'var(--theme-palette-color-3)' ],
 	],
 	'css' => $css,
 	'variables' => [
-		'default' => ['variable' => 'color'],
+		'default' => ['variable' => 'theme-text-color'],
 	],
 ]);
 
 blocksy_output_colors([
-	'value' => get_theme_mod('linkColor'),
+	'value' => blocksy_get_theme_mod('linkColor'),
 	'default' => [
-		'default' => [ 'color' => 'var(--paletteColor1)' ],
-		'hover' => [ 'color' => 'var(--paletteColor2)' ],
+		'default' => [ 'color' => 'var(--theme-palette-color-1)' ],
+		'hover' => [ 'color' => 'var(--theme-palette-color-2)' ],
 	],
 	'css' => $css,
 	'variables' => [
-		'default' => ['variable' => 'linkInitialColor'],
-		'hover' => ['variable' => 'linkHoverColor'],
+		'default' => ['variable' => 'theme-link-initial-color'],
+		'hover' => ['variable' => 'theme-link-hover-color'],
 	],
 ]);
 
 blocksy_output_colors([
-	'value' => get_theme_mod('selectionColor'),
+	'value' => blocksy_get_theme_mod('selectionColor'),
 	'default' => [
 		'default' => [ 'color' => '#ffffff' ],
-		'hover' => [ 'color' => 'var(--paletteColor1)' ],
+		'hover' => [ 'color' => 'var(--theme-palette-color-1)' ],
 	],
 	'css' => $css,
 	'variables' => [
-		'default' => ['variable' => 'selectionTextColor'],
-		'hover' => ['variable' => 'selectionBackgroundColor'],
+		'default' => ['variable' => 'theme-selection-text-color'],
+		'hover' => ['variable' => 'theme-selection-background-color'],
 	],
 ]);
 
 blocksy_output_colors([
-	'value' => get_theme_mod('border_color'),
+	'value' => blocksy_get_theme_mod('border_color'),
 	'default' => [
-		'default' => [ 'color' => 'var(--paletteColor5)' ],
+		'default' => [ 'color' => 'var(--theme-palette-color-5)' ],
 	],
 	'css' => $css,
 	'variables' => [
-		'default' => ['variable' => 'border-color'],
+		'default' => ['variable' => 'theme-border-color'],
 	],
 ]);
 
 
 // Headings
 blocksy_output_colors([
-	'value' => get_theme_mod('headingColor'),
+	'value' => blocksy_get_theme_mod('headingColor'),
 	'default' => [
-		'default' => [ 'color' => 'var(--paletteColor4)' ],
+		'default' => [ 'color' => 'var(--theme-palette-color-4)' ],
 	],
 	'css' => $css,
 	'variables' => [
 		'default' => [
 			'selector' => ':root',
-			'variable' => 'headings-color'
+			'variable' => 'theme-headings-color'
 		],
 	],
 ]);
 
 blocksy_output_colors([
-	'value' => get_theme_mod('heading_1_color'),
+	'value' => blocksy_get_theme_mod('heading_1_color'),
 	'default' => [
 		'default' => [ 'color' => Blocksy_Css_Injector::get_skip_rule_keyword('DEFAULT') ],
 	],
@@ -100,13 +106,13 @@ blocksy_output_colors([
 	'variables' => [
 		'default' => [
 			'selector' => ':root',
-			'variable' => 'heading-1-color'
+			'variable' => 'theme-heading-1-color'
 		],
 	],
 ]);
 
 blocksy_output_colors([
-	'value' => get_theme_mod('heading_2_color'),
+	'value' => blocksy_get_theme_mod('heading_2_color'),
 	'default' => [
 		'default' => [ 'color' => Blocksy_Css_Injector::get_skip_rule_keyword('DEFAULT') ],
 	],
@@ -114,13 +120,13 @@ blocksy_output_colors([
 	'variables' => [
 		'default' => [
 			'selector' => ':root',
-			'variable' => 'heading-2-color'
+			'variable' => 'theme-heading-2-color'
 		],
 	],
 ]);
 
 blocksy_output_colors([
-	'value' => get_theme_mod('heading_3_color'),
+	'value' => blocksy_get_theme_mod('heading_3_color'),
 	'default' => [
 		'default' => [ 'color' => Blocksy_Css_Injector::get_skip_rule_keyword('DEFAULT') ],
 	],
@@ -128,13 +134,13 @@ blocksy_output_colors([
 	'variables' => [
 		'default' => [
 			'selector' => ':root',
-			'variable' => 'heading-3-color'
+			'variable' => 'theme-heading-3-color'
 		],
 	],
 ]);
 
 blocksy_output_colors([
-	'value' => get_theme_mod('heading_4_color'),
+	'value' => blocksy_get_theme_mod('heading_4_color'),
 	'default' => [
 		'default' => [ 'color' => Blocksy_Css_Injector::get_skip_rule_keyword('DEFAULT') ],
 	],
@@ -142,13 +148,13 @@ blocksy_output_colors([
 	'variables' => [
 		'default' => [
 			'selector' => ':root',
-			'variable' => 'heading-4-color'
+			'variable' => 'theme-heading-4-color'
 		],
 	],
 ]);
 
 blocksy_output_colors([
-	'value' => get_theme_mod('heading_5_color'),
+	'value' => blocksy_get_theme_mod('heading_5_color'),
 	'default' => [
 		'default' => [ 'color' => Blocksy_Css_Injector::get_skip_rule_keyword('DEFAULT') ],
 	],
@@ -156,13 +162,13 @@ blocksy_output_colors([
 	'variables' => [
 		'default' => [
 			'selector' => ':root',
-			'variable' => 'heading-5-color'
+			'variable' => 'theme-heading-5-color'
 		],
 	],
 ]);
 
 blocksy_output_colors([
-	'value' => get_theme_mod('heading_6_color'),
+	'value' => blocksy_get_theme_mod('heading_6_color'),
 	'default' => [
 		'default' => [ 'color' => Blocksy_Css_Injector::get_skip_rule_keyword('DEFAULT') ],
 	],
@@ -170,7 +176,7 @@ blocksy_output_colors([
 	'variables' => [
 		'default' => [
 			'selector' => ':root',
-			'variable' => 'heading-6-color'
+			'variable' => 'theme-heading-6-color'
 		],
 	],
 ]);
@@ -178,22 +184,22 @@ blocksy_output_colors([
 
 // Content spacing
 $contentSpacingMap = [
-	'none' => '0',
+	'none' => '0px',
 	'compact' => '0.8em',
 	'comfortable' => '1.5em',
 	'spacious' => '2em',
 ];
 
-$contentSpacing = get_theme_mod('contentSpacing', 'comfortable');
+$contentSpacing = blocksy_get_theme_mod('contentSpacing', 'comfortable');
 
 $contentSpacingResult = isset(
 	$contentSpacingMap[$contentSpacing]
 ) ? $contentSpacingMap[$contentSpacing] : $contentSpacingMap['comfortable'];
 
-$css->put(':root', '--content-spacing: ' . $contentSpacingResult);
+$css->put(':root', '--theme-content-spacing: ' . $contentSpacingResult);
 
 if ($contentSpacing === 'none') {
-	$css->put(':root', '--has-content-spacing: 0');
+	$css->put(':root', '--has-theme-content-spacing: 0');
 }
 
 // Buttons
@@ -202,49 +208,47 @@ blocksy_output_responsive([
 	'tablet_css' => $tablet_css,
 	'mobile_css' => $mobile_css,
 	'selector' => ':root',
-	'variableName' => 'buttonMinHeight',
-	'value' => get_theme_mod('buttonMinHeight', 40)
+	'variableName' => 'theme-button-min-height',
+	'value' => blocksy_get_theme_mod('buttonMinHeight', 40)
 ]);
 
-if (get_theme_mod('buttonHoverEffect', 'no') !== 'yes') {
-	$css->put(':root', '--buttonShadow: none');
-	$css->put(':root', '--buttonTransform: none');
+if (blocksy_get_theme_mod('buttonHoverEffect', 'no') !== 'yes') {
+	$css->put(':root', '--theme-button-shadow: none');
+	$css->put(':root', '--theme-button-transform: none');
 }
 
 blocksy_output_colors([
-	'value' => get_theme_mod('buttonTextColor'),
+	'value' => blocksy_get_theme_mod('buttonTextColor'),
 	'default' => [
 		'default' => [ 'color' => '#ffffff' ],
 		'hover' => [ 'color' => '#ffffff' ],
 	],
 	'css' => $css,
 	'variables' => [
-		'default' => ['variable' => 'buttonTextInitialColor'],
-		'hover' => ['variable' => 'buttonTextHoverColor'],
+		'default' => ['variable' => 'theme-button-text-initial-color'],
+		'hover' => ['variable' => 'theme-button-text-hover-color'],
 	],
 ]);
 
 blocksy_output_colors([
-	'value' => get_theme_mod('buttonColor'),
+	'value' => blocksy_get_theme_mod('buttonColor'),
 	'default' => [
-		'default' => [ 'color' => 'var(--paletteColor1)' ],
-		'hover' => [ 'color' => 'var(--paletteColor2)' ],
+		'default' => [ 'color' => 'var(--theme-palette-color-1)' ],
+		'hover' => [ 'color' => 'var(--theme-palette-color-2)' ],
 	],
 	'css' => $css,
 	'variables' => [
-		'default' => ['variable' => 'buttonInitialColor'],
-		'hover' => ['variable' => 'buttonHoverColor'],
+		'default' => ['variable' => 'theme-button-background-initial-color'],
+		'hover' => ['variable' => 'theme-button-background-hover-color'],
 	],
 ]);
 
 blocksy_output_border([
 	'css' => $css,
 	'selector' => ':root',
-
-	'variableName' => 'button-border',
-	'secondColorVariableName' => 'button-border-hover-color',
-
-	'value' => get_theme_mod('buttonBorder'),
+	'variableName' => 'theme-button-border',
+	'secondColorVariableName' => 'theme-button-border-hover-color',
+	'value' => blocksy_get_theme_mod('buttonBorder'),
 	'default' => [
 		'width' => 1,
 		'style' => 'none',
@@ -262,10 +266,9 @@ blocksy_output_spacing([
 	'tablet_css' => $tablet_css,
 	'mobile_css' => $mobile_css,
 	'selector' => ':root',
-	'property' => 'buttonBorderRadius',
-	'value' => get_theme_mod( 'buttonRadius',
+	'property' => 'theme-button-border-radius',
+	'value' => blocksy_get_theme_mod( 'buttonRadius',
 		blocksy_spacing_value([
-			'linked' => true,
 			'top' => '3px',
 			'left' => '3px',
 			'right' => '3px',
@@ -279,10 +282,10 @@ blocksy_output_spacing([
 	'tablet_css' => $tablet_css,
 	'mobile_css' => $mobile_css,
 	'selector' => ':root',
-	'property' => 'button-padding',
-	'value' => get_theme_mod( 'buttonPadding',
+	'property' => 'theme-button-padding',
+	'value' => blocksy_get_theme_mod(
+		'buttonPadding',
 		blocksy_spacing_value([
-			'linked' => false,
 			'top' => '5px',
 			'left' => '20px',
 			'right' => '20px',
@@ -293,10 +296,10 @@ blocksy_output_spacing([
 
 
 // Layout
-$max_site_width = get_theme_mod( 'maxSiteWidth', 1290 );
+$max_site_width = blocksy_get_theme_mod( 'maxSiteWidth', 1290 );
 $css->put(
 	':root',
-	'--normal-container-max-width: ' . $max_site_width . 'px'
+	'--theme-normal-container-max-width: ' . $max_site_width . 'px'
 );
 
 blocksy_output_responsive([
@@ -304,33 +307,52 @@ blocksy_output_responsive([
 	'tablet_css' => $tablet_css,
 	'mobile_css' => $mobile_css,
 	'selector' => ':root',
-	'variableName' => 'content-vertical-spacing',
+	'variableName' => 'theme-content-vertical-spacing',
 	'unit' => '',
-	'value' => get_theme_mod('contentAreaSpacing', [
+	'value' => blocksy_get_theme_mod('contentAreaSpacing', [
 		'desktop' => '60px',
 		'tablet' => '60px',
 		'mobile' => '50px',
-
 	])
 ]);
 
-$narrowContainerWidth = get_theme_mod( 'narrowContainerWidth', 750 );
+$contentEdgeSpacing = blocksy_get_theme_mod('contentEdgeSpacing', [
+	'desktop' => 5,
+	'tablet' => 5,
+	'mobile' => 6,
+]);
+
+$contentEdgeSpacing['desktop'] = 100 - intval($contentEdgeSpacing['desktop']) * 2;
+$contentEdgeSpacing['tablet'] = 100 - intval($contentEdgeSpacing['tablet']) * 2;
+$contentEdgeSpacing['mobile'] = 100 - intval($contentEdgeSpacing['mobile']) * 2;
+
+blocksy_output_responsive([
+	'css' => $css,
+	'tablet_css' => $tablet_css,
+	'mobile_css' => $mobile_css,
+	'selector' => ':root',
+	'variableName' => 'theme-container-edge-spacing',
+	'unit' => 'vw',
+	'value' => $contentEdgeSpacing
+]);
+
+$narrowContainerWidth = blocksy_get_theme_mod( 'narrowContainerWidth', 750 );
 $css->put(
 	':root',
-	'--narrow-container-max-width: ' . $narrowContainerWidth . 'px'
+	'--theme-narrow-container-max-width: ' . $narrowContainerWidth . 'px'
 );
 
-$wideOffset = get_theme_mod( 'wideOffset', 130 );
+$wideOffset = blocksy_get_theme_mod( 'wideOffset', 130 );
 $css->put(
 	':root',
-	'--wide-offset: ' . $wideOffset . 'px'
+	'--theme-wide-offset: ' . $wideOffset . 'px'
 );
 
 // sidebars
-$sidebar_type = get_theme_mod('sidebar_type', 'type-1');
+$sidebar_type = blocksy_get_theme_mod('sidebar_type', 'type-1');
 
 // sidebar width
-$sidebar_width = get_theme_mod( 'sidebarWidth', 27 );
+$sidebar_width = blocksy_get_theme_mod( 'sidebarWidth', 27 );
 if ($sidebar_width !== 27) {
 	$css->put(
 		'[data-sidebar]',
@@ -354,7 +376,7 @@ if ($sidebarGap !== '4%') {
 
 
 // sticky sidebar offset
-$sidebarOffset = get_theme_mod('sidebarOffset', 50);
+$sidebarOffset = blocksy_get_theme_mod('sidebarOffset', 50);
 if ($sidebarOffset !== 50) {
 	$css->put(
 		'[data-sidebar]',
@@ -363,7 +385,7 @@ if ($sidebarOffset !== 50) {
 }
 
 blocksy_output_colors([
-	'value' => get_theme_mod('sidebarWidgetsTitleColor'),
+	'value' => blocksy_get_theme_mod('sidebarWidgetsTitleColor'),
 	'default' => [
 		'default' => [ 'color' => Blocksy_Css_Injector::get_skip_rule_keyword('DEFAULT') ],
 	],
@@ -373,17 +395,17 @@ blocksy_output_colors([
 	'variables' => [
 		'default' => [
 			'selector' => '.ct-sidebar .widget-title',
-			'variable' => 'heading-color'
+			'variable' => 'theme-heading-color'
 		],
 	],
 	'responsive' => true
 ]);
 
 blocksy_output_colors([
-	'value' => get_theme_mod('sidebarWidgetsFontColor'),
+	'value' => blocksy_get_theme_mod('sidebarWidgetsFontColor'),
 	'default' => [
 		'default' => [ 'color' => Blocksy_Css_Injector::get_skip_rule_keyword('DEFAULT') ],
-		'link_initial' => [ 'color' => 'var(--color)' ],
+		'link_initial' => [ 'color' => 'var(--theme-text-color)' ],
 		'link_hover' => [ 'color' => Blocksy_Css_Injector::get_skip_rule_keyword('DEFAULT') ],
 	],
 	'css' => $css,
@@ -392,17 +414,17 @@ blocksy_output_colors([
 	'variables' => [
 		'default' => [
 			'selector' => '.ct-sidebar > *',
-			'variable' => 'color'
+			'variable' => 'theme-text-color'
 		],
 
 		'link_initial' => [
 			'selector' => '.ct-sidebar',
-			'variable' => 'linkInitialColor'
+			'variable' => 'theme-link-initial-color'
 		],
 
 		'link_hover' => [
 			'selector' => '.ct-sidebar',
-			'variable' => 'linkHoverColor'
+			'variable' => 'theme-link-hover-color'
 		],
 	],
 	'responsive' => true
@@ -416,7 +438,7 @@ if (
 	is_customize_preview()
 ) {
 	blocksy_output_colors([
-		'value' => get_theme_mod('sidebarBackgroundColor'),
+		'value' => blocksy_get_theme_mod('sidebarBackgroundColor'),
 		'default' => [
 			'default' => [ 'color' => Blocksy_Css_Injector::get_skip_rule_keyword('DEFAULT') ],
 		],
@@ -440,8 +462,8 @@ if ($sidebar_type === 'type-2') {
 		'tablet_css' => $tablet_css,
 		'mobile_css' => $mobile_css,
 		'selector' => 'aside[data-type="type-2"]',
-		'variableName' => 'border',
-		'value' => get_theme_mod('sidebarBorder'),
+		'variableName' => 'theme-border',
+		'value' => blocksy_get_theme_mod('sidebarBorder'),
 		'default' => [
 			'width' => 1,
 			'style' => 'none',
@@ -457,11 +479,10 @@ if ($sidebar_type === 'type-2') {
 		'tablet_css' => $tablet_css,
 		'mobile_css' => $mobile_css,
 		'selector' => 'aside[data-type="type-2"]',
-		'property' => 'borderRadius',
-		'value' => get_theme_mod( 'sidebarRadius',
-			blocksy_spacing_value([
-				'linked' => true,
-			])
+		'property' => 'theme-border-radius',
+		'value' => blocksy_get_theme_mod(
+			'sidebarRadius',
+			blocksy_spacing_value()
 		)
 	]);
 
@@ -471,7 +492,7 @@ if ($sidebar_type === 'type-2') {
 		'tablet_css' => $tablet_css,
 		'mobile_css' => $mobile_css,
 		'selector' => 'aside[data-type="type-2"]',
-		'value' => get_theme_mod('sidebarShadow', blocksy_box_shadow_value([
+		'value' => blocksy_get_theme_mod('sidebarShadow', blocksy_box_shadow_value([
 			'enable' => true,
 			'h_offset' => 0,
 			'v_offset' => 12,
@@ -492,8 +513,8 @@ if ($sidebar_type === 'type-3') {
 		'tablet_css' => $tablet_css,
 		'mobile_css' => $mobile_css,
 		'selector' => 'aside[data-type="type-3"]',
-		'variableName' => 'border',
-		'value' => get_theme_mod('sidebarDivider'),
+		'variableName' => 'theme-border',
+		'value' => blocksy_get_theme_mod('sidebarDivider'),
 		'default' => [
 			'width' => 1,
 			'style' => 'solid',
@@ -505,7 +526,7 @@ if ($sidebar_type === 'type-3') {
 	]);
 }
 
-$sidebarWidgetsSpacing = get_theme_mod('sidebarWidgetsSpacing', 40);
+$sidebarWidgetsSpacing = blocksy_get_theme_mod('sidebarWidgetsSpacing', 40);
 
 if ($sidebarWidgetsSpacing !== 40) {
 	blocksy_output_responsive([
@@ -518,7 +539,7 @@ if ($sidebarWidgetsSpacing !== 40) {
 	]);
 }
 
-$sidebarInnerSpacing = get_theme_mod('sidebarInnerSpacing', 35);
+$sidebarInnerSpacing = blocksy_get_theme_mod('sidebarInnerSpacing', 35);
 
 if ($sidebarInnerSpacing !== 35) {
 	blocksy_output_responsive([
@@ -533,7 +554,7 @@ if ($sidebarInnerSpacing !== 35) {
 
 
 // Mobile sidebar position
-$sidebar_position = get_theme_mod('mobile_sidebar_position', 'bottom');
+$sidebar_position = blocksy_get_theme_mod('mobile_sidebar_position', 'bottom');
 
 if ($sidebar_position === 'top') {
 	$mobile_css->put(
@@ -549,11 +570,11 @@ if ($sidebar_position === 'top') {
 
 
 // To top button
-$has_back_top = get_theme_mod('has_back_top', 'no');
+$has_back_top = blocksy_get_theme_mod('has_back_top', 'no');
 
 if ($has_back_top === 'yes') {
 
-	$topButtonSize = get_theme_mod('topButtonSize', 12);
+	$topButtonSize = blocksy_get_theme_mod('topButtonSize', 12);
 
 	if ($topButtonSize !== 12) {
 		blocksy_output_responsive([
@@ -561,12 +582,12 @@ if ($has_back_top === 'yes') {
 			'tablet_css' => $tablet_css,
 			'mobile_css' => $mobile_css,
 			'selector' => '.ct-back-to-top .ct-icon',
-			'variableName' => 'icon-size',
+			'variableName' => 'theme-icon-size',
 			'value' => $topButtonSize
 		]);
 	}
 
-	$topButtonOffset = get_theme_mod('topButtonOffset', 25);
+	$topButtonOffset = blocksy_get_theme_mod('topButtonOffset', 25);
 
 	if ($topButtonOffset !== 25) {
 		blocksy_output_responsive([
@@ -579,7 +600,7 @@ if ($has_back_top === 'yes') {
 		]);
 	}
 
-	$sideButtonOffset = get_theme_mod('sideButtonOffset', 25);
+	$sideButtonOffset = blocksy_get_theme_mod('sideButtonOffset', 25);
 
 	if ($sideButtonOffset !== 25) {
 		blocksy_output_responsive([
@@ -593,7 +614,7 @@ if ($has_back_top === 'yes') {
 	}
 
 	blocksy_output_colors([
-		'value' => get_theme_mod('topButtonIconColor'),
+		'value' => blocksy_get_theme_mod('topButtonIconColor'),
 		'default' => [
 			'default' => [ 'color' => '#ffffff' ],
 			'hover' => [ 'color' => '#ffffff' ],
@@ -602,18 +623,18 @@ if ($has_back_top === 'yes') {
 		'variables' => [
 			'default' => [
 				'selector' => '.ct-back-to-top',
-				'variable' => 'icon-color'
+				'variable' => 'theme-icon-color'
 			],
 
 			'hover' => [
 				'selector' => '.ct-back-to-top',
-				'variable' => 'icon-hover-color'
+				'variable' => 'theme-icon-hover-color'
 			]
 		],
 	]);
 
 	blocksy_output_colors([
-		'value' => get_theme_mod('topButtonShapeBackground'),
+		'value' => blocksy_get_theme_mod('topButtonShapeBackground'),
 		'default' => [
 			'default' => [ 'color' => Blocksy_Css_Injector::get_skip_rule_keyword('DEFAULT') ],
 			'hover' => [ 'color' => Blocksy_Css_Injector::get_skip_rule_keyword('DEFAULT') ],
@@ -632,7 +653,7 @@ if ($has_back_top === 'yes') {
 		],
 	]);
 
-	$topButtonSgape = get_theme_mod('top_button_shape', 'square');
+	$topButtonSgape = blocksy_get_theme_mod('top_button_shape', 'square');
 
 	if($topButtonSgape === 'square') {
 		blocksy_output_spacing([
@@ -640,10 +661,10 @@ if ($has_back_top === 'yes') {
 			'tablet_css' => $tablet_css,
 			'mobile_css' => $mobile_css,
 			'selector' => '.ct-back-to-top',
-			'property' => 'border-radius',
-			'value' => get_theme_mod( 'topButtonRadius',
+			'property' => 'theme-border-radius',
+			'value' => blocksy_get_theme_mod(
+				'topButtonRadius',
 				blocksy_spacing_value([
-					'linked' => true,
 					'top' => '2px',
 					'left' => '2px',
 					'right' => '2px',
@@ -658,7 +679,7 @@ if ($has_back_top === 'yes') {
 		'tablet_css' => $tablet_css,
 		'mobile_css' => $mobile_css,
 		'selector' => '.ct-back-to-top',
-		'value' => get_theme_mod('topButtonShadow', blocksy_box_shadow_value([
+		'value' => blocksy_get_theme_mod('topButtonShadow', blocksy_box_shadow_value([
 			'enable' => false,
 			'h_offset' => 0,
 			'v_offset' => 5,
@@ -674,7 +695,7 @@ if ($has_back_top === 'yes') {
 }
 
 // Passepartout
-$has_passepartout = get_theme_mod('has_passepartout', 'no');
+$has_passepartout = blocksy_get_theme_mod('has_passepartout', 'no');
 
 if ($has_passepartout !== 'no') {
 	blocksy_output_responsive([
@@ -682,20 +703,20 @@ if ($has_passepartout !== 'no') {
 		'tablet_css' => $tablet_css,
 		'mobile_css' => $mobile_css,
 		'selector' => ':root',
-		'variableName' => 'frame-size',
-		'value' => get_theme_mod('passepartoutSize', 10)
+		'variableName' => 'theme-frame-size',
+		'value' => blocksy_get_theme_mod('passepartoutSize', 10)
 	]);
 
 	blocksy_output_colors([
-		'value' => get_theme_mod('passepartoutColor'),
+		'value' => blocksy_get_theme_mod('passepartoutColor'),
 		'default' => [
-			'default' => [ 'color' => 'var(--paletteColor1)' ],
+			'default' => [ 'color' => 'var(--theme-palette-color-1)' ],
 		],
 		'css' => $css,
 		'variables' => [
 			'default' => [
 				'selector' => ':root',
-				'variable' => 'frame-color'
+				'variable' => 'theme-frame-color'
 			],
 		],
 	]);
@@ -704,7 +725,7 @@ if ($has_passepartout !== 'no') {
 
 // breadcrumbs
 blocksy_output_colors([
-	'value' => get_theme_mod('breadcrumbsFontColor'),
+	'value' => blocksy_get_theme_mod('breadcrumbsFontColor'),
 	'default' => [
 		'default' => [ 'color' => Blocksy_Css_Injector::get_skip_rule_keyword('DEFAULT') ],
 		'initial' => [ 'color' => Blocksy_Css_Injector::get_skip_rule_keyword('DEFAULT') ],
@@ -714,17 +735,17 @@ blocksy_output_colors([
 	'variables' => [
 		'default' => [
 			'selector' => '.ct-breadcrumbs',
-			'variable' => 'color'
+			'variable' => 'theme-text-color'
 		],
 
 		'initial' => [
 			'selector' => '.ct-breadcrumbs',
-			'variable' => 'linkInitialColor'
+			'variable' => 'theme-link-initial-color'
 		],
 
 		'hover' => [
 			'selector' => '.ct-breadcrumbs',
-			'variable' => 'linkHoverColor'
+			'variable' => 'theme-link-hover-color'
 		],
 	],
 ]);

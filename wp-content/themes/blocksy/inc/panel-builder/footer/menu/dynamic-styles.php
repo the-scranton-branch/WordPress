@@ -95,7 +95,7 @@ blocksy_output_font_css([
 blocksy_output_colors([
 	'value' => blocksy_akg('footerMenuFontColor', $atts),
 	'default' => [
-		'default' => [ 'color' => 'var(--color)' ],
+		'default' => [ 'color' => 'var(--theme-text-color)' ],
 		'hover' => [ 'color' => Blocksy_Css_Injector::get_skip_rule_keyword('DEFAULT') ],
 		'active' => [ 'color' => Blocksy_Css_Injector::get_skip_rule_keyword('DEFAULT') ],
 	],
@@ -107,7 +107,7 @@ blocksy_output_colors([
 				'operation' => 'suffix',
 				'to_add' => '> ul > li > a'
 			])),
-			'variable' => 'linkInitialColor'
+			'variable' => 'theme-link-initial-color'
 		],
 
 		'hover' => [
@@ -116,7 +116,7 @@ blocksy_output_colors([
 				'operation' => 'suffix',
 				'to_add' => '> ul > li > a'
 			])),
-			'variable' => 'linkHoverColor'
+			'variable' => 'theme-link-hover-color'
 		],
 
 		'active' => [
@@ -125,7 +125,7 @@ blocksy_output_colors([
 				'operation' => 'suffix',
 				'to_add' => '> ul > li > a'
 			])),
-			'variable' => 'linkActiveColor'
+			'variable' => 'theme-link-active-color'
 		],
 	],
 ]);
@@ -138,9 +138,8 @@ blocksy_output_spacing([
 	'selector' => blocksy_assemble_selector($root_selector),
 	'important' => true,
 	'value' => blocksy_default_akg(
-		'footerMenuMargin', $atts,
-		blocksy_spacing_value([
-			'linked' => true,
-		])
+		'footerMenuMargin',
+		$atts,
+		blocksy_spacing_value()
 	)
 ]);

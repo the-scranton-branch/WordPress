@@ -1,40 +1,34 @@
 :root {
-	--tec-color-accent-primary: var(--paletteColor1);
+	--tec-color-accent-primary: var(--theme-palette-color-1);
 }
 
 #main {
 
-	#tribe-events-pg-template,
-	.tribe-common .tribe-common-l-container {
+	.tribe-common-l-container {
 		max-width: initial;
+	}
+
+	#tribe-events,
+	.tribe-events-l-container {
 		padding: 0;
-	}
-
-	.tribe-events-back {
-		margin-bottom: 1em;
-	}
-
-	#tribe-events-footer {
-		padding-bottom: 0;
-	}
-
-	.tribe-events-sub-nav {
-		padding: 0;
-		margin-bottom: 0;
 	}
 }
 
-.tribe-common {
-	
-	.tribe-common-c-btn,
-	a.tribe-common-c-btn {
-		color: var(--buttonTextInitialColor);
-		background-color: var(--buttonInitialColor);
+.single-tribe_events {
 
-		&:hover,
-		&:focus {
-			color: var(--buttonTextHoverColor);
-			background-color: var(--buttonHoverColor);			
-		}
+	.hero-section[data-type='type-1'] header.entry-header {
+		display: initial;
+	}
+}
+
+.tribe-common .tribe-common-c-btn,
+.tribe-events .tribe-common-c-btn.tribe-events-c-search__button {
+	color: var(--theme-button-text-initial-color);
+	background-color: var(--theme-button-background-initial-color);
+
+	&:hover,
+	&:focus {
+		color: var(--theme-button-text-hover-color);
+		background-color: var(--theme-button-background-hover-color);
 	}
 }

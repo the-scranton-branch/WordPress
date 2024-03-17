@@ -1,11 +1,12 @@
 [data-behaviour*='side'] {
+
 	.ct-panel-inner {
 		position: absolute;
-		top: 0;
-		bottom: 0;
-		max-width: var(--side-panel-width, 500px);
-		box-shadow: var(--box-shadow);
-		transition: transform 0.25s ease-in-out;
+		inset-block: 0;
+		height: 100%;
+		width: var(--side-panel-width, 500px);
+		box-shadow: var(--theme-box-shadow);
+		transition: transform $transition-duration ease-in-out;
 	}
 
 	&.active .ct-panel-inner {
@@ -14,11 +15,11 @@
 }
 
 [data-behaviour*='right-side'] .ct-panel-inner {
-	right: 0;
-	transform: translate3d(20%, 0, 0);
+	align-self: flex-end;
+	transform: translate3d(var(--theme-panel-reveal-right, 20%), 0, 0);
 }
 
 [data-behaviour*='left-side'] .ct-panel-inner {
-	left: 0;
-	transform: translate3d(-20%, 0, 0);
+	align-self: flex-start;
+	transform: translate3d(var(--theme-panel-reveal-left, -20%), 0, 0);
 }

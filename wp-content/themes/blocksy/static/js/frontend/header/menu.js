@@ -1,9 +1,10 @@
 import { isTouchDevice } from '../helpers/is-touch-device'
+import { isIosDevice } from '../helpers/is-ios-device'
 
 const isRtl = () => document.querySelector('html').dir === 'rtl'
 
 const isEligibleForSubmenu = (el) =>
-	el.classList.contains('animated-submenu') &&
+	el.className.includes('animated-submenu') &&
 	(!el.parentNode.classList.contains('menu') ||
 		(el.className.indexOf('ct-mega-menu') === -1 &&
 			el.parentNode.classList.contains('menu')))
@@ -37,28 +38,98 @@ function furthest(el, s) {
 	return nodes[nodes.length - 1]
 }
 
-const isIosDevice =
-	typeof window !== 'undefined' &&
-	window.navigator &&
-	window.navigator.platform &&
-	(/iP(ad|hone|od)/.test(window.navigator.platform) ||
-		(window.navigator.platform === 'MacIntel' &&
-			window.navigator.maxTouchPoints > 1))
+const getAllParentsUntil = (el, parent) => {
+	const parents = []
+
+	while (el.parentNode !== parent) {
+		parents.push(el.parentNode)
+		el = el.parentNode
+	}
+
+	return parents
+}
+
+const reversePlacementIfNeeded = (placement) => {
+	if (!isRtl()) {
+		return placement
+	}
+
+	if (placement === 'left') {
+		return 'right'
+	}
+
+	if (placement === 'right') {
+		return 'left'
+	}
+
+	return placement
+}
 
 const getPreferedPlacementFor = (el) => {
-	const farmost = furthest(el, 'li.menu-item')
+	let farmost = furthest(el, 'li.menu-item')
 
 	if (!farmost) {
-		return isRtl() ? 'left' : 'right'
+		return reversePlacementIfNeeded('right')
 	}
 
-	if (!farmost.querySelector('.sub-menu .sub-menu .sub-menu')) {
-		return isRtl() ? 'left' : 'right'
+	const submenusWithParents = [...farmost.querySelectorAll('.sub-menu')].map(
+		(el) => {
+			return { el, parents: getAllParentsUntil(el, farmost) }
+		}
+	)
+
+	if (submenusWithParents.length === 0) {
+		return reversePlacementIfNeeded('right')
 	}
 
-	return farmost.getBoundingClientRect().left > innerWidth / 2
-		? 'left'
-		: 'right'
+	const submenusWithParentsSorted = submenusWithParents
+		.sort((a, b) => a.parents.length - b.parents.length)
+		.reverse()
+
+	const submenuWithMostParents = submenusWithParentsSorted[0]
+
+	const allSubmenus = [
+		...submenuWithMostParents.parents.filter((el) =>
+			el.matches('.sub-menu')
+		),
+
+		...[submenuWithMostParents.el],
+	]
+
+	const allSubmenusAlignedWidth = allSubmenus.reduce((acc, el, index) => {
+		const style = getComputedStyle(el)
+
+		return (
+			acc +
+			el.getBoundingClientRect().width +
+			(index === 0
+				? 0
+				: parseFloat(
+						style.getPropertyValue(
+							'--dropdown-horizontal-offset'
+						) || '5px'
+				  ))
+		)
+	}, 0)
+
+	const farmostRect = farmost.getBoundingClientRect()
+
+	if (isRtl()) {
+		let willItFitToTheLeft = allSubmenusAlignedWidth < farmostRect.right
+
+		return willItFitToTheLeft ? 'left' : 'right'
+	}
+
+	let willItFitToTheRight =
+		innerWidth - farmostRect.left > allSubmenusAlignedWidth
+
+	if (farmost.matches('.animated-submenu-inline')) {
+		willItFitToTheRight =
+			innerWidth - farmostRect.left - farmostRect.width >
+			allSubmenusAlignedWidth
+	}
+
+	return willItFitToTheRight ? 'right' : 'left'
 }
 
 const computeItemSubmenuFor = (
@@ -151,6 +222,12 @@ const closeSubmenu = (e) => {
 				ct_localizations.expand_submenu
 			)
 		}
+
+		if (e.focusOnIndicator) {
+			childIndicator.focus({
+				focusVisible: true,
+			})
+		}
 	}
 
 	setTimeout(() => {
@@ -164,6 +241,10 @@ const closeSubmenu = (e) => {
 }
 
 export const mountMenuLevel = (menuLevel, args = {}) => {
+	args = {
+		checkForFirstLevel: true,
+		...args,
+	}
 	;[...menuLevel.children]
 		.filter((el) =>
 			el.matches('.menu-item-has-children, .page_item_has_children')
@@ -171,18 +252,56 @@ export const mountMenuLevel = (menuLevel, args = {}) => {
 		.map((el) => {
 			if (el.classList.contains('ct-mega-menu-custom-width')) {
 				const menu = el.querySelector('.sub-menu')
+
 				const elRect = el.getBoundingClientRect()
 				const menuRect = menu.getBoundingClientRect()
 
-				if (
-					elRect.left + elRect.width / 2 + menuRect.width / 2 >
-					innerWidth
-				) {
-					el.dataset.submenu = 'left'
-				}
+				let centerFits =
+					elRect.left + elRect.width / 2 > menuRect.width / 2 &&
+					innerWidth - (elRect.left + elRect.width / 2) >
+						menuRect.width / 2
 
-				if (elRect.left + elRect.width / 2 - menuRect.width / 2 < 0) {
-					el.dataset.submenu = 'right'
+				if (!centerFits) {
+					const placement = getPreferedPlacementFor(menu)
+
+					let offset = 0
+
+					let edgeOffset = 15
+
+					if (placement === 'right') {
+						offset = `${
+							Math.round(
+								elRect.left -
+									(innerWidth - menuRect.width) +
+									edgeOffset
+							) * -1
+						}px`
+
+						if (
+							!(
+								elRect.left + elRect.width / 2 >
+								menuRect.width / 2
+							)
+						) {
+							offset = `${
+								Math.round(elRect.left - edgeOffset) * -1
+							}px`
+						}
+					}
+
+					if (placement === 'left') {
+						offset = `${
+							Math.round(innerWidth - elRect.right - edgeOffset) *
+							-1
+						}px`
+					}
+
+					el.dataset.submenu = placement
+
+					menu.style.setProperty(
+						'--theme-submenu-inline-offset',
+						offset
+					)
 				}
 			}
 
@@ -205,6 +324,7 @@ export const mountMenuLevel = (menuLevel, args = {}) => {
 					if (e.keyCode == 27) {
 						closeSubmenu({
 							target: el.firstElementChild,
+							focusOnIndicator: true,
 						})
 					}
 				})
@@ -223,7 +343,7 @@ export const mountMenuLevel = (menuLevel, args = {}) => {
 			if (!hasClickInteraction) {
 				el.addEventListener('mouseenter', (e) => {
 					// So that mouseenter event is catched before the open itself
-					if (isIosDevice) {
+					if (isIosDevice()) {
 						openSubmenu({ target: el.firstElementChild })
 					} else {
 						requestAnimationFrame(() => {
@@ -232,7 +352,10 @@ export const mountMenuLevel = (menuLevel, args = {}) => {
 					}
 
 					// If first level
-					if (!el.parentNode.classList.contains('.sub-menu')) {
+					if (
+						args.checkForFirstLevel &&
+						!el.parentNode.classList.contains('.sub-menu')
+					) {
 						;[...el.parentNode.children]
 							.filter((firstLevelEl) => firstLevelEl !== el)
 							.map((firstLevelEl) => {
@@ -288,7 +411,7 @@ export const mountMenuLevel = (menuLevel, args = {}) => {
 						} else {
 							openSubmenu(e)
 
-							if (isIosDevice) {
+							if (isIosDevice()) {
 								e.target.closest('li').addEventListener(
 									'mouseleave',
 									() => {

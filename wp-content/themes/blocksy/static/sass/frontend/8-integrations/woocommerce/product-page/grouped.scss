@@ -33,9 +33,9 @@ form.grouped_form {
 		padding-inline-end: 1.2em;
 
 		label {
-			--fontSize: 16px;
-			--fontWeight: 500;
-			--linkInitialColor: var(--color);
+			--theme-font-size: 16px;
+			--theme-font-weight: 500;
+			--theme-link-initial-color: var(--theme-text-color);
 		}
 	}
 

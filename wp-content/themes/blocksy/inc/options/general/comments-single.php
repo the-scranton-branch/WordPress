@@ -161,13 +161,13 @@ $options = [
 							[
 								'title' => __( 'Initial', 'blocksy' ),
 								'id' => 'default',
-								'inherit' => 'var(--color)'
+								'inherit' => 'var(--theme-text-color)'
 							],
 
 							[
 								'title' => __( 'Hover', 'blocksy' ),
 								'id' => 'hover',
-								'inherit' => 'var(--linkHoverColor)'
+								'inherit' => 'var(--theme-link-hover-color)'
 							],
 						],
 					],

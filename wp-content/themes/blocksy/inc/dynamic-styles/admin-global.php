@@ -4,41 +4,41 @@ if (! isset($selector)) {
 	$selector = ':root';
 }
 
-$max_site_width = get_theme_mod( 'maxSiteWidth', 1290 );
+$max_site_width = blocksy_get_theme_mod( 'maxSiteWidth', 1290 );
 $css->put(
 	':root',
-	'--normal-container-max-width: ' . $max_site_width . 'px'
+	'--theme-normal-container-max-width: ' . $max_site_width . 'px'
 );
 
-$narrowContainerWidth = get_theme_mod( 'narrowContainerWidth', 750 );
+$narrowContainerWidth = blocksy_get_theme_mod( 'narrowContainerWidth', 750 );
 $css->put(
 	':root',
-	'--narrow-container-max-width: ' . $narrowContainerWidth . 'px'
+	'--theme-narrow-container-max-width: ' . $narrowContainerWidth . 'px'
 );
 
-$wideOffset = get_theme_mod( 'wideOffset', 130 );
+$wideOffset = blocksy_get_theme_mod( 'wideOffset', 130 );
 $css->put(
 	':root',
-	'--wide-offset: ' . $wideOffset . 'px'
+	'--theme-wide-offset: ' . $wideOffset . 'px'
 );
 
 $contentSpacingMap = [
-	'none' => '0',
+	'none' => '0px',
 	'compact' => '0.8em',
 	'comfortable' => '1.5em',
 	'spacious' => '2em',
 ];
 
-$contentSpacing = get_theme_mod('contentSpacing', 'comfortable');
+$contentSpacing = blocksy_get_theme_mod('contentSpacing', 'comfortable');
 
 $contentSpacingResult = isset(
 	$contentSpacingMap[$contentSpacing]
 ) ? $contentSpacingMap[$contentSpacing] : $contentSpacingMap['comfortable'];
 
-$css->put(':root', '--content-spacing: ' . $contentSpacingResult);
+$css->put(':root', '--theme-content-spacing: ' . $contentSpacingResult);
 
 if ($contentSpacing === 'none') {
-	$css->put(':root', '--has-content-spacing: 0');
+	$css->put(':root', '--has-theme-content-spacing: 0');
 }
 
 
@@ -84,8 +84,26 @@ if (
 		'tablet_css' => $tablet_css,
 		'mobile_css' => $mobile_css,
 		'selector' => ':root',
-		'variableName' => 'buttonMinHeight',
-		'value' => get_theme_mod('buttonMinHeight', 40)
+		'variableName' => 'theme-button-min-height',
+		'value' => blocksy_get_theme_mod('buttonMinHeight', 40)
+	]);
+
+	blocksy_output_border([
+		'css' => $css,
+		'selector' => ':root',
+		'variableName' => 'button-border',
+		'secondColorVariableName' => 'button-border-hover-color',
+		'value' => get_theme_mod('buttonBorder'),
+		'default' => [
+			'width' => 1,
+			'style' => 'none',
+			'color' => [
+				'color' => 'rgba(224, 229, 235, 0.5)',
+			],
+			'secondColor' => [
+				'color' => 'rgba(224, 229, 235, 0.7)',
+			]
+		]
 	]);
 
 	blocksy_output_spacing([
@@ -93,10 +111,9 @@ if (
 		'tablet_css' => $tablet_css,
 		'mobile_css' => $mobile_css,
 		'selector' => ':root',
-		'property' => 'buttonBorderRadius',
-		'value' => get_theme_mod( 'buttonRadius',
+		'property' => 'theme-button-border-radius',
+		'value' => blocksy_get_theme_mod( 'buttonRadius',
 			blocksy_spacing_value([
-				'linked' => true,
 				'top' => '3px',
 				'left' => '3px',
 				'right' => '3px',
@@ -110,10 +127,9 @@ if (
 		'tablet_css' => $tablet_css,
 		'mobile_css' => $mobile_css,
 		'selector' => ':root',
-		'property' => 'button-padding',
-		'value' => get_theme_mod( 'buttonPadding',
+		'property' => 'theme-button-padding',
+		'value' => blocksy_get_theme_mod( 'buttonPadding',
 			blocksy_spacing_value([
-				'linked' => false,
 				'top' => '5px',
 				'left' => '20px',
 				'right' => '20px',
@@ -162,7 +178,7 @@ if ($post_id) {
 
 		$css->put(
 			':root',
-			'--block-max-width: ' . $template_editor_width . 'px !important'
+			'--theme-block-max-width: ' . $template_editor_width . 'px !important'
 		);
 	}
 }

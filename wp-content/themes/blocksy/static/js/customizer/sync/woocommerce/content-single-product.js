@@ -42,7 +42,7 @@ const renderTabsType = () => {
 		wp.customize('woo_tabs_alignment')()
 }
 
-wp.customize('woo_tabs_type', (val) => val.bind((to) => renderTabsType()))
+// wp.customize('woo_tabs_type', (val) => val.bind((to) => renderTabsType()))
 wp.customize('woo_tabs_alignment', (val) => val.bind((to) => renderTabsType()))
 
 wp.customize('has_product_sticky_gallery', (val) =>
@@ -87,7 +87,7 @@ wp.customize('product_gallery_ratio', (val) =>
 
 		;[
 			...article.querySelectorAll(
-				'.flexy-items .ct-image-container, .woocommerce-product-gallery > .ct-image-container'
+				'.flexy-items .ct-media-container, .woocommerce-product-gallery > .ct-product-gallery-container > .ct-media-container'
 			),
 		].map((el) => {
 			ctEvents.trigger('ct:flexy:update-height')

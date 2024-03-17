@@ -1,20 +1,8 @@
 <?php
 
-add_filter('post_class', function ($classes) {
-	if (function_exists('is_bbpress') && (
-		get_post_type() === 'forum'
-		||
-		get_post_type() === 'topic'
-		||
-		get_post_type() === 'reply'
-	)) {
-		$classes[] = 'bbpress';
-	}
+namespace Blocksy;
 
-	return $classes;
-});
-
-class Blocksy_Custom_Post_Types {
+class CustomPostTypes {
 	private $supported_post_types = null;
 
 	public function wipe_caches() {
@@ -29,19 +17,51 @@ class Blocksy_Custom_Post_Types {
 			]));
 
 			$potential_post_types = array_values(array_diff($potential_post_types, [
-				'cmplz-processing',
-				'cmplz-dataleak',
-				'iamport_payment',
-				'wpcw_achievements',
-				'zoom-meetings',
-				'pafe-formabandonment',
-				'pafe-form-database',
-				'pafe-form-booking',
-				'piotnetforms',
-				'piotnetforms-aban',
-				'piotnetforms-data',
-				'piotnetforms-book',
-				'piotnetforms-fonts',
+
+				// theme
+				'ct_content_block',
+
+				// elements kit
+				'elementskit_content',
+				'elementskit_template',
+				'elementskit_widget',
+
+				// zion builder
+				'zion_template',
+
+				// thrive
+				'tcb_lightbox',
+				'tcb_symbol',
+				'tvo_display_post',
+				'tvo_capture',
+				'tvo_display',
+
+				// learn dash
+				'ld-exam',
+				'groups',
+				'sfwd-assignment',
+				'sfwd-essays',
+				'sfwd-transactions',
+				'sfwd-certificates',
+
+				// Lifter LMS
+				'llms_quiz',
+				'llms_membership',
+				'llms_certificate',
+				'llms_my_certificate',
+
+				// tribe events
+				'tribe_events',
+				'tribe_event_series',
+				'tribe_venue',
+				'tribe_organizer',
+
+				// tutor lms
+				'tutor_quiz',
+				'tutor_assignments',
+				'tutor_zoom_meeting',
+
+				// jet engine
 				'jet-popup',
 				'jet-smart-filters',
 				'jet-theme-core',
@@ -50,51 +70,82 @@ class Blocksy_Custom_Post_Types {
 				'jet-engine-booking',
 				'jet_options_preset',
 				'jet-menu',
+
+				// piotnet forms
+				'piotnetforms',
+				'piotnetforms-aban',
+				'piotnetforms-data',
+				'piotnetforms-book',
+				'piotnetforms-fonts',
+				'pafe-formabandonment',
+				'pafe-form-database',
+				'pafe-form-booking',
+				'pafe-fonts',
+
+				// complianz
+				'cmplz-processing',
+				'cmplz-dataleak',
+
+				// elementor
+				'elementor_library',
+
+				// brizy
+				'brizy_template',
+				'editor-story',
+
+				// mailpoet
+				'mailpoet_page',
+
+				// modern events calendar
+				'mec_esb',
+				'mec-events',
+
+				// woolentor
+				'woolentor-template',
+
+				// shopengine
+				'shopengine-template',
+
+				// blockslider
+				'blockslider',
+
+				// funelfit
+				'wffn_landing',
+				'wffn_ty',
+				'wffn_optin',
+				'wffn_oty',
+				'wfacp_checkout',
+				'wfocu_funnel',
+				'wfocu_offer',
+
+				// co-authors
+				'guest-author',
+
+				// other
+				'iamport_payment',
+				'wpcw_achievements',
+				'zoom-meetings',
 				'adsforwp',
 				'adsforwp-groups',
 				'popup',
-				'ct_content_block',
 				'product',
-				'elementor_library',
-				'brizy_template',
-				'editor-story',
 				'forum',
 				'topic',
 				'reply',
-				'blockslider',
-				'mailpoet_page',
 				'ha_nav_content',
 				'course',
 				'lesson',
 				'atbdp_orders',
 				'at_biz_dir',
-
-				// 'courses',
-				'tutor_quiz',
-				'tutor_assignments',
-				'tutor_zoom_meeting',
-
-				// 'tribe_events',
+				'gspbstylebook',
+				'br_labels',
 				'testimonial',
 				'frm_display',
-				'mec_esb',
-				'mec-events',
-
-				'sfwd-assignment',
-				'sfwd-essays',
-				'sfwd-transactions',
-				'sfwd-certificates',
 				'e-landing-page',
-				'zion_template',
-				'pafe-fonts',
 				'pgc_simply_gallery',
 				'pdfviewer',
 				'da_image',
-
-				// 'sfwd-quiz',
-				// 'sfwd-topic',
-				// 'sfwd-lessons',
-				// 'sfwd-courses'
+				'ha_library',
 			]));
 
 			$this->supported_post_types = array_unique(apply_filters(
@@ -106,7 +157,11 @@ class Blocksy_Custom_Post_Types {
 		return $this->supported_post_types;
 	}
 
-	public function is_supported_post_type() {
+	public function is_supported_post_type($args = []) {
+		$args = wp_parse_args($args, [
+			'allow_built_in' => false
+		]);
+
 		global $post;
 		global $wp_taxonomies;
 		global $wp_query;
@@ -115,7 +170,6 @@ class Blocksy_Custom_Post_Types {
 
 		$tax_query = $wp_query->tax_query;
 
-
 		if (
 			$tax_query
 			&&
@@ -123,10 +177,17 @@ class Blocksy_Custom_Post_Types {
 			&&
 			! is_post_type_archive()
 		) {
-			$tax = $tax_query->queries;
+			$tax = null;
 
-			if (! empty($tax) && isset($tax[0]['taxonomy'])) {
-				$tax = $tax[0]['taxonomy'];
+			foreach ($tax_query->queries as $taxonomy) {
+				if (isset($taxonomy['taxonomy'])) {
+					$taxonomy_obj = get_taxonomy($taxonomy['taxonomy']);
+
+					if ($taxonomy_obj->public) {
+						$tax = $taxonomy['taxonomy'];
+						break;
+					}
+				}
 			}
 
 			if ($tax && ! is_array($tax) && isset($wp_taxonomies[$tax])) {
@@ -146,6 +207,20 @@ class Blocksy_Custom_Post_Types {
 			$post_type = get_query_var('post_type');
 		}
 
+		$builtin_post_types = ['post', 'page'];
+
+		if (function_exists('is_woocommerce')) {
+			$builtin_post_types[] = 'product';
+		}
+
+		if (
+			in_array($post_type, $builtin_post_types)
+			&&
+			$args['allow_built_in']
+		) {
+			return $post_type;
+		}
+
 		$post_type = apply_filters(
 			'blocksy:custom_post_types:current_post_type:compute',
 			$post_type
@@ -159,41 +234,3 @@ class Blocksy_Custom_Post_Types {
 	}
 }
 
-if (! function_exists('blocksy_get_taxonomy_for_cpt')) {
-	function blocksy_get_taxonomies_for_cpt($post_type) {
-		if ($post_type === 'post') {
-			return [
-				'category' => __('Category', 'blocksy'),
-				'post_tag' => __('Tag', 'blocksy')
-			];
-		}
-
-		if ($post_type === 'product') {
-			return [
-				'product_cat' => __('Category', 'blocksy'),
-				'product_tag' => __('Tag', 'blocksy')
-			];
-		}
-
-		$result = [];
-
-		$taxonomies = array_values(array_diff(
-			get_object_taxonomies($post_type),
-			['post_format']
-		));
-
-		if (count($taxonomies) > 0) {
-			foreach ($taxonomies as $single_taxonomy) {
-				$taxonomy_object = get_taxonomy($single_taxonomy);
-
-				$result[$single_taxonomy] = $taxonomy_object->label;
-			}
-		} else {
-			return [
-				'default' => __('Default', 'blocksy')
-			];
-		}
-
-		return $result;
-	}
-}

@@ -112,7 +112,6 @@ class Blocksy_Header_Builder_Render extends Blocksy_Builder_Render {
 			$middle_row_height['desktop'] = 0;
 		}
 
-
 		$is_row_empty_mobile = $this->is_row_empty('bottom-row', 'mobile');
 		$is_row_empty_desktop = $this->is_row_empty('bottom-row', 'desktop');
 
@@ -254,10 +253,6 @@ class Blocksy_Header_Builder_Render extends Blocksy_Builder_Render {
 			'device' => 'desktop'
 		]);
 
-		if ($this->is_row_empty($row)) {
-			return '';
-		}
-
 		$row_config = $this->get_item_config_for($row['id']);
 
 		$simplified_id = str_replace(
@@ -278,13 +273,56 @@ class Blocksy_Header_Builder_Render extends Blocksy_Builder_Render {
 			$container_class = 'ct-container-fluid';
 		}
 
-		$start_placement = $this->render_start_placement($row, [
+		$rendered_placements = [
+			'start' => [
+				'items' => [],
+				'rendered' => ''
+			],
+
+			'start-middle' => [
+				'items' => [],
+				'rendered' => ''
+			],
+
+			'middle' => [
+				'items' => [],
+				'rendered' => ''
+			],
+
+			'end-middle' => [
+				'items' => [],
+				'rendered' => ''
+			],
+
+			'end' => [
+				'items' => [],
+				'rendered' => ''
+			]
+		];
+
+		foreach ($row['placements'] as $placement) {
+			$rendered_placements[$placement['id']] = $placement;
+
+			$rendered_placements[
+				$placement['id']
+			]['rendered'] = $this->render_items_collection(
+				$placement['items'],
+				[
+					'device' => $args['device']
+				]
+			);
+		}
+
+		$start_placement = $this->render_start_placement([
+			'rendered_placements' => $rendered_placements,
 			'device' => $args['device']
 		]);
-		$middle_placement = $this->render_middle_placement($row, [
+		$middle_placement = $this->render_middle_placement([
+			'rendered_placements' => $rendered_placements,
 			'device' => $args['device']
 		]);
-		$end_placement = $this->render_end_placement($row, [
+		$end_placement = $this->render_end_placement([
+			'rendered_placements' => $rendered_placements,
 			'device' => $args['device']
 		]);
 
@@ -332,9 +370,24 @@ class Blocksy_Header_Builder_Render extends Blocksy_Builder_Render {
 		if (
 			$count === 3
 			&&
-			$this->should_column_be_expanded($row, 'middle')
+			$this->should_column_be_expanded($rendered_placements, 'middle')
 		) {
 			$attr['data-middle'] = 'search-input';
+		}
+
+		$visibility_classes = blocksy_visibility_classes(
+			blocksy_default_akg(
+				'headerRowVisibility',
+				$atts,
+				[
+					'tablet' => true,
+					'mobile' => true,
+				]
+			)
+		);
+
+		if (! empty($visibility_classes)) {
+			$attr['class'] = $visibility_classes;
 		}
 
 		$row_container_attr = apply_filters(
@@ -343,7 +396,7 @@ class Blocksy_Header_Builder_Render extends Blocksy_Builder_Render {
 				is_customize_preview() ? [
 					'data-item-label' => $row_config['config']['name'],
 					'data-shortcut' => 'border',
-					'data-location' => $this->get_customizer_location_for(
+					'data-shortcut-location' => $this->get_customizer_location_for(
 						$row['id']
 					),
 				] : []
@@ -352,15 +405,23 @@ class Blocksy_Header_Builder_Render extends Blocksy_Builder_Render {
 			$args['device']
 		);
 
+		$row_content = $start_placement . $middle_placement . $end_placement;
+
+		if (
+			empty($row_content)
+			&&
+			blocksy_akg('render_empty_row', $atts, 'no') === 'no'
+		) {
+			return '';
+		}
+
 		$result = '<div ' . blocksy_attr_to_html($row_container_attr) . '>';
 		$result .= '<div ' . blocksy_attr_to_html(array_merge([
 			'class' => $container_class
 		])) . '>';
 		// $result .= '<div class="' . $container_class . '">';
 
-		$result .= $start_placement;
-		$result .= $middle_placement;
-		$result .= $end_placement;
+		$result .= $row_content;
 
 		$result .= '</div>';
 		$result .= '</div>';
@@ -394,14 +455,8 @@ class Blocksy_Header_Builder_Render extends Blocksy_Builder_Render {
 			}
 		}
 
-		$not_registered_label = sprintf(
-			// translated: %s is the panel builder item ID that is missing
-			__('Item %s not registered or doesn\'t have a view.php file.', 'blocksy'),
-			$item_id
-		);
-
 		if (! $item) {
-			return '<div class="ct-builder-no-item">' . $not_registered_label . '</div>';
+			return  '';
 		}
 
 		$render_args = apply_filters('blocksy:header:item-template-args', [
@@ -415,7 +470,7 @@ class Blocksy_Header_Builder_Render extends Blocksy_Builder_Render {
 				is_customize_preview() ? [
 					'data-item-label' => $item['config']['name'],
 					'data-shortcut' => $item['config']['shortcut_style'],
-					'data-location' => $this->get_customizer_location_for($item_id)
+					'data-shortcut-location' => $this->get_customizer_location_for($item_id)
 				] : []
 			)),
 			'device' => $args['device'],
@@ -428,81 +483,63 @@ class Blocksy_Header_Builder_Render extends Blocksy_Builder_Render {
 				'blocksy:header:item-view-path:' . $item_id,
 				$item['path'] . '/view.php'
 			),
-			$render_args,
-			$not_registered_label
+			$render_args
 		);
 	}
 
-	private function render_start_placement($row, $args = []) {
+	private function render_start_placement($args = []) {
 		$args = wp_parse_args($args, [
+			'rendered_placements' => null,
 			'device' => 'desktop'
 		]);
 
-		$placement = $this->get_placement_by($row, 'start');
-
-		$middle_placement = $this->get_placement_by($row, 'middle');
-		$end_placement = $this->get_placement_by($row, 'end');
-		$start_secondary = $this->get_placement_by($row, 'start-middle');
-		$end_secondary = $this->get_placement_by($row, 'end-middle');
-
-		if (! $placement) {
+		if (! $args['rendered_placements']) {
 			return '';
 		}
 
-		if ($start_secondary && $end_secondary && $end_placement) {
+		// We will skip the start placement only in a few specific situations.
+		if (empty($args['rendered_placements']['start']['rendered'])) {
+			// Only middle is having some elements
 			if (
-				count($start_secondary['items']) === 0
+				empty($args['rendered_placements']['start-middle']['rendered'])
 				&&
-				count($end_secondary['items']) === 0
+				empty($args['rendered_placements']['end-middle']['rendered'])
 				&&
-				count($placement['items']) === 0
-				&&
-				count($end_placement['items']) === 0
+				empty($args['rendered_placements']['end']['rendered'])
 			) {
+				return '';
+			}
+
+			// Middle is empty. End may or may not be empty.
+			if (empty($args['rendered_placements']['middle']['rendered'])) {
 				return '';
 			}
 		}
 
-		if ($middle_placement && $end_placement) {
-			if (
-				count($middle_placement['items']) === 0
-				&&
-				count($placement['items']) === 0
-			) {
-				return '';
-			}
-		}
-
-		$secondary_output = '';
 		$primary_output = '';
+		$secondary_output = '';
 
-		if (count($placement['items']) > 0) {
+		if (! empty($args['rendered_placements']['start']['rendered'])) {
 			$primary_output = blocksy_html_tag(
 				'div',
 				[
 					'data-items' => 'primary'
 				],
-				$this->render_items_collection($placement['items'], [
-					'device' => $args['device']
-				])
+				$args['rendered_placements']['start']['rendered']
 			);
 		}
 
 		if (
-			$middle_placement
+			! empty($args['rendered_placements']['start-middle']['rendered'])
 			&&
-			$start_secondary
-			&&
-			count($middle_placement['items']) > 0
-			&&
-			count($start_secondary['items']) > 0
+			! empty($args['rendered_placements']['middle']['rendered'])
 		) {
 			$secondary_output = blocksy_html_tag(
 				'div',
 				[
 					'data-items' => 'secondary'
 				],
-				$this->render_items_collection($start_secondary['items'])
+				$args['rendered_placements']['start-middle']['rendered']
 			);
 		}
 
@@ -515,6 +552,8 @@ class Blocksy_Header_Builder_Render extends Blocksy_Builder_Render {
 		if (! empty(trim($secondary_output))) {
 			$count++;
 		}
+
+		$column_content = $primary_output . $secondary_output;
 
 		return blocksy_html_tag(
 			'div',
@@ -529,18 +568,17 @@ class Blocksy_Header_Builder_Render extends Blocksy_Builder_Render {
 		);
 	}
 
-	private function render_middle_placement($row, $args = []) {
+	private function render_middle_placement($args = []) {
 		$args = wp_parse_args($args, [
+			'rendered_placements' => null,
 			'device' => 'desktop'
 		]);
 
-		$placement = $this->get_placement_by($row, 'middle');
-
-		if (! $placement) {
+		if (! $args['rendered_placements']) {
 			return '';
 		}
 
-		if (count($placement['items']) === 0) {
+		if (empty($args['rendered_placements']['middle']['rendered'])) {
 			return '';
 		}
 
@@ -550,85 +588,64 @@ class Blocksy_Header_Builder_Render extends Blocksy_Builder_Render {
 			blocksy_html_tag(
 				'div',
 				['data-items' => ''],
-				$this->render_items_collection($placement['items'], [
-					'device' => $args['device']
-				])
+				$args['rendered_placements']['middle']['rendered']
 			)
 		);
 	}
 
-	private function render_end_placement($row, $args = []) {
+	private function render_end_placement($args = []) {
 		$args = wp_parse_args($args, [
+			'rendered_placements' => null,
 			'device' => 'desktop'
 		]);
 
-		$placement = $this->get_placement_by($row, 'end');
-
-		$middle_placement = $this->get_placement_by($row, 'middle');
-		$start_placement = $this->get_placement_by($row, 'start');
-		$start_secondary = $this->get_placement_by($row, 'start-middle');
-		$end_secondary = $this->get_placement_by($row, 'end-middle');
-
-		if (! $placement) {
+		if (! $args['rendered_placements']) {
 			return '';
 		}
 
-		if ($start_secondary && $end_secondary && $start_placement) {
+		// We will skip the end placement only in a few specific situations.
+		if (empty($args['rendered_placements']['end']['rendered'])) {
+			// Only middle is having some elements
 			if (
-				count($start_secondary['items']) === 0
+				empty($args['rendered_placements']['end-middle']['rendered'])
 				&&
-				count($end_secondary['items']) === 0
+				empty($args['rendered_placements']['start-middle']['rendered'])
 				&&
-				count($placement['items']) === 0
-				&&
-				count($start_placement['items']) === 0
+				empty($args['rendered_placements']['start']['rendered'])
 			) {
+				return '';
+			}
+
+			// Middle is empty. End may or may not be empty.
+			if (empty($args['rendered_placements']['middle']['rendered'])) {
 				return '';
 			}
 		}
 
-		if ($middle_placement && $start_placement) {
-			if (
-				count($middle_placement['items']) === 0
-				&&
-				count($placement['items']) === 0
-			) {
-				return '';
-			}
-		}
-
-		$secondary_output = '';
 		$primary_output = '';
+		$secondary_output = '';
 
-		if (count($placement['items']) > 0) {
+		if (! empty($args['rendered_placements']['end']['rendered'])) {
 			$primary_output = blocksy_html_tag(
 				'div',
 				[
 					'data-items' => 'primary'
 				],
-				$this->render_items_collection($placement['items'], [
-					'device' => $args['device']
-				])
+				$args['rendered_placements']['end']['rendered']
 			);
 		}
 
 		if (
-			$middle_placement
+			! empty($args['rendered_placements']['end-middle']['rendered'])
 			&&
-			$end_secondary
-			&&
-			count($middle_placement['items']) > 0
-			&&
-			count($end_secondary['items']) > 0
+			! empty($args['rendered_placements']['middle']['rendered'])
 		) {
 			$secondary_output = blocksy_html_tag(
 				'div',
 				[
 					'data-items' => 'secondary'
 				],
-				$this->render_items_collection($end_secondary['items'], [
-					'device' => $args['device']
-				])
+				$args['rendered_placements']['end-middle']['rendered']
 			);
 		}
 
@@ -655,16 +672,8 @@ class Blocksy_Header_Builder_Render extends Blocksy_Builder_Render {
 		);
 	}
 
-	private function get_placement_by($row, $id) {
-		foreach ($row['placements'] as $placement) {
-			if ($placement['id'] === $id) {
-				return $placement;
-			}
-		}
-
-		return null;
-	}
-
+	// It will only check for items being placed in the row. It won't check if
+	// those items actually exist or return anything.
 	public function is_row_empty($row, $device = '') {
 		if (! is_array($row)) {
 			$current_section = $this->get_current_section();
@@ -724,14 +733,14 @@ class Blocksy_Header_Builder_Render extends Blocksy_Builder_Render {
 		return [];
 	}
 
-	public function should_column_be_expanded($row, $placement) {
+	public function should_column_be_expanded($rendered_placements, $placement) {
 		$menus = [
 			'menu',
 			'menu-secondary',
 			'menu-tertiary',
 		];
 
-		$items = $this->get_placement_by($row, $placement)['items'];
+		$items = $rendered_placements[$placement]['items'];
 
 		if (in_array('search-input', $items)) {
 			return true;

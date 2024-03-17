@@ -18,16 +18,17 @@ export default class ImageUploader extends Component {
 
 	getUrlFor = (attachmentInfo) =>
 		attachmentInfo
-			? (attachmentInfo.width < 700
-					? attachmentInfo.sizes.full
-					: _.max(
-							_.values(
-								_.keys(attachmentInfo.sizes).length === 1
-									? attachmentInfo.sizes
-									: _.omit(attachmentInfo.sizes, 'full')
-							),
-							({ width }) => width
-					  )
+			? (
+					(attachmentInfo.width < 700
+						? attachmentInfo.sizes && attachmentInfo.sizes.full
+						: _.max(
+								_.values(
+									_.keys(attachmentInfo.sizes).length === 1
+										? attachmentInfo.sizes
+										: _.omit(attachmentInfo.sizes, 'full')
+								),
+								({ width }) => width
+						  )) || {}
 			  ).url || attachmentInfo.url
 			: null
 
@@ -56,7 +57,8 @@ export default class ImageUploader extends Component {
 			},
 			states: [
 				new wp.media.controller.Library({
-					title: __('Select logo', 'blocksy'),
+					title:
+						this.props.option.label || __('Select logo', 'blocksy'),
 					library: wp.media.query({
 						type: this.props.option.mediaType || 'image',
 					}),
@@ -71,8 +73,8 @@ export default class ImageUploader extends Component {
 					? []
 					: [
 							new wp.media.controller.CustomizeImageCropper({
-								imgSelectOptions: this
-									.calculateImageSelectOptions,
+								imgSelectOptions:
+									this.calculateImageSelectOptions,
 								control: this,
 							}),
 					  ]),
@@ -333,14 +335,27 @@ export default class ImageUploader extends Component {
 								this.openFrame()
 							}>
 							{!this.props.option.has_position_picker && (
-								<img
-									className="attachment-thumb"
-									src={this.getUrlFor(
-										this.state.attachment_info
+								<>
+									{!this.props.option.mediaType ||
+									this.props.option?.mediaType?.includes(
+										'image'
+									) ? (
+										<img
+											className="attachment-thumb"
+											src={this.getUrlFor(
+												this.state.attachment_info
+											)}
+											draggable="false"
+											alt=""
+										/>
+									) : (
+										<p>
+											{this.getUrlFor(
+												this.state.attachment_info
+											)}
+										</p>
 									)}
-									draggable="false"
-									alt=""
-								/>
+								</>
 							)}
 
 							{this.props.option.has_position_picker && (
@@ -362,26 +377,32 @@ export default class ImageUploader extends Component {
 								/>
 							)}
 
-							<div className="actions">
-								<button
-									type="button"
-									className="button edit-button control-focus"
-									title={__('Edit', 'blocksy')}
-									onClick={(e) => {
-										e.stopPropagation()
-										this.openFrame()
-									}}
-									id="customize-media-control-button-35"></button>
-								<button
-									onClick={(e) => {
-										e.stopPropagation()
-										this.setState({ attachment_info: null })
-										this.onChange(null)
-									}}
-									title={__('Remove', 'blocksy')}
-									type="button"
-									className="button remove-button"></button>
-							</div>
+							<ul className="actions">
+								<li>
+									<button
+										type="button"
+										className="button edit-button control-focus"
+										title={__('Edit', 'blocksy')}
+										onClick={(e) => {
+											e.stopPropagation()
+											this.openFrame()
+										}}
+										id="customize-media-control-button-35"></button>
+								</li>
+								<li>
+									<button
+										onClick={(e) => {
+											e.stopPropagation()
+											this.setState({
+												attachment_info: null,
+											})
+											this.onChange(null)
+										}}
+										title={__('Remove', 'blocksy')}
+										type="button"
+										className="button remove-button"></button>
+								</li>
+							</ul>
 						</div>
 					</Fragment>
 				) : (
@@ -389,7 +410,7 @@ export default class ImageUploader extends Component {
 						<button
 							type="button"
 							onClick={() => this.openFrame()}
-							className="button ct-upload-button"
+							className="ct-upload-button"
 							id="customize-media-control-button-50">
 							{this.props.option.emptyLabel ||
 								__('Select logo', 'blocksy')}

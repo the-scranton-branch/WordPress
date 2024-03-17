@@ -35,11 +35,15 @@ const GenericContainerType = ({
 		Container = LabeledGroup
 	}
 
+	const onChangeViaContainer = (key, value) => {
+		onChange(key, value)
+	}
+
 	if (Container) {
 		return (
 			<Container
 				purpose={purpose}
-				onChange={onChange}
+				onChange={onChangeViaContainer}
 				value={value}
 				renderingChunk={renderingChunk}
 				hasRevertButton={hasRevertButton}

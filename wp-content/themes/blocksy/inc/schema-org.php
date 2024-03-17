@@ -2,7 +2,7 @@
 
 if (! function_exists('blocksy_has_schema_org_markup')) {
 	function blocksy_has_schema_org_markup() {
-		return get_theme_mod('enable_schema_org_markup', 'yes') === 'yes';
+		return blocksy_get_theme_mod('enable_schema_org_markup', 'yes') === 'yes';
 	}
 }
 
@@ -12,13 +12,14 @@ if (! function_exists('blocksy_schema_org_definitions')) {
 			$args,
 			[
 				'array' => false,
-				'to_merge' => []
+				'to_merge' => [],
+				'condition' => true
 			]
 		);
 
 		$value = [];
 
-		if (!blocksy_has_schema_org_markup()) {
+		if (! blocksy_has_schema_org_markup() || ! $args['condition']) {
 			if ($args['array']) {
 				return $value;
 			}
@@ -97,13 +98,20 @@ if (! function_exists('blocksy_schema_org_definitions')) {
 					'itemtype' => 'https://schema.org/CreativeWork'
 				];
 			} else {
-				if (is_home() || is_archive()) {
+				if (is_home() || is_archive() || is_search()) {
 					$value = [
 						'itemscope' => 'itemscope',
 						'itemtype' => 'https://schema.org/CreativeWork'
 					];
 				}
 			}
+		}
+
+		if ($place === 'creative_work:related_posts') {
+			$value = [
+				'itemscope' => 'itemscope',
+				'itemtype' => 'https://schema.org/CreativeWork'
+			];
 		}
 
 		if ($place === 'header') {

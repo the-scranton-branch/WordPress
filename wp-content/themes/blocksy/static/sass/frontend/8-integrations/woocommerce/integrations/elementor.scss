@@ -1,5 +1,6 @@
-.elementor-widget-container {
+@import '../../../1-helpers/functions.scss';
 
+.elementor-widget-container {
 	// single product slider
 	.flex-viewport {
 		margin-bottom: 20px;
@@ -7,7 +8,7 @@
 
 	.flex-control-thumbs {
 		margin: 0 -10px;
-		
+
 		li {
 			padding: 0 10px 10px 10px;
 		}
@@ -19,23 +20,19 @@
 	}
 }
 
-
 // quantity input
 .elementor-add-to-cart--align-justify {
-
-	.quantity[data-type="type-1"] {
+	.quantity[data-type='type-1'] {
 		flex: 0 0 100px;
 	}
 
-	.quantity[data-type="type-2"] {
+	.quantity[data-type='type-2'] {
 		flex: 0 0 130px;
 	}
 }
 
 .elementor-widget-woocommerce-cart .woocommerce {
-
 	.quantity[data-type] {
-
 		.input-text {
 			text-align: center;
 			max-height: initial;
@@ -46,6 +43,25 @@
 
 			&:hover {
 				color: var(--quantity-arrows-hover-color, #fff);
+			}
+		}
+	}
+}
+
+// product tabs
+.woocommerce
+	div.product.elementor
+	.woocommerce-tabs
+	.woocommerce-Tabs-panel.panel {
+	margin: 0;
+}
+
+// cart page
+.woocommerce-cart-form table.cart {
+	.actions {
+		.coupon {
+			@include media-breakpoint-down(sm) {
+				flex-direction: column !important;
 			}
 		}
 	}

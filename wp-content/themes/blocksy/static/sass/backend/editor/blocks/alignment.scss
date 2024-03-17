@@ -1,13 +1,18 @@
-:root .block-editor-block-list__layout.is-root-container {
+.is-root-container {
+
+	// full width blocks
+	> .alignfull {
+		margin-inline: var(--has-wide, -#{$sides_spacing});
+	}
 
 	> .wp-block {
 
 		&.alignleft {
-			margin-inline-start: calc( ( 100% - #{'min(var(--block-max-width), 100%)'} ) / 2 );
+			margin-inline-start: calc( ( 100% - #{'min(var(--theme-block-max-width), 100%)'} ) / 2 );
 		}
 
 		&.alignright {
-			margin-inline-end: calc( ( 100% - #{'min(var(--block-max-width), 100%)'} ) / 2 );
+			margin-inline-end: calc( ( 100% - #{'min(var(--theme-block-max-width), 100%)'} ) / 2 );
 		}
 	}
 }

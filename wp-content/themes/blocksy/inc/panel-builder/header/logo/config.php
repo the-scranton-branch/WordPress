@@ -18,7 +18,8 @@ $config = [
 		'has_tagline',
 		'site_description_wrapper',
 		'site_title_custom_tag',
-		'site_title_wrapper'
+		'site_title_wrapper',
+		'inline_svg_logos'
 	],
 
 	'translation_keys' => [

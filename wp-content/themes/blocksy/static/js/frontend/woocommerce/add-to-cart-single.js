@@ -44,6 +44,7 @@ function singleProductAddToCart(wrapper) {
 	button.addClass('loading')
 
 	// Trigger event.
+
 	$(document.body).trigger('adding_to_cart', [button, {}])
 
 	currentTask = fetch(formUrl, {
@@ -56,19 +57,22 @@ function singleProductAddToCart(wrapper) {
         */
 	})
 		.then((r) => r.text())
-		.then((data, textStatus, jqXHR) => {
+		.then((addToCartData, textStatus, jqXHR) => {
 			const div = document.createElement('div')
-			div.innerHTML = data
+			div.innerHTML = addToCartData
 
-			let error = div.querySelector('.woocommerce-error')
+			const errorSelector =
+				'.woocommerce-error, .wc-block-components-notice-banner.is-error'
+
+			let error = div.querySelector(errorSelector)
 
 			if (error && error.innerHTML.length > 0) {
 				let notices = document.querySelector(
 					'.woocommerce-notices-wrapper'
 				)
 
-				if (notices.querySelector('.woocommerce-error')) {
-					notices.querySelector('.woocommerce-error').remove()
+				if (notices.querySelector(errorSelector)) {
+					notices.querySelector(errorSelector).remove()
 				}
 
 				if (notices) {
@@ -78,8 +82,26 @@ function singleProductAddToCart(wrapper) {
 				return
 			}
 
+			$(document.body).trigger('added_to_cart', [
+				{},
+				addToCartData.cart_hash,
+				button,
+				quantity,
+			])
+
 			$(document.body).trigger('wc_fragment_refresh')
 
+			if (form.closest('.quick-view-modal').length) {
+				form.closest('.quick-view-modal')
+					.find('.ct-quick-add')
+					.addClass('added')
+
+				form.closest('.quick-view-modal')
+					.find('.ct-quick-add')
+					.removeClass('loading')
+			}
+
+			/*
 			$.ajax({
 				url: wc_cart_fragments_params.wc_ajax_url
 					.toString()
@@ -93,25 +115,9 @@ function singleProductAddToCart(wrapper) {
 
 						$(document.body).trigger('wc_fragments_refreshed')
 					}
-
-					if (form.closest('.quick-view-modal').length) {
-						form.closest('.quick-view-modal')
-							.find('.ct-quick-add')
-							.addClass('added')
-
-						form.closest('.quick-view-modal')
-							.find('.ct-quick-add')
-							.removeClass('loading')
-					}
-
-					$(document.body).trigger('added_to_cart', [
-						data.fragments,
-						data.cart_hash,
-						button,
-						quantity,
-					])
 				},
 			})
+            */
 		})
 		.catch(() => button.removeClass('loading'))
 		.finally(() => button.removeClass('loading'))

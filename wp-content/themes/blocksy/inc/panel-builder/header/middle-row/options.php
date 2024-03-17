@@ -16,7 +16,7 @@ if (empty($default_background)) {
 	$default_background = blocksy_background_default_value([
 		'backgroundColor' => [
 			'default' => [
-				'color' => 'var(--paletteColor8)',
+				'color' => 'var(--theme-palette-color-8)',
 			],
 		],
 	]);
@@ -105,6 +105,29 @@ $options = [
 						'sync' => [
 							'id' => 'header_placements_1'
 						],
+					],
+				],
+			],
+
+			blocksy_rand_md5() => [
+				'type' => 'ct-condition',
+				'condition' => [ 'wp_customizer_current_view' => 'tablet|mobile' ],
+				'options' => [
+					'headerRowVisibility' => [
+						'label' => __( 'Row Visibility', 'blocksy' ),
+						'type' => 'ct-visibility',
+						'design' => 'block',
+						'divider' => 'top:full',
+						'allow_empty' => true,
+						'value' => [
+							'tablet' => true,
+							'mobile' => true,
+						],
+						'choices' => blocksy_ordered_keys([
+							'tablet' => __( 'Tablet', 'blocksy' ),
+							'mobile' => __( 'Mobile', 'blocksy' ),
+						]),
+						'setting' => [ 'transport' => 'postMessage' ],
 					],
 				],
 			],
@@ -492,9 +515,7 @@ $options = [
 						'type' => 'ct-spacing',
 						'sync' => 'live',
 						'divider' => 'top: full',
-						'value' => blocksy_spacing_value([
-							'linked' => true,
-						]),
+						'value' => blocksy_spacing_value(),
 						'responsive' => true
 					],
 				],

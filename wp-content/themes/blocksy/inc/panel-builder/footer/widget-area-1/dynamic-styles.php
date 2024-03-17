@@ -85,7 +85,7 @@ blocksy_output_colors([
 					'to_add' => '.ct-widget'
 				])
 			),
-			'variable' => 'color'
+			'variable' => 'theme-text-color'
 		],
 
 		'link_initial' => [
@@ -100,7 +100,7 @@ blocksy_output_colors([
 					'to_add' => '.ct-widget'
 				])
 			),
-			'variable' => 'linkInitialColor'
+			'variable' => 'theme-link-initial-color'
 		],
 
 		'link_hover' => [
@@ -115,7 +115,7 @@ blocksy_output_colors([
 					'to_add' => '.ct-widget'
 				])
 			),
-			'variable' => 'linkHoverColor'
+			'variable' => 'theme-link-hover-color'
 		],
 	],
 ]);
@@ -130,9 +130,9 @@ blocksy_output_spacing([
 		'to_add' => $selector
 	])),
 	'important' => true,
-	'value' => blocksy_default_akg( 'widget_area_margin', $atts,
-		blocksy_spacing_value([
-			'linked' => true,
-		])
+	'value' => blocksy_default_akg(
+		'widget_area_margin',
+		$atts,
+		blocksy_spacing_value()
 	)
 ]);

@@ -12,6 +12,9 @@ $source_options = [
 	'default' => __('Default', 'blocksy')
 ];
 
+$is_shop = class_exists( 'woocommerce' );
+
+
 if (function_exists('rank_math_the_breadcrumbs')) {
 	ob_start();
 	rank_math_the_breadcrumbs();
@@ -108,23 +111,61 @@ $breadcrumbs_options = [
 			],
 
 			'breadcrumb_page_title' => [
-				'label' => __( 'Current Page/Post Title', 'blocksy' ),
+				'label' => __( 'Single Page/Post Title', 'blocksy' ),
 				'type' => 'ct-switch',
 				'value' => 'yes',
-				'divider' => 'top',
+				'divider' => 'top:full',
+				'sync' => blocksy_sync_whole_page([
+					'loader_selector' => '.ct-breadcrumbs'
+				]),
+			],
+
+			'breadcrumb_single_taxonomy_title' => [
+				'label' => __( 'Single Page/Post Taxonomy Title', 'blocksy' ),
+				'type' => 'ct-switch',
+				'value' => 'yes',
+				'divider' => 'top:full',
 				'sync' => blocksy_sync_whole_page([
 					'loader_selector' => '.ct-breadcrumbs'
 				]),
 			],
 
 			'breadcrumb_taxonomy_title' => [
-				'label' => __( 'Current Taxonomy Title', 'blocksy' ),
+				'label' => __( 'Archive Taxonomy Title', 'blocksy' ),
 				'type' => 'ct-switch',
 				'value' => 'yes',
-				'divider' => 'top',
 				'sync' => blocksy_sync_whole_page([
 					'loader_selector' => '.ct-breadcrumbs'
 				]),
+			],
+
+			blocksy_rand_md5() => [
+				'type' => 'ct-condition',
+				'condition' => ['show_on_front' => '!posts'],
+				'values_source' => 'global',
+				'options' => [
+					'breadcrumb_blog_item' => [
+						'label' => __('Blog Page in Breadcrumbs', 'blocksy'),
+						'type' => 'ct-switch',
+						'value' => 'no',
+						'sync' => blocksy_sync_whole_page([
+							'loader_selector' => '.ct-breadcrumbs'
+						]),
+					],
+				]
+			],
+
+			blocksy_rand_md5() => [
+				'options' => $is_shop ? [
+						'breadcrumb_shop_item' => [
+						'label' => __('Shop Page in Breadcrumbs', 'blocksy'),
+						'type' => 'ct-switch',
+						'value' => 'no',
+						'sync' => blocksy_sync_whole_page([
+							'loader_selector' => '.ct-breadcrumbs'
+						]),
+					]
+				] : []
 			],
 
 		],
@@ -172,19 +213,19 @@ $breadcrumbs_options = [
 					[
 						'title' => __( 'Text', 'blocksy' ),
 						'id' => 'default',
-						'inherit' => 'var(--color)'
+						'inherit' => 'var(--theme-text-color)'
 					],
 
 					[
 						'title' => __( 'Link Initial', 'blocksy' ),
 						'id' => 'initial',
-						'inherit' => 'var(--linkInitialColor)'
+						'inherit' => 'var(--theme-link-initial-color)'
 					],
 
 					[
 						'title' => __( 'Link Hover', 'blocksy' ),
 						'id' => 'hover',
-						'inherit' => 'var(--linkHoverColor)'
+						'inherit' => 'var(--theme-link-hover-color)'
 					],
 				],
 			],
@@ -205,7 +246,7 @@ $options = [
 				'type' => 'ct-select',
 				'value' => 'default',
 				'choices' => $source_options,
-				'divider' => 'bottom'
+				'divider' => 'bottom:full'
 			],
 
 			blocksy_rand_md5() => [

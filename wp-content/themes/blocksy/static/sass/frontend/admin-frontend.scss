@@ -28,9 +28,8 @@
 
 	span {
 		position: absolute;
-		top: 0;
-		right: 0;
-		bottom: 0;
+		inset-block: 0;
+		inset-inline-end: 0;
 		display: flex;
 		align-items: center;
 		justify-content: center;
@@ -87,15 +86,8 @@ body [data-customize-hide] {
 	display: none !important;
 }
 
-// disable transitions
-// .ct-disable-transitions,
-// .ct-disable-transitions * {
-// 	transition: none !important;
-// }
-
 // Customizer shortcuts
 [data-shortcut] {
-	--accentColor: #2271b1;
 	position: relative;
 }
 
@@ -110,9 +102,7 @@ body [data-customize-hide] {
 	margin: 0 !important;
 	opacity: 0;
 	visibility: hidden;
-
-	transition: color 0.15s ease, opacity 0.15s ease, transform 0.15s ease,
-		visibility 0.15s ease;
+	transition: all 0.2s ease;
 
 	&:hover {
 		color: rgba(255, 255, 255, 0.75);
@@ -125,11 +115,11 @@ body [data-customize-hide] {
 	outline-style: var(--ui-outlineStyle, solid);
 	outline-offset: var(--ui-outlineOffset, -1px);
 	outline-color: transparent;
-	transition: outline 0.15s ease;
+	transition: outline 0.2s ease, opacity 0.2s ease, transform 0.2s ease;
 
 	> .ct-customizer-shortcut {
 		top: var(--ui-top, 0px);
-		left: var(--ui-left, 0px);
+		inset-inline-start: var(--ui-left, 0px);
 		width: auto !important;
 		height: 28px;
 		padding: 0 13px;
@@ -137,18 +127,22 @@ body [data-customize-hide] {
 		font-weight: 600;
 		letter-spacing: 0.03em;
 		text-transform: uppercase;
-		background: var(--accentColor);
+		background: var(--ui-accent-color, #2271b1);
 		border-radius: 0 0 2px 0;
 	}
 
 	&:hover {
-		outline-color: var(--accentColor);
+		outline-color: var(--ui-accent-color, #2271b1);
 
 		> .ct-customizer-shortcut {
 			opacity: 1;
 			visibility: visible;
 		}
 	}
+}
+
+[data-shortcut*='outside'] {
+	--ui-outlineOffset: 0px;
 }
 
 [data-shortcut='border-dashed'] {
@@ -161,10 +155,6 @@ body [data-customize-hide] {
 	}
 }
 
-[data-shortcut*='outside'] {
-	--ui-outlineOffset: 0px;
-}
-
 // type drop
 $drop-size: 22px;
 
@@ -174,7 +164,7 @@ $drop-size: 22px;
 		align-items: center;
 		justify-content: center;
 		top: calc(50% - #{calc($drop-size / 2)});
-		right: -5px;
+		inset-inline-end: -5px;
 		width: $drop-size;
 		height: $drop-size;
 		transform: translateX(100%);
@@ -191,16 +181,16 @@ $drop-size: 22px;
 
 		&:before {
 			top: 0;
-			left: 0;
+			inset-inline-start: 0;
 			width: inherit;
 			height: inherit;
-			background: var(--accentColor);
+			background: var(--ui-accent-color, #2271b1);
 			border-radius: 100% 100% 100% 2px;
 			transform: rotate(45deg);
 		}
 
 		&:after {
-			left: -15px;
+			inset-inline-start: -15px;
 			width: calc(100% + #{$drop-size});
 			height: calc(100% + #{$drop-size});
 		}
@@ -231,6 +221,21 @@ $drop-size: 22px;
 
 // admin bar shift when overlay opens
 [data-panel] #wpadminbar {
-	padding-right: var(--scrollbar-width, 0px);
+	padding-inline-end: var(--scrollbar-width, 0px);
 }
 
+// search live results helper
+.ct-search-form {
+
+	&:not([data-live-results*='thumbs']) .ct-media-container {
+		display: none;
+	}
+
+	&:not([data-live-results*='product_price']) .price {
+		display: none;
+	}
+
+	&:not([data-live-results*='product_status']) .stock-status {
+		display: none;
+	}
+}

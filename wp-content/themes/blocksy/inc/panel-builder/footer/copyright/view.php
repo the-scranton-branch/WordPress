@@ -17,17 +17,23 @@ $theme = blocksy_get_wp_theme();
 $text = str_replace(
 	'{current_year}',
 	date("Y"),
-	blocksy_translate_dynamic(blocksy_default_akg(
-		'copyright_text',
-		$atts,
-		apply_filters(
-			'blocksy:footer:copyright:default-value',
-			__(
-				'Copyright &copy; {current_year} - WordPress Theme by {theme_author}',
-				'blocksy'
-			)
+	apply_filters(
+		'blocksy:footer:copyright:value',
+		blocksy_translate_dynamic(
+			blocksy_default_akg(
+				'copyright_text',
+				$atts,
+				apply_filters(
+					'blocksy:footer:copyright:default-value',
+					__(
+						'Copyright &copy; {current_year} - WordPress Theme by {theme_author}',
+						'blocksy'
+					)
+				)
+			),
+			'footer:' . $section_id . ':copyright:copyright_text'
 		)
-	), 'footer:' . $section_id . ':copyright:copyright_text')
+	)
 );
 
 $text = str_replace(
@@ -36,7 +42,7 @@ $text = str_replace(
 	$text
 );
 
-$text = do_shortcode(str_replace(
+$text = blocksy_output_html_safely(str_replace(
 	'{theme_author}',
 	blocksy_html_tag(
 		'a',

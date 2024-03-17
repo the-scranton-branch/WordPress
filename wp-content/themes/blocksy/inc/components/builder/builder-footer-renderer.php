@@ -42,7 +42,7 @@ class Blocksy_Footer_Builder_Render extends Blocksy_Builder_Render {
 			array_merge(
 				[
 					'id' => 'footer',
-					'class' => 'ct-footer',
+					'class' => 'ct-footer' . (blocksy_akg('footer_container_structure', $atts, 'fixed') === 'boxed' ? ' ct-container': ''),
 					'data-id' => $this->get_short_section_id()
 				],
 				blocksy_schema_org_definitions('footer', [
@@ -188,8 +188,19 @@ class Blocksy_Footer_Builder_Render extends Blocksy_Builder_Render {
 
 		$container_class = 'ct-container';
 
-		if (blocksy_default_akg('footerRowWidth', $atts, 'fixed') !== 'fixed') {
+		$footer = $this->get_current_section();
+		$footer_atts = $footer['settings'];
+
+		if (
+			blocksy_default_akg('footerRowWidth', $atts, 'fixed') !== 'fixed'
+			||
+			blocksy_akg('footer_container_structure', $footer_atts, 'fixed') === 'fluid'
+		) {
 			$container_class = 'ct-container-fluid';
+		}
+
+		if (blocksy_akg('footer_container_structure', $footer_atts, 'fixed') === 'boxed') {
+			$container_class = 'ct-container-auto';
 		}
 
 		$row_divider_output = [];
@@ -216,7 +227,7 @@ class Blocksy_Footer_Builder_Render extends Blocksy_Builder_Render {
 			is_customize_preview() ? [
 				'data-item-label' => $row_config['config']['name'],
 				'data-shortcut' => 'border',
-				'data-location' => $this->get_customizer_location_for(
+				'data-shortcut-location' => $this->get_customizer_location_for(
 					$row['id']
 				),
 			] : []
@@ -256,7 +267,7 @@ class Blocksy_Footer_Builder_Render extends Blocksy_Builder_Render {
 					is_customize_preview()
 				) {
 					$column_attr['data-shortcut'] = 'border-dashed';
-					$column_attr['data-location'] = $this->get_customizer_location_for($column[0]);
+					$column_attr['data-shortcut-location'] = $this->get_customizer_location_for($column[0]);
 				}
 			}
 
@@ -340,17 +351,8 @@ class Blocksy_Footer_Builder_Render extends Blocksy_Builder_Render {
 			}
 		}
 
-		$not_registered_label = sprintf(
-			// translated: %s is the panel builder item ID that is missing
-			__(
-				'Item %s not registered or doesn\'t have a view.php file.',
-				'blocksy'
-			),
-			$item_id
-		);
-
 		if (! $item) {
-			return '<div class="ct-builder-no-item">' . $not_registered_label . '</div>';
+			return '';
 		}
 
 		return blocksy_render_view(
@@ -365,12 +367,11 @@ class Blocksy_Footer_Builder_Render extends Blocksy_Builder_Render {
 					is_customize_preview() ? [
 						'data-item-label' => $item['config']['name'],
 						'data-shortcut' => $item['config']['shortcut_style'],
-						'data-location' => $this->get_customizer_location_for($item_id)
+						'data-shortcut-location' => $this->get_customizer_location_for($item_id)
 					] : []
 				)),
 				'item_id' => $item_id
-			],
-			$not_registered_label
+			]
 		);
 	}
 

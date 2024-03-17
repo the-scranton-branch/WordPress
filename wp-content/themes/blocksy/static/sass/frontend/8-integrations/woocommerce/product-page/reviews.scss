@@ -1,41 +1,21 @@
 [data-content="normal"] .woocommerce-Reviews {
 	@include media-breakpoint-up (lg) {
-		flex-direction: row;
-		justify-content: space-between;
-
-		#comments,
-		#review_form_wrapper {
-			width: 47%;
-		}
+		grid-template-columns: repeat(2, 1fr);
+		column-gap: 5%;
 	}
+}
 
-	// @include media-breakpoint-up (lg) {
-	// 	display: flex;
-	// 	justify-content: space-between;
-
-	// 	#comments,
-	// 	#review_form_wrapper {
-	// 		width: 47%;
-	// 	}
-	// }
+.entry-summary .woocommerce-Reviews {
+	grid-template-columns: auto;
 }
 
 .woocommerce-Reviews {
-	display: flex;
-	flex-direction: column;
+	display: grid;
 	row-gap: 40px;
-
-
-
-	// @include media-breakpoint-down (md) {
-		#comments {
-			// margin-bottom: 40px;
-		}
-	// }
 
 	h2,
 	.comment-reply-title {
-		--fontSize: 20px;
+		font-size: 20px;
 		margin-bottom: 20px;
 	}
 
@@ -45,42 +25,50 @@
 	}
 
 	.commentlist {
-		border-top: 1px solid var(--border-color);
 
 		li {
-			margin-bottom: 0;
+			border-top: 1px solid var(--theme-border-color);
 
 			&:not(:last-child) {
 				.comment_container {
 					padding-bottom: 40px;
-					border-bottom: 1px solid var(--border-color);
 				}
+			}
+		}
+
+		.children {
+			@include media-breakpoint-down(sm) {
+				--theme-list-indent: 35px;
+			}
+
+			@include media-breakpoint-up(md) {
+				--theme-list-indent: 70px;
 			}
 		}
 	}
 
 	.comment_container {
-		position: relative;
+		display: grid;
+		gap: 25px;
 		padding-top: 40px;
 	}
 
+	.ct-has-avatar .comment_container {
+		@include media-breakpoint-up (sm) {
+			grid-template-columns: 45px 1fr;
+		}
+	}
+
 	.avatar {
-		position: absolute;
-		left: 0;
-		width: 45px;
-		height: 45px;
+		max-width: 45px;
 		border-radius: 100%;
 	}
 
-	.comment-text {
-		padding-inline-start: 70px;
+	.description {
+		word-break: break-word;
 
-		.description > * {
-			margin: 20px 0 0 0;
-
-			&:first-child {
-				margin-top: 0;
-			}
+		*:last-child {
+			margin-bottom: 0;
 		}
 	}
 
@@ -91,32 +79,21 @@
 
 		@include media-breakpoint-up (sm) {
 			float: right;
-			margin-top: 2px;
+			margin-top: 3px;
 		}
 	}
 
 	.meta {
 		display: flex;
+		flex-wrap: wrap;
 		align-items: center;
 		line-height: 20px;
 
-		span {
-			display: inline-block;
-			text-indent: -99999px;
-			margin: 0 10px;
-
-			&:before {
-				font-size: 10px;
-				float: left;
-				content: '/';
-				text-indent: 1px;
-			}
-		}
-
-		time {
+		:is(em, time, span) {
 			font-size: 11px;
 			font-weight: 500;
 			text-transform: uppercase;
+			margin-inline-start: 0.7em;
 		}
 	}
 

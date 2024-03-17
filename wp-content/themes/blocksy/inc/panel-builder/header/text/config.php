@@ -3,7 +3,8 @@
 $config = [
 	'name' => __('HTML', 'blocksy'),
 	'typography_keys' => ['headerTextFont'],
-	'clone' => true,
+	// 'clone' => true,
+	'clone' => 9,
 
 	'selective_refresh' => [
 		'user_visibility'

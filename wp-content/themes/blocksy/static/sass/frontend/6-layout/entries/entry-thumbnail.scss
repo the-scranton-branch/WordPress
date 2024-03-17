@@ -1,73 +1,41 @@
-// important
-.entry-card .ct-image-container img {
-	height: 100%;
-}
+.entry-card {
 
-// boundless image
-.entry-card .boundless-image {
-	width: calc(100% + var(--card-inner-spacing, 30px) * 2);
-	margin-left: calc(var(--card-inner-spacing, 30px) * -1);
-	margin-right: calc(var(--card-inner-spacing, 30px) * -1);
+	.ct-media-container {
+		border-radius: var(--theme-image-border-radius, var(--theme-border-radius, 0px));
 
-	&:first-child {
-		border-top-left-radius: inherit;
-		border-top-right-radius: inherit;
-		margin-top: calc(var(--card-inner-spacing, 30px) * -1);
+		// img {
+		// 	height: 100%;
+		// }
 	}
 
-	&:last-child {
-		border-bottom-left-radius: inherit;
-		border-bottom-right-radius: inherit;
-		margin-bottom: calc(var(--card-inner-spacing, 30px) * -1);
+	// boundless image
+	.boundless-image {
+		width: calc(100% + var(--card-inner-spacing, 30px) * 2);
+		margin-inline: calc(var(--card-inner-spacing, 30px) * -1);
+
+		&:first-child {
+			border-end-start-radius: 0;
+			border-end-end-radius: 0;
+			margin-top: calc(var(--card-inner-spacing, 30px) * -1);
+		}
+
+		&:last-child {
+			border-start-start-radius: 0;
+			border-start-end-radius: 0;
+			margin-bottom: calc(var(--card-inner-spacing, 30px) * -1);
+		}
+
+		&:not(:first-child):not(:last-child) {
+			border-radius: 0;
+		}
 	}
 }
+
 
 [data-layout="simple"] .entry-card .boundless-image {
 	@include media-breakpoint-up (md) {
-		border-top-right-radius: 0;
-		border-bottom-left-radius: inherit;
-	}
-}
-
-// featured image border radius
-.entry-card .ct-image-container:not(.boundless-image) {
-	border-radius: var(--borderRadius, 0px);
-}
-
-
-// hover effect
-[data-hover] .ct-image-container img {
-	transition: opacity 0.5s ease,
-				transform 0.5s ease;
-}
-
-[data-hover="zoom-in"] {
-	> *:hover .ct-image-container img {
-		transform: scale(1.1);
-	}
-}
-
-[data-hover="zoom-out"] {
-	.ct-image-container img {
-		transform: scale(1.1);
-	}
-
-	> *:hover .ct-image-container img {
-		transform: scale(1.0);
-	}
-}
-
-[data-hover="swap"] {
-	.ct-swap {
-		position: absolute;
-		top: 0;
-		left: 0;
-		right: 0;
-		bottom: 0;
-		opacity: 0;
-	}
-
-	> *:hover .ct-swap {
-		opacity: 1;
+		border-radius: var(--theme-image-border-radius, var(--theme-border-radius, 0px));
+		border-start-end-radius: 0;
+		border-end-end-radius:0;
 	}
 }

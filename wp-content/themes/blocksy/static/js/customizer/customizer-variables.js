@@ -2,101 +2,36 @@ import { handleVariablesFor } from 'customizer-sync-helpers/dist/simplified'
 
 export const listenToVariables = () => {
 	handleVariablesFor({
-		colorPalette: [
-			{
-				variable: 'paletteColor1',
-				type: 'color:color1',
-			},
-
-			{
-				variable: 'paletteColor2',
-				type: 'color:color2',
-			},
-
-			{
-				variable: 'paletteColor3',
-				type: 'color:color3',
-			},
-
-			{
-				variable: 'paletteColor4',
-				type: 'color:color4',
-			},
-
-			{
-				variable: 'paletteColor5',
-				type: 'color:color5',
-			},
-
-			{
-				variable: 'paletteColor6',
-				type: 'color:color6',
-			},
-
-			{
-				variable: 'paletteColor7',
-				type: 'color:color7',
-			},
-
-			{
-				variable: 'paletteColor8',
-				type: 'color:color8',
-			},
-		],
-
-		darkColorPalette: [
-			{
-				variable: 'darkPaletteColor1',
-				type: 'color:color1',
-			},
-
-			{
-				variable: 'darkPaletteColor2',
-				type: 'color:color2',
-			},
-
-			{
-				variable: 'darkPaletteColor3',
-				type: 'color:color3',
-			},
-
-			{
-				variable: 'darkPaletteColor4',
-				type: 'color:color4',
-			},
-
-			{
-				variable: 'darkPaletteColor5',
-				type: 'color:color5',
-			},
-
-			{
-				variable: 'darkPaletteColor6',
-				type: 'color:color6',
-			},
-
-			{
-				variable: 'darkPaletteColor7',
-				type: 'color:color7',
-			},
-		],
+		colorPalette: (value) =>
+			Object.keys(value).reduce(
+				(acc, key) => [
+					...acc,
+					{
+						variable: value[key].variable
+							? value[key].variable
+							: `theme-palette-color-${key.replace('color', '')}`,
+						type: `color:${key}`,
+					},
+				],
+				[]
+			),
 
 		fontColor: {
 			selector: ':root',
-			variable: 'color',
+			variable: 'theme-text-color',
 			type: 'color',
 		},
 
 		linkColor: [
 			{
 				selector: ':root',
-				variable: 'linkInitialColor',
+				variable: 'theme-link-initial-color',
 				type: 'color:default',
 			},
 
 			{
 				selector: ':root',
-				variable: 'linkHoverColor',
+				variable: 'theme-link-hover-color',
 				type: 'color:hover',
 			},
 		],
@@ -104,13 +39,13 @@ export const listenToVariables = () => {
 		formTextColor: [
 			{
 				selector: ':root',
-				variable: 'form-text-initial-color',
+				variable: 'theme-form-text-initial-color',
 				type: 'color:default',
 			},
 
 			{
 				selector: ':root',
-				variable: 'form-text-focus-color',
+				variable: 'theme-form-text-focus-color',
 				type: 'color:focus',
 			},
 		],
@@ -118,13 +53,13 @@ export const listenToVariables = () => {
 		formBorderColor: [
 			{
 				selector: ':root',
-				variable: 'form-field-border-initial-color',
+				variable: 'theme-form-field-border-initial-color',
 				type: 'color:default',
 			},
 
 			{
 				selector: ':root',
-				variable: 'form-field-border-focus-color',
+				variable: 'theme-form-field-border-focus-color',
 				type: 'color:focus',
 			},
 		],
@@ -132,75 +67,75 @@ export const listenToVariables = () => {
 		formBackgroundColor: [
 			{
 				selector: ':root',
-				variable: 'form-field-initial-background',
+				variable: 'theme-form-field-background-initial-color',
 				type: 'color:default',
 			},
 
 			{
 				selector: ':root',
-				variable: 'form-field-focus-background',
+				variable: 'theme-form-field-background-focus-color',
 				type: 'color:focus',
 			},
 		],
 
 		border_color: {
 			selector: ':root',
-			variable: 'border-color',
+			variable: 'theme-border-color',
 			type: 'color',
 		},
 
 		headingColor: {
 			selector: ':root',
-			variable: 'headings-color',
+			variable: 'theme-headings-color',
 			type: 'color',
 		},
 
 		heading_1_color: {
 			selector: ':root',
-			variable: 'heading-1-color',
+			variable: 'theme-heading-1-color',
 			type: 'color',
 		},
 
 		heading_2_color: {
 			selector: ':root',
-			variable: 'heading-2-color',
+			variable: 'theme-heading-2-color',
 			type: 'color',
 		},
 
 		heading_3_color: {
 			selector: ':root',
-			variable: 'heading-3-color',
+			variable: 'theme-heading-3-color',
 			type: 'color',
 		},
 
 		heading_4_color: {
 			selector: ':root',
-			variable: 'heading-4-color',
+			variable: 'theme-heading-4-color',
 			type: 'color',
 		},
 
 		heading_5_color: {
 			selector: ':root',
-			variable: 'heading-5-color',
+			variable: 'theme-heading-5-color',
 			type: 'color',
 		},
 
 		heading_6_color: {
 			selector: ':root',
-			variable: 'heading-6-color',
+			variable: 'theme-heading-6-color',
 			type: 'color',
 		},
 
 		buttonTextColor: [
 			{
 				selector: ':root',
-				variable: 'buttonTextInitialColor',
+				variable: 'theme-button-text-initial-color',
 				type: 'color:default',
 			},
 
 			{
 				selector: ':root',
-				variable: 'buttonTextHoverColor',
+				variable: 'theme-button-text-hover-color',
 				type: 'color:hover',
 			},
 		],
@@ -208,13 +143,13 @@ export const listenToVariables = () => {
 		buttonColor: [
 			{
 				selector: ':root',
-				variable: 'buttonInitialColor',
+				variable: 'theme-button-background-initial-color',
 				type: 'color:default',
 			},
 
 			{
 				selector: ':root',
-				variable: 'buttonHoverColor',
+				variable: 'theme-button-background-hover-color',
 				type: 'color:hover',
 			},
 		],
@@ -238,6 +173,12 @@ export const listenToVariables = () => {
 				selector: ':root',
 				variable: 'quantity-arrows-initial-color',
 				type: 'color:default',
+			},
+
+			{
+				selector: ':root',
+				variable: 'quantity-arrows-initial-color',
+				type: 'color:default_type_2',
 			},
 
 			{

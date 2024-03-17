@@ -138,6 +138,38 @@ function blocksy_replace_current_template() {
 	$theme_directory = get_template_directory();
 
 	if (
+		class_exists('Tribe__Events__Main')
+		&&
+		(
+			tribe_is_event()
+			||
+			is_singular('tribe_event_series')
+			||
+			is_singular('tribe_organizer')
+			||
+			tribe_is_venue()
+		)
+	) {
+		$actual_prefix = 'tribe_events_single';
+	}
+
+	if (
+		class_exists('Tribe__Events__Main')
+		&&
+		(
+			tribe_is_events_home()
+			||
+			tribe_is_showing_all()
+			||
+			is_tax('tec_venue_category')
+			||
+			is_archive('tribe_events')
+		)
+	) {
+		$actual_prefix = 'tribe_events_archive';
+	}
+
+	if (
 		is_singular()
 		&&
 		strpos($template, $theme_directory) !== false
@@ -148,6 +180,30 @@ function blocksy_replace_current_template() {
 			function_exists('tutor_course_enrolled_lead_info')
 			||
 			! function_exists('tutor_course_enrolled_lead_info')
+		)
+		&&
+		(
+			class_exists('Tribe__Events__Main')
+			&&
+			! (
+				tribe_is_events_home()
+				||
+				tribe_is_showing_all()
+				||
+				is_tax('tec_venue_category')
+				||
+				is_archive('tribe_events')
+				||
+				tribe_is_event()
+				||
+				is_singular('tribe_event_series')
+				||
+				is_singular('tribe_organizer')
+				||
+				tribe_is_venue()
+			)
+			||
+			! class_exists('Tribe__Events__Main')
 		)
 	) {
 		ob_start();
@@ -162,7 +218,6 @@ function blocksy_replace_current_template() {
 
 		return ob_get_clean();
 	}
-
 
 	if (
 		strpos($template, $theme_directory) !== false
@@ -186,8 +241,13 @@ function blocksy_replace_current_template() {
 
 	if ($template) {
 		ob_start();
+		$level = ob_get_level();
 
 		include $template;
+
+		while (ob_get_level() > $level + 1) {
+			ob_end_clean();
+		}
 
 		$content = ob_get_clean();
 
@@ -195,7 +255,7 @@ function blocksy_replace_current_template() {
 
 		$without_header = preg_split('/<main id="main".*?\\>/s', $content)[1];
 		$without_footer = preg_split(
-			'/<footer id="footer" class="ct-footer".*?\\>/s',
+			'/<footer id="footer".*?\\>/s',
 			$without_header
 		)[0];
 

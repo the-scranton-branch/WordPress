@@ -23,7 +23,15 @@ add_action('parse_tax_query', function ($query) {
 
 	$prefix = blocksy_manager()->screen->get_prefix();
 
-	if ($prefix === 'bbpress_single' || $prefix === 'courses_archive') {
+	if (
+		$prefix === 'bbpress_single'
+		||
+		(
+			$prefix === 'courses_archive'
+			&&
+			function_exists('tutor')
+		)
+	) {
 		return;
 	}
 
@@ -32,14 +40,15 @@ add_action('parse_tax_query', function ($query) {
 			'blog',
 			'categories',
 			'woo_categories',
-			'search'
+			'search',
+			'author'
 		],
 		'default_prefix' => 'blog'
 	]);
 
 	$query->set(
 		'posts_per_page',
-		intval(get_theme_mod(
+		intval(blocksy_get_theme_mod(
 			$prefix . '_archive_per_page',
 			get_option('posts_per_page', 10)
 		))
@@ -63,7 +72,7 @@ if (! function_exists('blocksy_get_listing_card_type')) {
 			return '';
 		}
 
-		$card_type = get_theme_mod($args['prefix'] . '_card_type', 'boxed');
+		$card_type = blocksy_get_theme_mod($args['prefix'] . '_card_type', 'boxed');
 
 		if ($card_type === 'cover') {
 			if (
@@ -95,7 +104,7 @@ if (! function_exists('blocksy_listing_page_structure')) {
 		);
 
 
-		$blog_post_structure = get_theme_mod(
+		$blog_post_structure = blocksy_get_theme_mod(
 			$args['prefix'] . '_structure',
 			'grid'
 		);
@@ -129,7 +138,9 @@ if (! function_exists('blocksy_cards_get_deep_link')) {
 			$args,
 			[
 				'suffix' => '',
-				'prefix' => null
+				'prefix' => null,
+				'shortcut' => 'border:outside',
+				'return' => 'string'
 			]
 		);
 
@@ -140,14 +151,18 @@ if (! function_exists('blocksy_cards_get_deep_link')) {
 		$attr = [];
 
 		if (is_customize_preview()) {
-			$attr['data-shortcut'] = 'border:outside';
-			$attr['data-location'] = blocksy_first_level_deep_link(
+			$attr['data-shortcut'] = $args['shortcut'];
+			$attr['data-shortcut-location'] = blocksy_first_level_deep_link(
 				$args['prefix']
 			);
 
 			if (! empty($args['suffix'])) {
-				$attr['data-location'] .= ':' . $args['suffix'];
+				$attr['data-shortcut-location'] .= ':' . $args['suffix'];
 			}
+		}
+
+		if ($args['return'] === 'array') {
+			return $attr;
 		}
 
 		return blocksy_attr_to_html($attr);

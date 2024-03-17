@@ -14,7 +14,15 @@ let prefix = getPrefixFor()
 export const getSingleElementsVariables = () => ({
 	...getSingleShareBoxVariables(),
 
-	// Autor Box
+	// featured image
+	[`${prefix}_featured_image_border_radius`]: {
+		selector: applyPrefixFor('.ct-featured-image', prefix),
+		type: 'spacing',
+		variable: 'theme-border-radius',
+		responsive: true,
+	},
+
+	// autor Box
 	[`${prefix}_single_author_box_spacing`]: {
 		selector: applyPrefixFor('.author-box', prefix),
 		variable: 'spacing',
@@ -29,7 +37,7 @@ export const getSingleElementsVariables = () => ({
 
 	[`${prefix}_single_author_box_name_color`]: {
 		selector: applyPrefixFor('.author-box .author-box-name', prefix),
-		variable: 'heading-color',
+		variable: 'theme-heading-color',
 		type: 'color:default',
 		responsive: true,
 	},
@@ -42,21 +50,21 @@ export const getSingleElementsVariables = () => ({
 	[`${prefix}_single_author_box_font_color`]: [
 		{
 			selector: applyPrefixFor('.author-box .author-box-bio', prefix),
-			variable: 'color',
+			variable: 'theme-text-color',
 			type: 'color:default',
 			responsive: true,
 		},
 
 		{
 			selector: applyPrefixFor('.author-box .author-box-bio', prefix),
-			variable: 'linkInitialColor',
+			variable: 'theme-link-initial-color',
 			type: 'color:initial',
 			responsive: true,
 		},
 
 		{
 			selector: applyPrefixFor('.author-box .author-box-bio', prefix),
-			variable: 'linkHoverColor',
+			variable: 'theme-link-hover-color',
 			type: 'color:hover',
 			responsive: true,
 		},
@@ -64,15 +72,15 @@ export const getSingleElementsVariables = () => ({
 
 	[`${prefix}_single_author_box_social_icons_color`]: [
 		{
-			selector: applyPrefixFor('.author-box .author-box-social', prefix),
-			variable: 'icon-color',
+			selector: applyPrefixFor('.author-box .author-box-socials', prefix),
+			variable: 'theme-icon-color',
 			type: 'color:default',
 			responsive: true,
 		},
 
 		{
-			selector: applyPrefixFor('.author-box .author-box-social', prefix),
-			variable: 'icon-hover-color',
+			selector: applyPrefixFor('.author-box .author-box-socials', prefix),
+			variable: 'theme-icon-hover-color',
 			type: 'color:hover',
 			responsive: true,
 		},
@@ -80,14 +88,14 @@ export const getSingleElementsVariables = () => ({
 
 	[`${prefix}_single_author_box_social_icons_background`]: [
 		{
-			selector: applyPrefixFor('.author-box .author-box-social', prefix),
+			selector: applyPrefixFor('.author-box .author-box-socials', prefix),
 			variable: 'background-color',
 			type: 'color:default',
 			responsive: true,
 		},
 
 		{
-			selector: applyPrefixFor('.author-box .author-box-social', prefix),
+			selector: applyPrefixFor('.author-box .author-box-socials', prefix),
 			variable: 'background-hover-color',
 			type: 'color:hover',
 			responsive: true,
@@ -96,23 +104,20 @@ export const getSingleElementsVariables = () => ({
 
 	...handleBackgroundOptionFor({
 		id: `${prefix}_single_author_box_container_background`,
-		selector: applyPrefixFor(
-			'.author-box[data-type="type-1"]',
-			prefix
-		),
+		selector: applyPrefixFor('.author-box[data-type="type-1"]', prefix),
 		responsive: true,
 	}),
 
 	[`${prefix}_single_author_box_shadow`]: {
 		selector: applyPrefixFor('.author-box[data-type="type-1"]', prefix),
 		type: 'box-shadow',
-		variable: 'box-shadow',
+		variable: 'theme-box-shadow',
 		responsive: true,
 	},
 
 	[`${prefix}_single_author_box_container_border`]: {
 		selector: applyPrefixFor('.author-box[data-type="type-1"]', prefix),
-		variable: 'border',
+		variable: 'theme-border',
 		type: 'border',
 		responsive: true,
 		// skip_none: true,
@@ -121,19 +126,48 @@ export const getSingleElementsVariables = () => ({
 	[`${prefix}_single_author_box_border_radius`]: {
 		selector: applyPrefixFor('.author-box[data-type="type-1"]', prefix),
 		type: 'spacing',
-		variable: 'border-radius',
+		variable: 'theme-border-radius',
 		responsive: true,
 	},
 
 	[`${prefix}_single_author_box_border`]: {
 		selector: applyPrefixFor('.author-box[data-type="type-2"]', prefix),
-		variable: 'border-color',
+		variable: 'theme-border-color',
 		type: 'color',
 		responsive: true,
 	},
 
+
+	// post tags
+	[`${prefix}_post_tags_alignment`]: {
+		selector: applyPrefixFor('.entry-tags', prefix),
+		variable: 'horizontal-alignment',
+		responsive: true,
+		unit: '',
+	},
+
+	...typographyOption({
+		id: `${prefix}_post_tags_title_font`,
+		selector: applyPrefixFor('.entry-tags .ct-module-title', prefix),
+	}),
+
+	[`${prefix}_post_tags_title_color`]: {
+		selector: applyPrefixFor('.entry-tags .ct-module-title', prefix),
+		variable: 'theme-heading-color',
+		type: 'color:default',
+	},
+
+	[`${prefix}_post_tags_border_radius`]: {
+		selector: applyPrefixFor('.entry-tags-items', prefix),
+		type: 'spacing',
+		variable: 'theme-border-radius',
+		responsive: true,
+	},
+
+
+	// related posts
 	[`${prefix}_related_label_alignment`]: {
-		selector: applyPrefixFor('.ct-related-posts .ct-block-title', prefix),
+		selector: applyPrefixFor('.ct-related-posts .ct-module-title', prefix),
 		variable: 'horizontal-alignment',
 		responsive: true,
 		unit: '',
@@ -151,53 +185,69 @@ export const getSingleElementsVariables = () => ({
 		unit: '',
 	},
 
+	...typographyOption({
+		id: `${prefix}_related_posts_label_font`,
+		selector: applyPrefixFor('.ct-related-posts .ct-module-title', prefix),
+	}),
+
 	[`${prefix}_related_posts_label_color`]: {
-		selector: applyPrefixFor('.ct-related-posts .ct-block-title', prefix),
-		variable: 'heading-color',
+		selector: applyPrefixFor('.ct-related-posts .ct-module-title', prefix),
+		variable: 'theme-heading-color',
 		type: 'color:default',
 	},
 
+	...typographyOption({
+		id: `${prefix}_related_posts_link_font`,
+		selector: applyPrefixFor('.ct-related-posts .related-entry-title', prefix),
+	}),
+
 	[`${prefix}_related_posts_link_color`]: [
 		{
-			selector: applyPrefixFor('.related-entry-title', prefix),
-			variable: 'heading-color',
+			selector: applyPrefixFor('.ct-related-posts .related-entry-title', prefix),
+			variable: 'theme-heading-color',
 			type: 'color:default',
 		},
 
 		{
-			selector: applyPrefixFor('.related-entry-title', prefix),
-			variable: 'linkHoverColor',
+			selector: applyPrefixFor('.ct-related-posts .related-entry-title', prefix),
+			variable: 'theme-link-hover-color',
 			type: 'color:hover',
 		},
 	],
 
+	...typographyOption({
+		id: `${prefix}_related_posts_meta_font`,
+		selector: applyPrefixFor('.ct-related-posts .entry-meta', prefix),
+	}),
+
 	[`${prefix}_related_posts_meta_color`]: [
 		{
 			selector: applyPrefixFor('.ct-related-posts .entry-meta', prefix),
-			variable: 'color',
+			variable: 'theme-text-color',
 			type: 'color:default',
 		},
 
 		{
 			selector: applyPrefixFor('.ct-related-posts .entry-meta', prefix),
-			variable: 'linkHoverColor',
+			variable: 'theme-link-hover-color',
 			type: 'color:hover',
 		},
 	],
 
 	[`${prefix}_related_thumb_radius`]: {
 		selector: applyPrefixFor(
-			'.ct-related-posts .ct-image-container',
+			'.ct-related-posts .ct-media-container',
 			prefix
 		),
 		type: 'spacing',
-		variable: 'borderRadius',
+		variable: 'theme-border-radius',
 		responsive: true,
+		emptyValue: 5,
 	},
 
 	[`${prefix}_related_narrow_width`]: {
 		selector: applyPrefixFor('.ct-related-posts-container', prefix),
-		variable: 'narrow-container-max-width',
+		variable: 'theme-narrow-container-max-width',
 		unit: 'px',
 	},
 
@@ -218,7 +268,43 @@ export const getSingleElementsVariables = () => ({
 		},
 	],
 
-	// Posts Navigation
+	[`${prefix}_related_posts_slideshow_columns`]: [
+		{
+			selector: '.ct-related-posts .flexy-container',
+			variable: 'grid-columns-width',
+			responsive: true,
+			extractValue: (val) => {
+				const responsive = maybePromoteScalarValueIntoResponsive(val)
+
+				ctEvents.trigger('blocksy:frontend:init')
+				setTimeout(() => {
+					const sliders = document.querySelectorAll(
+						'.ct-related-posts .flexy-container'
+					)
+
+					if (sliders.length) {
+						sliders.forEach((slider) => {
+							const firstChild = slider.querySelector(
+								'.flexy-item:first-child'
+							)
+
+							if (slider.flexy) {
+								slider.flexy.scheduleSliderRecalculation()
+							}
+						})
+					}
+				}, 50)
+
+				return {
+					desktop: `calc(100% / ${responsive.desktop})`,
+					tablet: `calc(100% / ${responsive.tablet})`,
+					mobile: `calc(100% / ${responsive.mobile})`,
+				}
+			},
+		},
+	],
+
+	// posts navigation
 	[`${prefix}_post_nav_spacing`]: {
 		selector: applyPrefixFor('.post-navigation', prefix),
 		variable: 'margin',
@@ -229,13 +315,13 @@ export const getSingleElementsVariables = () => ({
 	[`${prefix}_posts_nav_font_color`]: [
 		{
 			selector: applyPrefixFor('.post-navigation', prefix),
-			variable: 'linkInitialColor',
+			variable: 'theme-link-initial-color',
 			type: 'color:default',
 		},
 
 		{
 			selector: applyPrefixFor('.post-navigation', prefix),
-			variable: 'linkHoverColor',
+			variable: 'theme-link-hover-color',
 			type: 'color:hover',
 		},
 	],
@@ -250,7 +336,7 @@ export const getSingleElementsVariables = () => ({
 	[`${prefix}_posts_nav_image_border_radius`]: {
 		selector: applyPrefixFor('.post-navigation figure', prefix),
 		type: 'spacing',
-		variable: 'border-radius',
+		variable: 'theme-border-radius',
 		// responsive: true,
 	},
 })

@@ -70,6 +70,8 @@
 			<key name="flickr" />
 			<key name="phone" />
 			<key name="email" />
+			<key name="free_not_enought_message" />
+			<key name="free_enought_message" />
 		</key>
 
 		<key name="theme_mods_blocksy-child">
@@ -133,6 +135,8 @@
 			<key name="flickr" />
 			<key name="phone" />
 			<key name="email" />
+			<key name="free_not_enought_message" />
+			<key name="free_enought_message" />
 		</key>
 	</admin-texts>
 </wpml-config>

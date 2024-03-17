@@ -1,5 +1,4 @@
 .ct-header-trigger {
-	// --toggle-button-radius: 3px;
 
 	// icon type
 	.ct-icon {
@@ -71,38 +70,20 @@
 		}
 	}
 
-
-	// shape type
-	&[data-design="outline"],
-	&[data-design="solid"] {
-		--toggle-button-padding: 8px 10px;
-	}
-
 	&[data-design*="outline"] {
 		--toggle-button-border-width: 1px;
 		--toggle-button-border-color: var(--secondColor, rgba(224, 229, 235, 0.9));
-		// border: 1px solid var(--secondColor, rgba(224, 229, 235, 0.9));
 
 		&:hover {
-			// border-color: var(--secondColorHover, rgba(224, 229, 235, 0.9));
 			--toggle-button-border-color: var(--secondColorHover, rgba(224, 229, 235, 0.9));
 		}
 	}
 
 	&[data-design*="solid"] {
-		// background: var(--secondColor, rgba(224, 229, 235, 0.9));
 		--toggle-button-background: var(--secondColor, rgba(224, 229, 235, 0.9));
 
 		&:hover {
-			// background: var(--secondColorHover, rgba(224, 229, 235, 0.9));
 			--toggle-button-background: var(--secondColorHover, rgba(224, 229, 235, 0.9));
 		}
 	}
 }
-
-// hide trigger when off-canvas is oppened
-// [data-panel*='in'] .ct-header-trigger {
-// 	@include media-breakpoint-down (md) {
-// 		opacity: 0;
-// 	}
-// }

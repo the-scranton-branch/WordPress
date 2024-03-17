@@ -21,17 +21,11 @@ $selector:
 // type 4
 [data-link='type-4'] {
 	#{$selector} {
-		// background-size: var(--has-link-decoration, 100% 2px);
-		// background-image: var(
-		// 	--has-link-decoration,
-		// 	linear-gradient(currentColor, currentColor)
-		// );
 
 		&:hover {
 			color: var(--has-link-decoration, #fff);
-
 			background-size: var(--has-link-decoration, 100% 100%);
-			background-image: var(--has-link-decoration, linear-gradient(var(--linkHoverColor), var(--linkHoverColor)));
+			background-image: var(--has-link-decoration, linear-gradient(var(--theme-link-hover-color), var(--theme-link-hover-color)));
 		}
 	}
 }
@@ -40,7 +34,7 @@ $selector:
 [data-link='type-5'] {
 	#{$selector} {
 		background-size: var(--has-link-decoration, 0% 100%);
-		background-image: var(--has-link-decoration, linear-gradient(var(--linkHoverColor), var(--linkHoverColor)));
+		background-image: var(--has-link-decoration, linear-gradient(var(--theme-link-hover-color), var(--theme-link-hover-color)));
 
 		&:hover {
 			color: var(--has-link-decoration, #fff);

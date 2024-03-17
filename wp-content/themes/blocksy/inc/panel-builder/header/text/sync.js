@@ -36,7 +36,7 @@ const getVariables = ({ itemId, fullItemId, panelType }) => ({
 			selector: assembleSelector(
 				getRootSelectorFor({ itemId, panelType })
 			),
-			variable: 'color',
+			variable: 'theme-text-color',
 			type: 'color:default',
 			responsive: true,
 		},
@@ -45,7 +45,7 @@ const getVariables = ({ itemId, fullItemId, panelType }) => ({
 			selector: assembleSelector(
 				getRootSelectorFor({ itemId, panelType })
 			),
-			variable: 'linkInitialColor',
+			variable: 'theme-link-initial-color',
 			type: 'color:link_initial',
 			responsive: true,
 		},
@@ -54,8 +54,19 @@ const getVariables = ({ itemId, fullItemId, panelType }) => ({
 			selector: assembleSelector(
 				getRootSelectorFor({ itemId, panelType })
 			),
-			variable: 'linkHoverColor',
+			variable: 'theme-link-hover-color',
 			type: 'color:link_hover',
+			responsive: true,
+		},
+	],
+
+	headerTextHeadingColor: [
+		{
+			selector: assembleSelector(
+				getRootSelectorFor({ itemId, panelType })
+			),
+			variable: 'theme-heading-color',
+			type: 'color:default',
 			responsive: true,
 		},
 	],
@@ -71,7 +82,7 @@ const getVariables = ({ itemId, fullItemId, panelType }) => ({
 				})
 			),
 
-			variable: 'color',
+			variable: 'theme-text-color',
 			type: 'color:default',
 			responsive: true,
 		},
@@ -85,7 +96,7 @@ const getVariables = ({ itemId, fullItemId, panelType }) => ({
 				})
 			),
 
-			variable: 'linkInitialColor',
+			variable: 'theme-link-initial-color',
 			type: 'color:link_initial',
 			responsive: true,
 		},
@@ -99,8 +110,24 @@ const getVariables = ({ itemId, fullItemId, panelType }) => ({
 				})
 			),
 
-			variable: 'linkHoverColor',
+			variable: 'theme-link-hover-color',
 			type: 'color:link_hover',
+			responsive: true,
+		},
+	],
+
+	transparentHeaderTextHeadingColor: [
+		{
+			selector: assembleSelector(
+				mutateSelector({
+					selector: getRootSelectorFor({ itemId, panelType }),
+					operation: 'between',
+					to_add: '[data-transparent-row="yes"]',
+				})
+			),
+
+			variable: 'theme-heading-color',
+			type: 'color:default',
 			responsive: true,
 		},
 	],
@@ -115,7 +142,7 @@ const getVariables = ({ itemId, fullItemId, panelType }) => ({
 					to_add: '[data-sticky*="yes"]',
 				})
 			),
-			variable: 'color',
+			variable: 'theme-text-color',
 			type: 'color:default',
 			responsive: true,
 		},
@@ -128,7 +155,7 @@ const getVariables = ({ itemId, fullItemId, panelType }) => ({
 					to_add: '[data-sticky*="yes"]',
 				})
 			),
-			variable: 'linkInitialColor',
+			variable: 'theme-link-initial-color',
 			type: 'color:link_initial',
 			responsive: true,
 		},
@@ -141,8 +168,23 @@ const getVariables = ({ itemId, fullItemId, panelType }) => ({
 					to_add: '[data-sticky*="yes"]',
 				})
 			),
-			variable: 'linkHoverColor',
+			variable: 'theme-link-hover-color',
 			type: 'color:link_hover',
+			responsive: true,
+		},
+	],
+
+	stickyHeaderTextHeadingColor: [
+		{
+			selector: assembleSelector(
+				mutateSelector({
+					selector: getRootSelectorFor({ itemId, panelType }),
+					operation: 'between',
+					to_add: '[data-sticky*="yes"]',
+				})
+			),
+			variable: 'theme-heading-color',
+			type: 'color:default',
 			responsive: true,
 		},
 	],

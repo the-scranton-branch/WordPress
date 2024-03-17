@@ -18,17 +18,24 @@ $options = [
 			),
 
 			[
-				'emoji_scripts' => [
-					'label' => __( 'Disable Emojis Script', 'blocksy' ),
-					'type' => 'ct-switch',
-					'value' => 'yes',
-					'setting' => [ 'transport' => 'postMessage' ],
-					'desc' => __( 'Enable this option if you want to remove WordPress emojis script in order to improve the performance.', 'blocksy' )
+				[
+					'emoji_scripts' => [
+						'label' => __( 'Disable Emojis Script', 'blocksy' ),
+						'type' => 'ct-switch',
+						'value' => 'yes',
+						'setting' => [ 'transport' => 'postMessage' ],
+						'desc' => __( 'Enable this option if you want to remove WordPress emojis script in order to improve the performance.', 'blocksy' )
+					],
+	
+					blocksy_rand_md5() => [
+						'type' => 'ct-divider'
+					]
 				],
 
-				blocksy_rand_md5() => [
-					'type' => 'ct-divider'
-				],
+				apply_filters(
+					'blocksy_performance_after_emojis_customizer_options',
+					[]
+				),
 
 				'has_lazy_load' => [
 					'label' => __( 'Lazy Load Images', 'blocksy' ),

@@ -32,7 +32,7 @@ if (! function_exists('blocksy_attr_to_html')) {
 				continue;
 			}
 
-			$html_attr .= $attr_name . '="' . $attr_val . '" ';
+			$html_attr .= $attr_name . '="' . esc_attr($attr_val) . '" ';
 		}
 
 		return $html_attr;
@@ -50,14 +50,18 @@ if (! function_exists('blocksy_attr_to_html')) {
  */
 if (! function_exists('blocksy_html_tag')) {
 	function blocksy_html_tag($tag, $attr = [], $end = false) {
-		$html = '<' . $tag . ' ' . blocksy_attr_to_html($attr);
+		if (! is_string($attr)) {
+			$attr = blocksy_attr_to_html($attr);
+		}
+
+		$html = '<' . $tag . ' ' . $attr;
 
 		if (true === $end) {
 			// <script></script>
 			$html .= '></' . $tag . '>';
 		} elseif (false === $end) {
-			// <br/>
-			$html .= '/>';
+			// <br>
+			$html .= '>';
 		} else {
 			// <div>content</div>
 			$html .= '>' . $end . '</' . $tag . '>';

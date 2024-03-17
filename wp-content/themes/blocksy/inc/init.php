@@ -7,9 +7,6 @@
  * @package Blocksy
  */
 add_action('after_setup_theme', function () {
-	$i18n_manager = new Blocksy_Translations_Manager();
-	$i18n_manager->register_translation_keys();
-
 	/**
 	 * Make theme available for translation.
 	 * Translations can be filed in the /languages/ directory.
@@ -23,6 +20,8 @@ add_action('after_setup_theme', function () {
 	add_theme_support('responsive-embeds');
 
 	add_theme_support('html5', ['script', 'style']);
+
+	remove_theme_support('block-templates');
 
 	/*
 	 * Let WordPress manage the document title.
@@ -40,81 +39,22 @@ add_action('after_setup_theme', function () {
 	add_theme_support('fl-theme-builder-parts');
 
 	add_theme_support('editor-styles');
-	// Trick editor into loading inline styles. See my_theme_pre_http_request_block_editor_customizer_styles()
-	add_editor_style('https://blocksy-block-editor-customizer-styles');
 	add_editor_style('static/bundle/editor-styles.min.css');
 
-	$paletteColors = blocksy_get_colors(
-		get_theme_mod('colorPalette'),
-		[
-			'color1' => [ 'color' => '#2872fa' ],
-			'color2' => [ 'color' => '#1559ed' ],
-			'color3' => [ 'color' => '#3A4F66' ],
-			'color4' => [ 'color' => '#192a3d' ],
-			'color5' => [ 'color' => '#e1e8ed' ],
-			'color6' => [ 'color' => '#f2f5f7' ],
-			'color7' => [ 'color' => '#FAFBFC' ],
-			'color8' => [ 'color' => '#ffffff' ],
-		]
+	$gutenberg_colors = [];
+
+	foreach (blocksy_manager()->colors->get_color_palette() as $key => $palette) {
+		$gutenberg_colors[] = [
+			'name' => $palette['title'],
+			'slug' => $palette['slug'],
+			'color' => 'var(--' . $palette['variable'] . ', ' . $palette['color'] . ')'
+		];
+	}
+
+	add_theme_support(
+		'editor-color-palette',
+		apply_filters('blocksy:editor-color-palette', $gutenberg_colors)
 	);
-
-	add_theme_support('editor-color-palette', apply_filters('blocksy:editor-color-palette', [
-		[
-			'name' => __( 'Palette Color 1', 'blocksy' ),
-			'slug' => 'palette-color-1',
-			'color' => 'var(--paletteColor1, ' . $paletteColors['color1'] . ')',
-			// 'color' => $paletteColors['color1']
-		],
-
-		[
-			'name' => __( 'Palette Color 2', 'blocksy' ),
-			'slug' => 'palette-color-2',
-			'color' => 'var(--paletteColor2, ' . $paletteColors['color2'] . ')',
-			// 'color' => $paletteColors['color2']
-		],
-
-		[
-			'name' => __( 'Palette Color 3', 'blocksy' ),
-			'slug' => 'palette-color-3',
-			'color' => 'var(--paletteColor3, '. $paletteColors['color3'] . ')',
-			// 'color' => $paletteColors['color3']
-		],
-
-		[
-			'name' => __( 'Palette Color 4', 'blocksy' ),
-			'slug' => 'palette-color-4',
-			'color' => 'var(--paletteColor4, ' . $paletteColors['color4'] . ')',
-			// 'color' => $paletteColors['color4']
-		],
-
-		[
-			'name' => __( 'Palette Color 5', 'blocksy' ),
-			'slug' => 'palette-color-5',
-			'color' => 'var(--paletteColor5, ' . $paletteColors['color5'] . ')',
-			// 'color' => $paletteColors['color5']
-		],
-
-		[
-			'name' => __( 'Palette Color 6', 'blocksy' ),
-			'slug' => 'palette-color-6',
-			'color' => 'var(--paletteColor6, ' . $paletteColors['color6'] . ')',
-			// 'color' => $paletteColors['color6']
-		],
-
-		[
-			'name' => __( 'Palette Color 7', 'blocksy' ),
-			'slug' => 'palette-color-7',
-			'color' => 'var(--paletteColor7, ' . $paletteColors['color7'] . ')',
-			// 'color' => $paletteColors['color7']
-		],
-
-		[
-			'name' => __( 'Palette Color 8', 'blocksy' ),
-			'slug' => 'palette-color-8',
-			'color' => 'var(--paletteColor8, ' . $paletteColors['color8'] . ')',
-			// 'color' => $paletteColors['color8']
-		]
-	]));
 
 	add_theme_support(
 		'editor-gradient-presets',
@@ -454,7 +394,7 @@ add_action('after_setup_theme', function () {
 				'gradient' => 'linear-gradient(-225deg, #E3FDF5 0%, #FFE6FA 100%)',
 				'slug' => 'perfect-white',
 			],
-		], $paletteColors)
+		], blocksy_manager()->colors->get_color_palette())
 	);
 
 	// remove_theme_support('widgets-block-editor');
@@ -505,12 +445,6 @@ add_action('after_setup_theme', function () {
 	add_theme_support('header-footer-elementor');
 });
 
-
-add_action('customize_save_after', function () {
-	$i18n_manager = new Blocksy_Translations_Manager();
-	$i18n_manager->register_wpml_translation_keys();
-});
-
 /**
  * Set the content width in pixels, based on the theme's design and stylesheet.
  *
@@ -524,7 +458,7 @@ add_action('after_setup_theme', function () {
 	// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 	$GLOBALS['content_width'] = apply_filters(
 		'blocksy_content_width',
-		get_theme_mod('maxSiteWidth', 1290)
+		blocksy_get_theme_mod('maxSiteWidth', 1290)
 	);
 }, 0);
 
@@ -536,7 +470,7 @@ add_action('after_setup_theme', function () {
 add_action(
 	'widgets_init',
 	function () {
-		$sidebar_title_tag = get_theme_mod('widgets_title_wrapper', 'h2');
+		$sidebar_title_tag = blocksy_get_theme_mod('widgets_title_wrapper', 'h3');
 
 		register_sidebar(
 			[
@@ -569,23 +503,29 @@ add_action(
 	}
 );
 
-require get_template_directory() . '/inc/classes/print.php';
+require get_template_directory() . '/inc/manager.php';
+
 require get_template_directory() . '/inc/helpers.php';
+require get_template_directory() . '/inc/helpers/layout.php';
 require get_template_directory() . '/inc/helpers/html.php';
-require get_template_directory() . '/inc/classes/hooks-manager.php';
+require get_template_directory() . '/inc/helpers/db.php';
+require get_template_directory() . '/inc/helpers/dynamic-css.php';
+require get_template_directory() . '/inc/helpers/cpt.php';
+require get_template_directory() . '/inc/helpers/search.php';
+
+require get_template_directory() . '/inc/classes/print.php';
+require get_template_directory() . '/inc/classes/archive-title-renderer.php';
+require get_template_directory() . '/inc/classes/colors.php';
 require get_template_directory() . '/inc/classes/blocksy-walker-page.php';
 require get_template_directory() . '/inc/classes/translations-manager.php';
 require get_template_directory() . '/inc/classes/screen-manager.php';
 require get_template_directory() . '/inc/classes/blocksy-blocks-parser.php';
-require get_template_directory() . '/inc/classes/theme-db-versioning.php';
-require get_template_directory() . '/inc/components/search.php';
 require get_template_directory() . '/inc/components/global-attrs.php';
-require get_template_directory() . '/inc/components/breadcrumbs.php';
 require get_template_directory() . '/inc/components/vertical-spacing.php';
 require get_template_directory() . '/inc/components/customizer-builder.php';
+
 require get_template_directory() . '/inc/components/emoji-scripts.php';
 require get_template_directory() . '/inc/schema-org.php';
-require get_template_directory() . '/inc/classes/class-ct-css-injector.php';
 require get_template_directory() . '/inc/classes/class-ct-attributes-parser.php';
 
 require get_template_directory() . '/inc/css/fundamentals.php';
@@ -593,14 +533,17 @@ require get_template_directory() . '/inc/css/static-files.php';
 require get_template_directory() . '/inc/css/colors.php';
 require get_template_directory() . '/inc/css/selectors.php';
 require get_template_directory() . '/inc/css/helpers.php';
+require get_template_directory() . '/inc/css/spacing.php';
 require get_template_directory() . '/inc/css/box-shadow-option.php';
 require get_template_directory() . '/inc/css/typography.php';
 require get_template_directory() . '/inc/css/backgrounds.php';
-require get_template_directory() . '/inc/dynamic-css.php';
 require get_template_directory() . '/inc/sidebar.php';
-require get_template_directory() . '/inc/sidebar-render.php';
-require get_template_directory() . '/inc/single/single-helpers.php';
-require get_template_directory() . '/inc/single/content-helpers.php';
+
+require get_template_directory() . '/inc/components/single/single-helpers.php';
+require get_template_directory() . '/inc/components/single/content-helpers.php';
+require get_template_directory() . '/inc/components/single/excerpt.php';
+require get_template_directory() . '/inc/components/single/page-elements.php';
+require get_template_directory() . '/inc/components/single/comments.php';
 
 require get_template_directory() . '/inc/components/menus.php';
 require get_template_directory() . '/inc/components/post-meta.php';
@@ -608,36 +551,42 @@ require get_template_directory() . '/inc/components/pagination.php';
 require get_template_directory() . '/inc/components/back-to-top.php';
 require get_template_directory() . '/inc/components/hero-section.php';
 require get_template_directory() . '/inc/components/social-box.php';
+require get_template_directory() . '/inc/components/contacts-box.php';
 
 require get_template_directory() . '/inc/css/visibility.php';
 require get_template_directory() . '/inc/meta-boxes.php';
 require get_template_directory() . '/inc/components/posts-listing.php';
 
-require get_template_directory() . '/inc/components/images.php';
+require get_template_directory() . '/inc/components/media/utils.php';
+require get_template_directory() . '/inc/components/media/simple.php';
+require get_template_directory() . '/inc/components/media/video.php';
+require get_template_directory() . '/inc/components/media/full.php';
+
 require get_template_directory() . '/inc/components/gallery.php';
 
 require get_template_directory() . '/inc/integrations/dfi.php';
+require get_template_directory() . '/inc/integrations/tribe-events.php';
 require get_template_directory() . '/inc/integrations/yith.php';
 require get_template_directory() . '/inc/integrations/avatars.php';
 require get_template_directory() . '/inc/integrations/cdn.php';
 require get_template_directory() . '/inc/integrations/stackable.php';
+require get_template_directory() . '/inc/integrations/greenshift.php';
 require get_template_directory() . '/inc/integrations/simply-static.php';
 require get_template_directory() . '/inc/integrations/elementor.php';
 require get_template_directory() . '/inc/integrations/zion.php';
 require get_template_directory() . '/inc/integrations/generateblocks.php';
 require get_template_directory() . '/inc/integrations/qubely.php';
 require get_template_directory() . '/inc/integrations/tutorlms.php';
+require get_template_directory() . '/inc/integrations/tribe-events.php';
 require get_template_directory() . '/inc/integrations/beaver-themer.php';
 require get_template_directory() . '/inc/integrations/theme-builders.php';
-require get_template_directory() . '/inc/integrations/custom-post-types.php';
 require get_template_directory() . '/inc/integrations/cartflows.php';
+require get_template_directory() . '/inc/integrations/bbpress.php';
+require get_template_directory() . '/inc/integrations/fluent-forms.php';
+require get_template_directory() . '/inc/integrations/coauthors.php';
 
-require get_template_directory() . '/inc/archive/helpers.php';
-require get_template_directory() . '/inc/archive/archive-card.php';
-
-if (class_exists('WooCommerce')) {
-	require get_template_directory() . '/inc/components/woocommerce-integration.php';
-}
+require get_template_directory() . '/inc/components/archive/helpers.php';
+require get_template_directory() . '/inc/components/archive/archive-card.php';
 
 /**
  * Custom template tags for this theme.
@@ -664,7 +613,6 @@ if (is_admin()) {
 	require get_template_directory() . '/admin/init.php';
 }
 
-require get_template_directory() . '/inc/manager.php';
 
 if (!is_admin()) {
 	add_filter('script_loader_tag', function ($tag, $handle) {
@@ -694,4 +642,11 @@ if (!is_admin()) {
 }
 
 Blocksy_Manager::instance();
+
+// Just temporary stub
+class Blocksy_Fonts_Manager {
+	public function get_googgle_fonts() {
+		return [];
+	}
+}
 

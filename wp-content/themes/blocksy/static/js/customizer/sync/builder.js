@@ -96,11 +96,11 @@ const makeShortcutFor = (item) => {
 		return
 	}
 
-	if (!item.dataset.location) {
+	if (!item.dataset.shortcutLocation) {
 		return
 	}
 
-	const shortcut = document.createElement('a')
+	const shortcut = document.createElement('span')
 
 	shortcut.classList.add('ct-customizer-shortcut')
 
@@ -110,7 +110,7 @@ const makeShortcutFor = (item) => {
 		let text = __('Edit', 'blocksy')
 
 		if (
-			(item.dataset.location || '').indexOf(
+			(item.dataset.shortcutLocation || '').indexOf(
 				'header:builder_panel_top-row'
 			) > -1
 		) {
@@ -118,7 +118,7 @@ const makeShortcutFor = (item) => {
 		}
 
 		if (
-			(item.dataset.location || '').indexOf(
+			(item.dataset.shortcutLocation || '').indexOf(
 				'header:builder_panel_middle-row'
 			) > -1
 		) {
@@ -126,7 +126,7 @@ const makeShortcutFor = (item) => {
 		}
 
 		if (
-			(item.dataset.location || '').indexOf(
+			(item.dataset.shortcutLocation || '').indexOf(
 				'header:builder_panel_bottom-row'
 			) > -1
 		) {
@@ -143,7 +143,7 @@ const makeShortcutFor = (item) => {
 		e.stopPropagation()
 		wp.customize.preview.send(
 			'ct-initiate-deep-link',
-			item.dataset.location
+			item.dataset.shortcutLocation
 		)
 	})
 
@@ -154,21 +154,36 @@ const makeAllShortcuts = () => {
 	;[
 		...document.querySelectorAll('#main-container > header [data-id]'),
 		...document.querySelectorAll('#main-container > header [data-row]'),
-		...document.querySelectorAll(
-			'#main-container > footer [data-shortcut]'
-		),
+		...document.querySelectorAll('#main-container > footer [data-shortcut]'),
 		...document.querySelectorAll('.hero-section'),
 		...document.querySelectorAll('.entries[data-cards]'),
+		...document.querySelectorAll('.entries[data-layout="gutenberg"]'),
 		...document.querySelectorAll('aside#sidebar'),
 		...document.querySelectorAll('#main-container > footer [data-row]'),
 		...document.querySelectorAll('#offcanvas .ct-bag-container'),
 		...document.querySelectorAll('.ct-trending-block'),
+		...document.querySelectorAll('.ct-pagination'),
+		...document.querySelectorAll('.archive .products, .woocommerce > .products'),
+		...document.querySelectorAll('.products.related'),
+		...document.querySelectorAll('.products.upsells'),
+		...document.querySelectorAll('.woocommerce-tabs'),
+		...document.querySelectorAll('.ct-compare-bar'),
+		...document.querySelectorAll('.product-entry-wrapper > .summary'),
+		...document.querySelectorAll('.product-entry-wrapper > .woocommerce-product-gallery'),
+		...document.querySelectorAll('.post-navigation'),
+		...document.querySelectorAll('.entry-tags'),
+		...document.querySelectorAll('.ct-share-box'),
+		...document.querySelectorAll('.author-box'),
+		...document.querySelectorAll('.ct-shortcuts-bar'),
+		...document.querySelectorAll('.ct-related-posts-container'),
+		...document.querySelectorAll('.ct-related-posts'),
+		...document.querySelectorAll('.ct-floating-bar'),
 	].map((el) => makeShortcutFor(el))
 }
 
 makeAllShortcuts()
 
-ctEvents.on('ct:header:render-frame', () => {
+ctEvents.on('ct:general:device-change', () => {
 	makeAllShortcuts()
 })
 
@@ -195,6 +210,8 @@ wp.customize.bind('preview-ready', () => {
 			})
 
 			clearAstCache()
+
+			ctEvents.trigger('ct:sync:dynamic-css:updated')
 		}
 	)
 
@@ -262,6 +279,7 @@ wp.customize.bind('preview-ready', () => {
 
 	wp.customize.selectiveRefresh.Partial.prototype.createEditShortcutForPlacement =
 		() => {}
+
 	wp.customize.selectiveRefresh.Partial.prototype.ready = function () {
 		var partial = this
 
@@ -292,6 +310,10 @@ wp.customize.bind('preview-ready', () => {
 			}
 
 			if (!setting) {
+				return false
+			}
+
+			if (skipNextRefresh) {
 				return false
 			}
 
@@ -452,6 +474,7 @@ wp.customize.bind('preview-ready', () => {
 
 				return
 			}
+
 			if (
 				Object.keys(
 					wp.customize.selectiveRefresh._pendingPartialRequests

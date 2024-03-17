@@ -36,32 +36,40 @@ $type = blocksy_default_akg('header_button_type', $atts, 'type-1');
 $size = blocksy_default_akg('header_button_size', $atts, 'small');
 $link = do_shortcode(
 	blocksy_translate_dynamic(
-		blocksy_default_akg('header_button_link', $atts, ''),
-		'header:' . $section_id . ':' . $item_id . ':header_button_link'
+		blocksy_default_akg('header_button_link', $atts, '#'),
+		$panel_type . ':' . $section_id . ':' . $item_id . ':header_button_link'
 	)
 );
 
-if (
-	$header_button_open === 'popup'
-	&&
-	function_exists('blocksy_get_default_content_block')
-	&&
-	blocksy_get_default_content_block(null, [
-		'template_type' => 'popup'
-	])
-) {
-	$popup_id = blocksy_get_default_content_block(
-		blocksy_akg(
-			'header_button_select_popup',
-			$atts,
-			''
-		),
-		[
-			'template_type' => 'popup'
-		]
+if ($header_button_open === 'popup') {
+	$popup_id = blocksy_akg(
+		'header_button_select_popup',
+		$atts,
+		''
 	);
 
-	$link = '#ct-popup-' . $popup_id;
+	$link = '#';
+
+	if (
+		$popup_id
+		&&
+		class_exists('\Blocksy\Plugin')
+		&&
+		\Blocksy\Plugin::instance()->premium
+		&&
+		\Blocksy\Plugin::instance()
+			->premium
+			->content_blocks
+			->is_hook_eligible_for_display($popup_id, [
+				'match_conditions' => false
+			])
+	) {
+		$values = blocksy_get_post_options($popup_id);
+
+		if (blocksy_default_akg('is_hook_enabled', $values, 'yes') === 'yes') {
+			$link = '#ct-popup-' . $popup_id;
+		}
+	}
 }
 
 $link_attr = [];
@@ -73,17 +81,30 @@ $text = do_shortcode(
 			$atts,
 			__('Download', 'blocksy')
 		),
-		'header:' . $section_id . ':' . $item_id . ':header_button_text'
+		$panel_type . ':' . $section_id . ':' . $item_id . ':header_button_text'
 	)
 );
 
-$aria_label = blocksy_translate_dynamic(
-	blocksy_default_akg(
-		'button_aria_label',
-		$atts,
-		''
-	),
-	'header:' . $section_id . ':' . $item_id . ':header_button_aria_label'
+$secondary_text = do_shortcode(
+	blocksy_translate_dynamic(
+		blocksy_default_akg(
+			'header_button_secondary_text',
+			$atts,
+			__('Hurry Up!', 'blocksy')
+		),
+		$panel_type . ':' . $section_id . ':' . $item_id . ':header_button_secondary_text'
+	)
+);
+
+$aria_label = do_shortcode(
+	blocksy_translate_dynamic(
+		blocksy_default_akg(
+			'button_aria_label',
+			$atts,
+			''
+		),
+		$panel_type . ':' . $section_id . ':' . $item_id . ':header_button_aria_label'
+	)
 );
 
 if (empty(trim($aria_label)) && ! empty($text)) {
@@ -107,6 +128,15 @@ if (blocksy_default_akg('header_button_nofollow', $atts, 'no') === 'yes') {
 	}
 
 	$link_attr['rel'] .= ' nofollow';
+	$link_attr['rel'] = trim($link_attr['rel']);
+}
+
+if (blocksy_default_akg('header_button_sponsored', $atts, 'no') === 'yes') {
+	if (! isset($link_attr['rel'])) {
+		$link_attr['rel'] = '';
+	}
+
+	$link_attr['rel'] .= ' sponsored';
 	$link_attr['rel'] = trim($link_attr['rel']);
 }
 
@@ -134,8 +164,35 @@ if (function_exists('blc_get_icon')) {
 			'icon' => ''
 		]),
 		'icon_container' => false,
-		'icon_class' => 'ct-icon'
+		'icon_html_atts' => [
+			'class' => 'ct-icon',
+		]
 	]);
+}
+
+if (
+	blocksy_akg('has_header_button_secondary_text', $atts, 'no') === 'yes'
+	&&
+	(
+		! empty(trim($secondary_text))
+		||
+		is_customize_preview()
+	)
+) {
+	$text = blocksy_html_tag(
+		'span',
+		[
+			'class' => 'ct-button-text'
+		],
+		$text .
+		blocksy_html_tag(
+			'span',
+			[
+				'class' => 'ct-button-secondary-text'
+			],
+			$secondary_text
+		)
+	);
 }
 
 if ($icon_position === 'left') {

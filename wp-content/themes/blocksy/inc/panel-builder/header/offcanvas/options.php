@@ -12,7 +12,6 @@ $options = [
 				'value' => 'panel',
 				'view' => 'text',
 				'design' => 'block',
-				'setting' => [ 'transport' => 'postMessage' ],
 				'choices' => [
 					'modal' => __( 'Modal', 'blocksy' ),
 					'panel' => __( 'Side Panel', 'blocksy' ),
@@ -30,7 +29,6 @@ $options = [
 						'value' => 'right',
 						'view' => 'text',
 						'design' => 'block',
-						'setting' => [ 'transport' => 'postMessage' ],
 						'choices' => [
 							'left' => __( 'Left Side', 'blocksy' ),
 							'right' => __( 'Right Side', 'blocksy' ),
@@ -90,6 +88,29 @@ $options = [
 					'initial' => '',
 					'center' => '',
 					'flex-end' => '',
+				],
+			],
+
+			'has_offcanvas_heading' => [
+				'label' => __( 'Panel Heading', 'blocksy' ),
+				'type' => 'ct-switch',
+				'value' => 'no',
+				'divider' => 'top:full',
+			],
+
+			blocksy_rand_md5() => [
+				'type' => 'ct-condition',
+				'condition' => [ 'has_offcanvas_heading' => 'yes' ],
+				'options' => [
+
+					'offcanvas_heading' => [
+						'label' => false,
+						'type' => 'text',
+						'design' => 'block',
+						'disableRevertButton' => true,
+						'value' => __( 'Menu', 'blocksy' ),
+					],
+
 				],
 			],
 
@@ -169,6 +190,35 @@ $options = [
 				],
 			],
 
+			blocksy_rand_md5() => [
+				'type' => 'ct-condition',
+				'condition' => [ 'has_offcanvas_heading' => 'yes' ],
+				'options' => [
+
+					'offcanvas_heading_font_color' => [
+						'label' => __( 'Panel Heading Font Color', 'blocksy' ),
+						'type'  => 'ct-color-picker',
+						'design' => 'block:right',
+						'divider' => 'top:full',
+						'responsive' => true,
+						'setting' => [ 'transport' => 'postMessage' ],
+						'value' => [
+							'default' => [
+								'color' => '#ffffff',
+							],
+						],
+
+						'pickers' => [
+							[
+								'title' => __( 'Text Initial', 'blocksy' ),
+								'id' => 'default',
+							],
+						],
+					],
+
+				],
+			],
+
 			'menu_close_button_type' => [
 				'label' => __('Close Button Type', 'blocksy'),
 				'type' => 'ct-select',
@@ -186,10 +236,22 @@ $options = [
 				),
 			],
 
+			'menu_close_button_icon_size' => [
+				'label' => __( 'Icon Size', 'blocksy' ),
+				'type' => 'ct-number',
+				'design' => 'inline',
+				'value' => 12,
+				'min' => 5,
+				'max' => 50,
+				'divider' => 'top',
+				'setting' => [ 'transport' => 'postMessage' ],
+			],
+
 			'menu_close_button_color' => [
 				'label' => __( 'Icon Color', 'blocksy' ),
 				'type'  => 'ct-color-picker',
 				'design' => 'block',
+				'divider' => 'top',
 				'responsive' => true,
 				'setting' => [ 'transport' => 'postMessage' ],
 
@@ -298,17 +360,6 @@ $options = [
 					],
 
 				],
-			],
-
-			'menu_close_button_icon_size' => [
-				'label' => __( 'Icon Size', 'blocksy' ),
-				'type' => 'ct-number',
-				'design' => 'inline',
-				'value' => 12,
-				'min' => 5,
-				'max' => 50,
-				'divider' => 'top',
-				'setting' => [ 'transport' => 'postMessage' ],
 			],
 
 			blocksy_rand_md5() => [

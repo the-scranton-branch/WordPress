@@ -1,5 +1,6 @@
 .menu {
 	display: flex;
+	gap: var(--menu-items-gap, 0px);
 
 	li {
 		&.menu-item,
@@ -18,15 +19,16 @@
 	--menu-item-padding: 0 calc(var(--menu-items-spacing, 25px) / 2);
 }
 
-// .ct-menu-link:not(:empty),
 .ct-menu-link {
 	display: flex;
 	align-items: center;
 	position: relative;
 	width: 100%;
-	// text-align: initial;
-	padding: var(--menu-item-padding, 0px);
 	border-radius: var(--menu-item-radius, inherit);
+
+	&:not(:empty) {
+		padding: var(--menu-item-padding, 0px);
+	}
 }
 
 

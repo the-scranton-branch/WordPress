@@ -1,8 +1,7 @@
-import './public-path.js'
+import './public-path'
 import './events'
 
 import ctEvents from 'ct-events'
-import $ from 'jquery'
 
 import { watchLayoutContainerForReveal } from './frontend/animated-element'
 import { onDocumentLoaded, handleEntryPoints, loadStyle } from './helpers'
@@ -10,40 +9,29 @@ import { onDocumentLoaded, handleEntryPoints, loadStyle } from './helpers'
 import { getCurrentScreen } from './frontend/helpers/current-screen'
 import { mountDynamicChunks } from './dynamic-chunks'
 
-import { mountRenderHeaderLoop } from './frontend/header/render-loop'
-
 import { menuEntryPoints } from './frontend/entry-points/menus'
 import { liveSearchEntryPoints } from './frontend/entry-points/live-search'
-import { wooEntryPoints } from './frontend/woocommerce/main'
 
 import { mountElementorIntegration } from './frontend/integration/elementor'
+
+import { preloadClickHandlers } from './frontend/dynamic-chunks/click-trigger'
+import { isTouchDevice } from './frontend/helpers/is-touch-device'
+
+export const areWeDealingWithSafari = /apple/i.test(navigator.vendor)
 
 /**
  * iOS hover fix
  */
 document.addEventListener('click', (x) => 0)
 
-export const areWeDealingWithSafari = /apple/i.test(navigator.vendor)
-
-export { getCurrentScreen } from './frontend/helpers/current-screen'
-
 import {
 	fastOverlayHandleClick,
 	fastOverlayMount,
 } from './frontend/fast-overlay'
 
-export const allFrontendEntryPoints = [
+let allFrontendEntryPoints = [
 	...menuEntryPoints,
 	...liveSearchEntryPoints,
-	...wooEntryPoints,
-
-	/*
-	{
-		els: '#main [data-sticky]',
-		load: () => import('./frontend/sticky'),
-		condition: () => areWeDealingWithSafari,
-	},
-    */
 
 	{
 		els: '[data-parallax]',
@@ -65,6 +53,12 @@ export const allFrontendEntryPoints = [
 	},
 
 	{
+		els: '.ct-media-container[data-media-id], .ct-dynamic-media[data-media-id]',
+		load: () => import('./frontend/lazy/video-on-click.js'),
+		trigger: ['click', 'slight-mousemove'],
+	},
+
+	{
 		els: '.ct-share-box [data-network]:not([data-network="pinterest"]):not([data-network="email"])',
 		load: () => import('./frontend/social-buttons'),
 		trigger: ['click'],
@@ -80,14 +74,14 @@ export const allFrontendEntryPoints = [
 				? ['.ct-header-cart > .ct-cart-item']
 				: []),
 			'.ct-language-switcher > .ct-active-language',
+			'.ct-header-account[data-interaction="dropdown"] > .ct-account-item',
 		],
 		load: () => import('./frontend/popper-elements'),
-		trigger: ['hover'],
-		events: ['ct:popper-elements:update'],
+		trigger: ['hover-with-click'],
 	},
 
 	{
-		els: '.ct-back-to-top, .ct-shortcuts-container [data-shortcut*="scroll_top"]',
+		els: '.ct-back-to-top, .ct-shortcuts-bar [data-shortcut*="scroll_top"]',
 		load: () => import('./frontend/back-to-top-link'),
 		events: ['ct:back-to-top:mount'],
 		trigger: ['scroll'],
@@ -113,6 +107,12 @@ export const allFrontendEntryPoints = [
 	},
 
 	{
+		els: ['.ct-expandable-trigger'],
+		load: () => import('./frontend/generic-accordion'),
+		trigger: ['click'],
+	},
+
+	{
 		els: ['.ct-header-search'],
 		load: () => new Promise((r) => r({ mount: fastOverlayMount })),
 		mount: ({ mount, el, ...rest }) => {
@@ -125,6 +125,17 @@ export const allFrontendEntryPoints = [
 		trigger: ['click'],
 	},
 ]
+
+if (document.body.className.indexOf('woocommerce') > -1) {
+	import('./frontend/woocommerce/main').then(({ wooEntryPoints }) => {
+		allFrontendEntryPoints = [...allFrontendEntryPoints, ...wooEntryPoints]
+
+		handleEntryPoints(allFrontendEntryPoints, {
+			immediate: true,
+			skipEvents: true,
+		})
+	})
+}
 
 handleEntryPoints(allFrontendEntryPoints, {
 	immediate: /comp|inter|loaded/.test(document.readyState),
@@ -156,36 +167,35 @@ const initOverlayTrigger = () => {
 				fastOverlayHandleClick(event, {
 					container: offcanvas,
 					closeWhenLinkInside: !menuToggle.closest('.ct-header-cart'),
-					computeScrollContainer: () =>
-						offcanvas.querySelector('.cart_list') &&
-						!offcanvas.querySelector('[data-id="cart"] .cart_list')
-							? offcanvas.querySelector('.cart_list')
-							: getCurrentScreen() === 'mobile' &&
-							  offcanvas.querySelector('[data-device="mobile"]')
-							? offcanvas.querySelector('[data-device="mobile"]')
-							: offcanvas.querySelector('.ct-panel-content'),
+					computeScrollContainer: () => {
+						if (
+							offcanvas.querySelector('.cart_list') &&
+							!offcanvas.querySelector(
+								'[data-id="cart"] .cart_list'
+							)
+						) {
+							return offcanvas.querySelector('.cart_list')
+						}
+
+						if (
+							getCurrentScreen() === 'mobile' &&
+							offcanvas.querySelector(
+								'[data-device="mobile"] > .ct-panel-content-inner'
+							)
+						) {
+							return offcanvas.querySelector(
+								'[data-device="mobile"] > .ct-panel-content-inner'
+							)
+						}
+
+						return offcanvas.querySelector(
+							'.ct-panel-content > .ct-panel-content-inner'
+						)
+					},
 				})
 			})
 		}
 	})
-}
-
-const mountAsideType4 = () => {
-	;[...document.querySelectorAll('aside[data-type="type-4"]')].map(
-		(sidebar) => {
-			let scrollbarWidth =
-				window.innerWidth - document.documentElement.clientWidth
-
-			if (scrollbarWidth > 0) {
-				sidebar.style.setProperty(
-					'--scrollbar-width',
-					`${scrollbarWidth}px`
-				)
-			}
-
-			sidebar.style.setProperty('--has-scrollbar', 1)
-		}
-	)
 }
 
 onDocumentLoaded(() => {
@@ -193,6 +203,8 @@ onDocumentLoaded(() => {
 		'mouseover',
 		() => {
 			loadStyle(ct_localizations.dynamic_styles.lazy_load)
+			preloadClickHandlers()
+			import('./frontend/handle-3rd-party-events.js')
 		},
 		{ once: true, passive: true }
 	)
@@ -227,81 +239,20 @@ onDocumentLoaded(() => {
 
 	setTimeout(() => {
 		renderEmptiness()
-	})
+	}, 10)
 
 	inputs.map((input) => input.addEventListener('input', renderEmptiness))
 
 	mountDynamicChunks()
-	mountAsideType4()
-	setTimeout(() => document.body.classList.remove('ct-loading'), 1500)
 
 	setTimeout(() => {
 		initOverlayTrigger()
 	})
 
-	mountRenderHeaderLoop()
-
 	mountElementorIntegration()
 })
 
-if ($) {
-	$(document.body).on('wc_fragments_refreshed', () => {
-		ctEvents.trigger('blocksy:frontend:init')
-	})
-
-	// https://woocommerce.com/document/composite-products/composite-products-js-api-reference/#using-the-api
-	$('.composite_data').on('wc-composite-initializing', (event, composite) => {
-		composite.actions.add_action('component_selection_changed', () => {
-			setTimeout(() => {
-				ctEvents.trigger('blocksy:frontend:init')
-			}, 1000)
-		})
-	})
-
-	$(document.body).on('wc_fragments_loaded', () => {
-		ctEvents.trigger('blocksy:frontend:init')
-	})
-
-	$(document).on('jet-filter-content-rendered', () => {
-		ctEvents.trigger('blocksy:frontend:init')
-	})
-
-	$(document).on('yith_infs_added_elem', function () {
-		ctEvents.trigger('blocksy:frontend:init')
-	})
-
-	jQuery(document).on('yith-wcan-ajax-filtered', function () {
-		ctEvents.trigger('blocksy:frontend:init')
-	})
-
-	$(document).on('berocket_ajax_filtering_end', () => {
-		setTimeout(() => {
-			ctEvents.trigger('blocksy:frontend:init')
-		}, 100)
-	})
-
-	$(document).on('preload', () => {
-		ctEvents.trigger('blocksy:frontend:init')
-	})
-
-	document.addEventListener('wpfAjaxSuccess', (e) => {
-		ctEvents.trigger('blocksy:frontend:init')
-	})
-
-	document.addEventListener('facetwp-loaded', () => {
-		ctEvents.trigger('blocksy:frontend:init')
-	})
-
-	$(document).on('sf:ajaxfinish', () => {
-		ctEvents.trigger('blocksy:frontend:init')
-	})
-
-	$(document).on('ddwcpoRenderVariation', () => {
-		setTimeout(() => {
-			ctEvents.trigger('blocksy:frontend:init')
-		})
-	})
-}
+let isPageLoad = true
 
 ctEvents.on('blocksy:frontend:init', () => {
 	handleEntryPoints(allFrontendEntryPoints, {
@@ -311,8 +262,19 @@ ctEvents.on('blocksy:frontend:init', () => {
 
 	mountDynamicChunks()
 
-	mountAsideType4()
 	initOverlayTrigger()
+
+	if (isPageLoad) {
+		isPageLoad = false
+	} else {
+		import('./frontend/integration/stackable').then(
+			({ mountStackableIntegration }) => mountStackableIntegration()
+		)
+
+		import('./frontend/integration/greenshift.js').then(
+			({ mountGreenshiftIntegration }) => mountGreenshiftIntegration()
+		)
+	}
 })
 
 ctEvents.on(
@@ -333,3 +295,4 @@ ctEvents.on(
 
 export { loadStyle, handleEntryPoints, onDocumentLoaded } from './helpers'
 export { registerDynamicChunk } from './dynamic-chunks'
+export { getCurrentScreen } from './frontend/helpers/current-screen'

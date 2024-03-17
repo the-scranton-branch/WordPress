@@ -35,22 +35,6 @@ class Blocksy_Dashboard_Page {
 			5
 		);
 
-		add_action('admin_init', function () {
-			global $pagenow;
-
-			if ("themes.php" == $pagenow && is_admin() && isset($_GET['activated'])) {
-				$url = apply_filters(
-					'blocksy:dashboard:redirect-after-activation',
-					add_query_arg(
-						'page',
-						$this->page_slug, admin_url('themes.php')
-					)
-				);
-
-				wp_redirect(esc_url_raw($url));
-			}
-		});
-
 		if (is_admin() && defined('DOING_AJAX') && DOING_AJAX) {
 			$plugins_api = new Blocksy_Admin_Dashboard_API_Premium_Plugins();
 			$plugins_api->attach_ajax_actions();
@@ -121,7 +105,8 @@ class Blocksy_Dashboard_Page {
 			'ct-dashboard-scripts',
 			'ctDashboardLocalizations',
 			[
-				'ajax_url'      => admin_url( 'admin-ajax.php' ),
+				'ajax_url' => admin_url('admin-ajax.php'),
+				'dashboard_actions_nonce' => wp_create_nonce('ct-dashboard'),
 				'customizer_url' => admin_url('/customize.php?autofocus'),
 				'theme_version' => $theme->get('Version'),
 				'theme_name'    => $theme->get('Name'),
@@ -165,19 +150,19 @@ class Blocksy_Dashboard_Page {
 	public function setup_framework_page() {
 		$theme = blocksy_get_wp_parent_theme();
 
-		if (! current_user_can('activate_plugins')) {
+		if (! current_user_can('manage_options')) {
 			return;
 		}
 
 		$welcome_page_options = [
 			'title'            => $theme->get('Name'),
 			'menu-title'       => $theme->get('Name'),
-			'permision'        => 'activate_plugins',
+			'permision'        => 'manage_options',
 			'top-level-handle' => $this->page_slug,
 			'callback'         => [ $this, 'welcome_page_template' ],
 			'icon-url' => apply_filters(
 				'blocksy:dashboard:icon-url',
-				get_template_directory_uri() . '/admin/dashboard/static/img/navigation.svg'
+				'data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIGlkPSJMYXllcl8xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB4PSIwcHgiIHk9IjBweCIKCSB2aWV3Qm94PSIwIDAgMzUgMzUiIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgMCAwIDM1IDM1OyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+CjxwYXRoIGQ9Ik0yMS42LDIxLjNjMCwwLjYtMC41LDEuMS0xLjEsMS4xaC0zLjVsLTAuOS0yLjJoNC40QzIxLjEsMjAuMiwyMS42LDIwLjcsMjEuNiwyMS4zeiBNMjAuNiwxMy41aC00LjRsMC45LDIuMmgzLjUKCWMwLjYsMCwxLjEtMC41LDEuMS0xLjFDMjEuNiwxNCwyMS4xLDEzLjUsMjAuNiwxMy41eiBNMzUsMTcuNUMzNSwyNy4yLDI3LjIsMzUsMTcuNSwzNUM3LjgsMzUsMCwyNy4yLDAsMTcuNUMwLDcuOCw3LjgsMCwxNy41LDAKCUMyNy4yLDAsMzUsNy44LDM1LDE3LjV6IE0yNSwxNy45YzAuNy0wLjksMS4xLTIuMSwxLjEtMy40YzAtMS4yLTAuNC0yLjQtMS4xLTMuM2MtMS0xLjQtMi42LTIuMy00LjQtMi4zYzAsMC0wLjEsMC0wLjEsMHYwSDkuOQoJYy0wLjMsMC0wLjUsMC4zLTAuNCwwLjVsMi42LDYuMkg5LjljLTAuMywwLTAuNSwwLjMtMC40LDAuNUwxNCwyNi45aDYuNWMzLjEsMCw1LjYtMi41LDUuNi01LjZDMjYuMiwyMCwyNS44LDE4LjksMjUsMTcuOQoJQzI1LjEsMTcuOSwyNS4xLDE3LjksMjUsMTcuOXoiLz4KPC9zdmc+Cg=='
 			),
 			'position' => 2,
 		];

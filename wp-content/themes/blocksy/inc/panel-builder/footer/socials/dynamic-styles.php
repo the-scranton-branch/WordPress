@@ -13,7 +13,7 @@ if ($socialsIconSize !== 15) {
 		'tablet_css' => $tablet_css,
 		'mobile_css' => $mobile_css,
 		'selector' => blocksy_assemble_selector($root_selector),
-		'variableName' => 'icon-size',
+		'variableName' => 'theme-icon-size',
 		'value' => $socialsIconSize,
 		'responsive' => true
 	]);
@@ -28,7 +28,7 @@ if ($socialsIconSpacing !== 15) {
 		'tablet_css' => $tablet_css,
 		'mobile_css' => $mobile_css,
 		'selector' => blocksy_assemble_selector($root_selector),
-		'variableName' => 'spacing',
+		'variableName' => 'items-spacing',
 		'value' => $socialsIconSpacing,
 		'responsive' => true
 	]);
@@ -119,7 +119,7 @@ if ($has_label) {
 					'operation' => 'suffix',
 					'to_add' => 'a'
 				])),
-				'variable' => 'linkInitialColor'
+				'variable' => 'theme-link-initial-color'
 			],
 
 			'hover' => [
@@ -128,7 +128,7 @@ if ($has_label) {
 					'operation' => 'suffix',
 					'to_add' => 'a'
 				])),
-				'variable' => 'linkHoverColor'
+				'variable' => 'theme-link-hover-color'
 			],
 		],
 		'responsive' => true
@@ -154,7 +154,7 @@ blocksy_output_colors([
 				'operation' => 'suffix',
 				'to_add' => '[data-color="custom"]'
 			])),
-			'variable' => 'icon-color'
+			'variable' => 'theme-icon-color'
 		],
 
 		'hover' => [
@@ -163,7 +163,7 @@ blocksy_output_colors([
 				'operation' => 'suffix',
 				'to_add' => '[data-color="custom"]'
 			])),
-			'variable' => 'icon-hover-color'
+			'variable' => 'theme-icon-hover-color'
 		]
 	],
 
@@ -175,7 +175,7 @@ blocksy_output_colors([
 	'value' => blocksy_akg('footerSocialsIconBackground', $atts),
 	'default' => [
 		'default' => [ 'color' => 'rgba(218, 222, 228, 0.3)' ],
-		'hover' => [ 'color' => 'var(--paletteColor1)' ],
+		'hover' => [ 'color' => 'var(--theme-palette-color-1)' ],
 	],
 	'css' => $css,
 	'tablet_css' => $tablet_css,
@@ -212,10 +212,9 @@ blocksy_output_spacing([
 	'selector' => blocksy_assemble_selector($root_selector),
 	'important' => true,
 	'value' => blocksy_default_akg(
-		'footerSocialsMargin', $atts,
-		blocksy_spacing_value([
-			'linked' => true,
-		])
+		'footerSocialsMargin',
+		$atts,
+		blocksy_spacing_value()
 	)
 ]);
 

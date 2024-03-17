@@ -1,10 +1,10 @@
 .ct-footer [data-row] {
-	border-top: var(--border-top);
-	border-bottom: var(--border-bottom);
+	border-top: var(--theme-border-top);
+	border-bottom: var(--theme-border-bottom);
 
 	> div {
-		border-top: var(--border-top);
-		border-bottom: var(--border-bottom);
+		border-top: var(--theme-border-top);
+		border-bottom: var(--theme-border-bottom);
 	}
 }
 
@@ -18,9 +18,9 @@
 			position: absolute;
 			content: '';
 			top: calc(var(--container-spacing) * -1);
-			right: calc(var(--columns-gap, 50px) / 2 * -1);
+			inset-inline-end: calc(var(--columns-gap, 50px) / 2 * -1);
 			height: calc(100% + var(--container-spacing) * 2);
-			border-right: var(--border);
+			border-inline-end: var(--theme-border);
 		}
 	}	
 }
@@ -31,13 +31,10 @@
 
 	&:after {
 		position: absolute;
-		top: 0;
-		left: 0;
-		right: 0;
-		bottom: 0;
+		inset: 0;
 		width: 0px;
 		margin: 0 auto;
-		border-right: var(--border);
+		border-inline-end: var(--theme-border);
 	}
 }
 

@@ -25,9 +25,8 @@
 .ct-cart-item,
 .ct-header-cta,
 .ct-header-text,
-// .ct-header-search,
-// .ct-header-trigger,
-.ct-header-account,
+.ct-account-item,
+.ct-header-compare,
 .ct-header-wishlist {
 	display: flex;
 	align-items: var(--align-items, center);
@@ -36,37 +35,41 @@
 
 .ct-cart-item,
 .ct-social-box,
-.ct-header-search,
-.ct-header-account,
-.ct-header-trigger,
+.ct-account-item,
+.ct-header-compare,
 .ct-header-wishlist {
-	--linkInitialColor: var(--color);
+	--theme-link-initial-color: var(--theme-text-color);
 }
 
 
 .ct-cart-item,
 .ct-social-box a,
+.ct-color-switch,
 .ct-header-search,
-.ct-header-account,
+.ct-account-item,
 .ct-header-trigger,
-.ct-header-wishlist {
+.ct-header-compare,
+.ct-header-wishlist,
+.ct-language-switcher {
 
-	// &:hover .ct-icon {
 	&:hover svg {
-		fill: var(--icon-hover-color, var(--paletteColor2));
+		fill: var(--theme-icon-hover-color, var(--theme-palette-color-2));
 	}
 }
 
 
+.ct-color-switch,
 .ct-header-search,
 .ct-header-trigger {
+	--theme-link-initial-color: var(--theme-text-color);
+
 	.ct-label {
 		transition: inherit;
-		color: var(--linkInitialColor);
+		color: var(--theme-link-initial-color);
 	}
 
 	&:hover .ct-label {
-		color: var(--linkHoverColor);
+		color: var(--theme-link-hover-color);
 	}
 }
 

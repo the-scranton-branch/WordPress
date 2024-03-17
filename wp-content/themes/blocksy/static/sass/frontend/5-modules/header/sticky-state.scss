@@ -2,13 +2,11 @@
 [data-sticky*='fixed'] {
 	position: fixed;
 	z-index: 5;
-	// prettier-ignore
-	top: calc(var(--admin-bar, 0px) + var(--frame-size, 0px) + var(--header-sticky-offset, 0px));
-	left: var(--frame-size, 0px);
-	right: calc(var(--frame-size, 0px) + var(--scrollbar-width, 0px));
+	top: calc(var(--admin-bar, 0px) + var(--theme-frame-size, 0px) + var(--header-sticky-offset, 0px));
+	left: var(--theme-frame-size, 0px);
+	right: calc(var(--theme-frame-size, 0px) + var(--scrollbar-width, 0px));
 }
 
-// [data-sticky*='auto-hide'],
 [data-sticky*='slide'] {
 	&[data-sticky*='yes-start'] {
 		transform: translateY(-100%);
@@ -48,12 +46,14 @@
 }
 
 // sticky transitions
-body:not(.ct-loading) [data-sticky] {
-	> [data-row] {
-		transition: box-shadow 0.2s cubic-bezier(0.455, 0.03, 0.515, 0.955),
-			background-color 0.2s cubic-bezier(0.455, 0.03, 0.515, 0.955);
-	}
+[data-sticky],
+[data-sticky] [data-row],
+[data-sticky] [data-row*="boxed"] > div {
+	transition: box-shadow 0.2s cubic-bezier(0.455, 0.03, 0.515, 0.955), 
+				background-color 0.2s cubic-bezier(0.455, 0.03, 0.515, 0.955);
+}
 
+[data-sticky] {
 	.ct-header-text,
 	.site-description {
 		transition: color 0.12s cubic-bezier(0.455, 0.03, 0.515, 0.955);

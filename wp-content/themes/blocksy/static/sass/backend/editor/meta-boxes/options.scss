@@ -27,16 +27,8 @@
 
 	// tabs
 	.ct-tabs {
-
-		> ul {
-			> li {
-				max-width: 120px;
-				background: #f3f3f3;
-
-				&.active:after {
-					background: #fff;
-				}
-			}
-		}
+		--tabs-pills-active-background-color: #fff;
+		--tabs-pills-inactive-background-color: #f3f3f3;
+		--tabs-pills-max-width: 120px;
 	}
 }

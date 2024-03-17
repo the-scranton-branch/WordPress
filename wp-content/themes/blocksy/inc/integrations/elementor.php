@@ -1,6 +1,11 @@
 <?php
 
 add_action('init', function () {
+
+	if (class_exists('Elementor\Plugin')) {
+		\Elementor\Plugin::$instance->experiments->remove_feature('block_editor_assets_optimize');
+	}
+
 	if (
 		get_option(
 			'elementor_disable_color_schemes',
@@ -39,55 +44,17 @@ add_action('init', function () {
 			$route = $request->get_route();
 			$rest_id = substr($route, strrpos($route, '/') + 1);
 
-			$palettes = [
-				'blocksy_palette_1' => [
-					'id' => 'blocksy_palette_1',
-					'title' => __('Theme Color Palette 1', 'blocksy'),
-					'value' => 'var(--paletteColor1)'
-				],
+			$palettes = [];
 
-				'blocksy_palette_2' => [
-					'id' => 'blocksy_palette_2',
-					'title' => __('Theme Color Palette 2', 'blocksy'),
-					'value' => 'var(--paletteColor2)'
-				],
+			foreach (blocksy_manager()->colors->get_color_palette() as $paletteKey => $paletteValue) {
+				$key = 'blocksy_palette_' . str_replace('color', '', $paletteKey);
 
-				'blocksy_palette_3' => [
-					'id' => 'blocksy_palette_3',
-					'title' => __('Theme Color Palette 3', 'blocksy'),
-					'value' => 'var(--paletteColor3)'
-				],
-
-				'blocksy_palette_4' => [
-					'id' => 'blocksy_palette_4',
-					'title' => __('Theme Color Palette 4', 'blocksy'),
-					'value' => 'var(--paletteColor4)'
-				],
-
-				'blocksy_palette_5' => [
-					'id' => 'blocksy_palette_5',
-					'title' => __('Theme Color Palette 5', 'blocksy'),
-					'value' => 'var(--paletteColor5)'
-				],
-
-				'blocksy_palette_6' => [
-					'id' => 'blocksy_palette_6',
-					'title' => __('Theme Color Palette 6', 'blocksy'),
-					'value' => 'var(--paletteColor6)'
-				],
-
-				'blocksy_palette_7' => [
-					'id' => 'blocksy_palette_7',
-					'title' => __('Theme Color Palette 7', 'blocksy'),
-					'value' => 'var(--paletteColor7)'
-				],
-
-				'blocksy_palette_8' => [
-					'id' => 'blocksy_palette_8',
-					'title' => __('Theme Color Palette 8', 'blocksy'),
-					'value' => 'var(--paletteColor8)'
-				]
-			];
+				$palettes[$key] = [
+					'id' => $key,
+					'title' => 'Theme ' . $paletteValue['title'],
+					'value' => 'var(--' . $paletteValue['variable'] . ')'
+				];
+			}
 
 			if (isset($palettes[$rest_id])) {
 				return new \WP_REST_Response($palettes[$rest_id]);
@@ -100,7 +67,7 @@ add_action('init', function () {
 			) {
 				$data = $response->get_data();
 
-				$colors = blocksy_get_colors(get_theme_mod('colorPalette'), [
+				$colors = blocksy_get_colors(blocksy_get_theme_mod('colorPalette'), [
 					'color1' => [ 'color' => '#2872fa' ],
 					'color2' => [ 'color' => '#1559ed' ],
 					'color3' => [ 'color' => '#3A4F66' ],
@@ -122,12 +89,14 @@ add_action('init', function () {
 					'blocksy_palette_8' => 'color8'
 				];
 
-				foreach ($palettes as $key => $value) {
-					$value['value'] = $colors[
-						$colors_for_palette[$key]
-					];
+				foreach (blocksy_manager()->colors->get_color_palette() as $paletteKey => $paletteValue) {
+					$key = 'blocksy_palette_' . str_replace('color', '', $paletteKey);
 
-					$data['colors'][$key] = $value;
+					$data['colors'][$key] = [
+						'id' => $key,
+						'title' => 'Theme ' . $paletteValue['title'],
+						'value' => $paletteValue['color']
+					];
 				}
 
 				$response->set_data($data);
@@ -201,7 +170,7 @@ add_action('init', function () {
 
 		wp_enqueue_style(
 			'blocksy-elementor-styles',
-			get_template_directory_uri() . '/static/bundle/elementor.min.css',
+			get_template_directory_uri() . '/static/bundle/elementor-editor.min.css',
 			[],
 			$theme->get('Version')
 		);

@@ -21,18 +21,18 @@
 		p {
 			display: block;
 			max-width: 600px;
-			text-align: center;
-			margin: 0 auto 30px auto !important;
+			margin: 0 auto 30px auto;
 		}
 
-		[class*="ct-button"] {
-			--buttonHeight: 42px;
-			--buttonPadding: 20px;
-			--buttonFontSize: 14px;
+		.ct-support-buttons {
+			display: flex;
+			justify-content: center;
+			gap: 20px;
 
-			&:not(:last-child) {
-				// margin-right: 20px;
-				margin-inline-end: 20px;
+			.ct-button {
+				--ui-button-height: 42px;
+				--ui-button-padding: 20px;
+				--ui-button-font-size: 14px;
 			}
 		}
 	}

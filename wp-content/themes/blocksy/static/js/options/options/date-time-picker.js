@@ -3,7 +3,7 @@ import { DateTimePicker } from '@wordpress/components'
 
 import { __experimentalGetSettings } from '@wordpress/date'
 
-const LocalDateTimePicker = ({ value, option, onChange }) => {
+const LocalDateTimePicker = ({ value, onChange }) => {
 	const settings = __experimentalGetSettings()
 
 	const is12HourTime = /a(?!\\)/i.test(
@@ -27,24 +27,5 @@ const LocalDateTimePicker = ({ value, option, onChange }) => {
 		</div>
 	)
 }
-
-/*
-	<div className="ct-option-input">
-		<input
-			type="text"
-			value={value}
-			{...{
-				...(option.field_attr ? option.field_attr : {}),
-				...(option.attr && option.attr.placeholder
-					? {
-							placeholder: option.attr.placeholder,
-					  }
-					: {}),
-			}}
-			onChange={({ target: { value } }) => onChange(value)}
-		/>
-	</div>
-)
-*/
 
 export default LocalDateTimePicker

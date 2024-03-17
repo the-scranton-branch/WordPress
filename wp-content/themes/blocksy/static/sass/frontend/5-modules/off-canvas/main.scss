@@ -1,11 +1,7 @@
+$transition-duration: 0.25s;
+
 @import 'modal';
 @import 'panel';
-
-body:not(.ct-loading) {
-	.ct-panel {
-		transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
-	}
-}
 
 body[data-panel] {
 	padding-right: var(--scrollbar-width, 0px);
@@ -16,14 +12,12 @@ body[data-panel] {
 	flex-direction: column;
 	position: fixed;
 	z-index: 999999;
-	top: var(--admin-bar, 0px);
-	left: 0;
-	right: 0;
-	bottom: 0;
+	inset: var(--admin-bar, 0px) 0 0 0;
 	opacity: 0;
 	visibility: hidden;
 	pointer-events: none;
-	content-visibility: auto;
+	transition: opacity $transition-duration ease-in-out, 
+				visibility $transition-duration ease-in-out;
 
 	&.active {
 		opacity: 1;
@@ -34,13 +28,10 @@ body[data-panel] {
 	.ct-panel-inner {
 		display: flex;
 		flex-direction: column;
-		width: 100%;
-		height: 100%;
-		box-shadow: var(--box-shadow);
-	}
 
-	@include media-breakpoint-down(sm) {
-		--panel-padding: 25px;
+		@include media-breakpoint-down(sm) {
+			--panel-padding: 25px;
+		}
 	}
 }
 
@@ -48,8 +39,7 @@ body[data-panel] {
 .ct-panel-actions {
 	display: flex;
 	align-items: center;
-	padding: var(--panel-padding, 35px);
-	padding-bottom: 0;
+	padding-inline: var(--panel-padding, 35px);
 
 	@include media-breakpoint-down(sm) {
 		padding-top: 20px;
@@ -62,7 +52,7 @@ body[data-panel] {
 	.ct-panel-heading {
 		font-size: 15px;
 		font-weight: 600;
-		color: var(--color);
+		color: var(--theme-text-color);
 	}
 
 	.close-button {
@@ -70,14 +60,19 @@ body[data-panel] {
 	}
 }
 
+// panel content
 .ct-panel-content {
 	flex: 1;
+	min-height: 0;
 	display: flex;
 	flex-direction: column;
 	justify-content: var(--vertical-alignment, flex-start);
+}
+
+.ct-panel-content-inner {
+	display: flex;
+	flex-direction: column;
 	align-items: var(--horizontal-alignment, flex-start);
-	overflow: var(--overflow, auto);
+	overflow-y: var(--overflow, auto);
 	padding: var(--panel-padding, 35px);
-	// padding-top: 20px;
-	box-sizing: border-box;
 }

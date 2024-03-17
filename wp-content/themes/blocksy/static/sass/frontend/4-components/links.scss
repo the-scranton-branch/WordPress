@@ -9,18 +9,18 @@ $selector:
 ;
 
 a {
-	color: var(--linkInitialColor);
-	text-decoration: var(--has-link-decoration, var(--textDecoration, none));
+	color: var(--theme-link-initial-color);
+	text-decoration: var(--has-link-decoration, var(--theme-text-decoration, none));
 
 	&:hover {
-		color: var(--linkHoverColor);
+		color: var(--theme-link-hover-color);
 	}
 }
 
 // type 2
 [data-link='type-2'] {
 	#{$selector} {
-		--textDecoration: underline;
+		--theme-text-decoration: underline;
 	}
 }
 
@@ -49,7 +49,7 @@ footer.ct-footer [data-link] a,
 	--has-link-decoration: var(--false);
 
 	&:hover {
-		color: var(--linkHoverColor);
+		color: var(--theme-link-hover-color);
 	}
 }
 

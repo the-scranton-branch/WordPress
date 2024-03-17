@@ -71,7 +71,7 @@ export const handleBackgroundOptionFor = ({
 					value: valueExtractor(value),
 					responsive,
 					cb: ({
-						background_type,
+						background_type = 'color',
 						gradient,
 						background_image,
 						background_pattern,
@@ -79,6 +79,10 @@ export const handleBackgroundOptionFor = ({
 						backgroundColor,
 						overlayColor,
 					} = {}) => {
+						if (!background_type) {
+							return 'CT_CSS_SKIP_RULE'
+						}
+
 						if (background_type === 'color') {
 							if (forced_background_image) {
 								return 'none'
@@ -112,52 +116,52 @@ export const handleBackgroundOptionFor = ({
 							? patternColor.default.color
 							: ''
 
-						if (color.indexOf('paletteColor1') > -1) {
+						if (color.indexOf('theme-palette-color-1') > -1) {
 							color = getComputedStyle(
 								document.body
-							).getPropertyValue('--paletteColor1')
+							).getPropertyValue('--theme-palette-color-1')
 						}
 
-						if (color.indexOf('paletteColor2') > -1) {
+						if (color.indexOf('theme-palette-color-2') > -1) {
 							color = getComputedStyle(
 								document.body
-							).getPropertyValue('--paletteColor2')
+							).getPropertyValue('--theme-palette-color-2')
 						}
 
-						if (color.indexOf('paletteColor3') > -1) {
+						if (color.indexOf('theme-palette-color-3') > -1) {
 							color = getComputedStyle(
 								document.body
-							).getPropertyValue('--paletteColor3')
+							).getPropertyValue('--theme-palette-color-3')
 						}
 
-						if (color.indexOf('paletteColor4') > -1) {
+						if (color.indexOf('theme-palette-color-4') > -1) {
 							color = getComputedStyle(
 								document.body
-							).getPropertyValue('--paletteColor4')
+							).getPropertyValue('--theme-palette-color-4')
 						}
 
-						if (color.indexOf('paletteColor5') > -1) {
+						if (color.indexOf('theme-palette-color-5') > -1) {
 							color = getComputedStyle(
 								document.body
-							).getPropertyValue('--paletteColor5')
+							).getPropertyValue('--theme-palette-color-5')
 						}
 
-						if (color.indexOf('paletteColor6') > -1) {
+						if (color.indexOf('theme-palette-color-6') > -1) {
 							color = getComputedStyle(
 								document.body
-							).getPropertyValue('--paletteColor6')
+							).getPropertyValue('--theme-palette-color-6')
 						}
 
-						if (color.indexOf('paletteColor7') > -1) {
+						if (color.indexOf('theme-palette-color-7') > -1) {
 							color = getComputedStyle(
 								document.body
-							).getPropertyValue('--paletteColor7')
+							).getPropertyValue('--theme-palette-color-7')
 						}
 
-						if (color.indexOf('paletteColor8') > -1) {
+						if (color.indexOf('theme-palette-color-8') > -1) {
 							color = getComputedStyle(
 								document.body
-							).getPropertyValue('--paletteColor8')
+							).getPropertyValue('--theme-palette-color-8')
 						}
 
 						if (color.indexOf('rgb') > -1) {

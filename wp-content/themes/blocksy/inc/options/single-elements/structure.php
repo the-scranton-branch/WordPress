@@ -98,24 +98,25 @@ $options = [
 			'design' => $has_v_spacing ? 'block' : 'inline',
 			'divider' => 'top',
 			'attr' => [ 'data-type' => 'content-spacing' ],
+			'choice_attr' => [ 'data-tooltip' => 'top' ],
 			'sync' => "live",
 			'choices' => [
 				'both'   => '<span></span>
-				<i class="ct-tooltip-top">' . __( 'Top & Bottom', 'blocksy' ) . '</i>',
+				<i class="ct-tooltip">' . __( 'Top & Bottom', 'blocksy' ) . '</i>',
 
 				'top'    => '<span></span>
-				<i class="ct-tooltip-top">' . __( 'Only Top', 'blocksy' ) . '</i>',
+				<i class="ct-tooltip">' . __( 'Only Top', 'blocksy' ) . '</i>',
 
 				'bottom' => '<span></span>
-				<i class="ct-tooltip-top">' . __( 'Only Bottom', 'blocksy' ) . '</i>',
+				<i class="ct-tooltip">' . __( 'Only Bottom', 'blocksy' ) . '</i>',
 
 				'none'   => '<span></span>
-				<i class="ct-tooltip-top">' . __( 'Disabled', 'blocksy' ) . '</i>',
+				<i class="ct-tooltip">' . __( 'Disabled', 'blocksy' ) . '</i>',
 			],
-			'desc' => sprintf(
+			'desc' => blocksy_safe_sprintf(
 				// translators: placeholder here means the actual URL.
 				__( 'You can customize the global spacing value in General ➝ Layout ➝ %sContent Area Spacing%s.', 'blocksy' ),
-				sprintf(
+				blocksy_safe_sprintf(
 					'<a data-trigger-section="general:layout_panel" href="%s">',
 					admin_url('/customize.php?autofocus[section]=general&ct_autofocus=general:layout_panel')
 				),

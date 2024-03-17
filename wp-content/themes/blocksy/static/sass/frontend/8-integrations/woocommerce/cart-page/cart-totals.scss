@@ -1,12 +1,27 @@
-// .cart_totals
-.ct-cart-form .cart_totals {
+// general styles
+.cart_totals {
+
+	.wc-proceed-to-checkout {
+
+		a {
+			width: 100%;
+		}
+	}
+
+	// misc
+	.shipping-calculator-button {
+		display: block;
+		margin: 10px 0;
+	}
+}
+
+
+// theme styles
+.ct-woocommerce-cart-form .cart_totals {
 	align-self: flex-start;
 	position: sticky;
-	top: calc(
-		50px + var(--admin-bar, 0px) + var(--header-sticky-height, 0px) *
-			(var(--sticky-shrink, 100) / 100)
-	);
-	border: 2px solid var(--border-color);
+	top: calc(50px + var(--admin-bar, 0px) + var(--header-sticky-height, 0px) * (var(--sticky-shrink, 100) / 100));
+	border: 2px solid var(--theme-border-color);
 
 	@include media-breakpoint-down(sm) {
 		padding: 25px;
@@ -17,23 +32,17 @@
 	}
 
 	h2 {
-		--fontSize: 15px;
+		font-size: 15px;
 	}
 
 	table {
-		--listItemSpacing: 1em;
-
-		// tr:first-child,
-		tr:last-child {
-			--table-border-width: 0;
-		}
 
 		td {
-			text-align: right;
+			text-align: var(--theme-table-text-align, end);
 
-			// &:before {
-			// 	display: none;
-			// }
+			@include media-breakpoint-down(sm) {
+				padding-inline-start: 0;
+			}
 		}
 	}
 

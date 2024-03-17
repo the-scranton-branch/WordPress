@@ -4,6 +4,10 @@ $attr = apply_filters('blocksy:hero:wrapper-attr', $attr);
 
 $prefix = blocksy_manager()->screen->get_prefix();
 
+if (empty(trim($elements))) {
+	return;
+}
+
 ?>
 
 <div <?php echo blocksy_attr_to_html($attr) ?>>

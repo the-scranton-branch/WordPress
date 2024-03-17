@@ -1,7 +1,46 @@
 <?php
 
+add_action('elementor/widget/before_render_content', function($widget) {
+	if (
+		class_exists('Elementor\Jet_Woo_Builder_MyAccount_Content')
+		&&
+		$widget instanceof Elementor\Jet_Woo_Builder_MyAccount_Content
+	) {
+		global $ct_skip_account;
+		$ct_skip_account = true;
+	}
+
+	if (
+		class_exists('ElementorPro\Modules\Woocommerce\Widgets\My_Account')
+		&&
+		$widget instanceof ElementorPro\Modules\Woocommerce\Widgets\My_Account
+	) {
+		global $ct_skip_account;
+		$ct_skip_account = true;
+	}
+}, 10, 1);
+
+add_filter('elementor/widget/render_content', function($content, $widget) {
+	if (! class_exists('ElementorPro\Modules\Woocommerce\Widgets\My_Account')) {
+		return $content;
+	}
+
+	if ($widget instanceof ElementorPro\Modules\Woocommerce\Widgets\My_Account) {
+		global $ct_skip_account;
+		$ct_skip_account = false;
+	}
+
+	return $content;
+}, 10, 2);
+
 if (! function_exists('blocksy_woocommerce_has_account_customizations')) {
 	function blocksy_woocommerce_has_account_customizations() {
+		global $ct_skip_account;
+
+		if ($ct_skip_account) {
+			return false;
+		}
+
 		return ! defined('YITH_WCMAP');
 	}
 }
@@ -46,11 +85,11 @@ add_action('woocommerce_before_account_navigation', function () {
 
 	$username = '';
 
-	if (get_theme_mod('has_account_page_name', 'no') === 'yes') {
+	if (blocksy_get_theme_mod('has_account_page_name', 'no') === 'yes') {
 		$username .= wp_get_current_user()->display_name;
 	}
 
-	if (get_theme_mod('has_account_page_quick_actions', 'no') === 'yes') {
+	if (blocksy_get_theme_mod('has_account_page_quick_actions', 'no') === 'yes') {
 		$account_details_url = wc_get_endpoint_url(
 			'edit-account',
 			'',
@@ -63,19 +102,17 @@ add_action('woocommerce_before_account_navigation', function () {
 		$username = '<div class="ct-account-user-box">' . $username . '</div>';
 	}
 
-	if (get_theme_mod('has_account_page_avatar', 'no') === 'yes') {
-		$avatar_size = intval(get_theme_mod(
+	if (blocksy_get_theme_mod('has_account_page_avatar', 'no') === 'yes') {
+		$avatar_size = intval(blocksy_get_theme_mod(
 			'account_page_avatar_size',
 			'35'
 		)) * 2;
 
 		$username = blocksy_simple_image(
-			get_avatar_url(
-				get_current_user_id(),
-				[
-					'size' => $avatar_size
-				]
-			),
+			blocksy_get_avatar_url([
+				'avatar_entity' => get_current_user_id(),
+				'size' => $avatar_size
+			]),
 			[
 				'tag_name' => 'span',
 
@@ -87,7 +124,7 @@ add_action('woocommerce_before_account_navigation', function () {
 					'style' => 'height:' . (
 						intval($avatar_size) / 2
 					) . 'px',
-					'alt' => blocksy_get_avatar_alt_for(get_the_author_meta('ID'))
+					'alt' => blocksy_get_avatar_alt_for(blocksy_get_the_author_meta('ID'))
 				],
 			]
 		) . $username;

@@ -2,6 +2,7 @@
 
 if (defined('WC_VERSION') && version_compare(WC_VERSION, '2.3', '>=')) {
 	add_filter('woocommerce_add_to_cart_fragments', 'blocksy_header_cart_item_fragment');
+	add_filter('woocommerce_update_order_review_fragments', 'blocksy_header_cart_item_fragment');
 } else {
 	add_filter('add_to_cart_fragments', 'blocksy_header_cart_item_fragment');
 }
@@ -26,15 +27,10 @@ if (! function_exists('blocksy_header_cart_item_fragment')) {
 			]
 		]);
 
-		$fragments['.ct-header-cart .ct-label'] = $header->render_single_item('cart', [
+		$fragments['.ct-header-cart .ct-label .ct-amount'] = $header->render_single_item('cart', [
 			'render_args' => [
 				'only_totals' => true
 			]
-		]);
-
-		$fragments['#woo-cart-panel .ct-panel-content'] = $elements->render_cart_offcanvas([
-			'has_container' => false,
-			'force_output' => true
 		]);
 
 		return apply_filters('blocksy:woocommerce:cart-fragments', $fragments);

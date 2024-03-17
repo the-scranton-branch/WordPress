@@ -1,13 +1,16 @@
 import {
+	createContext,
+	useContext,
 	createElement,
 	createPortal,
 	useRef,
 	Fragment,
 	useState,
+	useEffect,
 } from '@wordpress/element'
 import OptionsPanel from '../OptionsPanel'
 import { __ } from 'ct-i18n'
-import cls from 'classnames'
+import classnames from 'classnames'
 import PalettePreview from './color-palettes/PalettePreview'
 import ColorPalettesModal from './color-palettes/ColorPalettesModal'
 
@@ -17,228 +20,267 @@ import OutsideClickHandler from './react-outside-click-handler'
 import { Transition } from '@react-spring/web'
 import bezierEasing from 'bezier-easing'
 
+import Overlay from '../../customizer/components/Overlay'
+
+import { Dropdown } from '@wordpress/components'
+
+export const ColorPalettesContext = createContext({
+	isEditingPalettes: false,
+})
+
 const ColorPalettes = ({ option, value, onChange }) => {
+	const { isEditingPalettes, setIsEditingPalettes, customPalettes } =
+		useContext(ColorPalettesContext)
 	const colorPalettesWrapper = useRef()
 
-	const [{ isOpen, isTransitioning }, setModalState] = useState({
-		isOpen: false,
-		isTransitioning: false,
-	})
-
-	const { styles, popoverProps } = usePopoverMaker({
-		ref: colorPalettesWrapper,
-		defaultHeight: 430,
-		shouldCalculate: isTransitioning || isOpen,
-	})
-
-	const setIsOpen = (isOpen) => {
-		setModalState((state) => ({
-			...state,
-			isOpen,
-			isTransitioning: true,
-		}))
-	}
-
-	const stopTransitioning = () =>
-		setModalState((state) => ({
-			...state,
-			isTransitioning: false,
-		}))
-	const properValue = {
-		...option.value,
-		...Object.keys(value).reduce(
-			(all, currentKey) => ({
-				...all,
-				...(value[currentKey]
-					? {
-							[currentKey]: value[currentKey],
-					  }
-					: {}),
-			}),
-			{}
-		),
-		...(option.value.palettes
-			? {
-					palettes: option.value.palettes.map((p, index) => {
-						let maybeCurrentlyInValue = value.palettes.find(
-							({ id }) => p.id === id
-						)
-
-						let maybeCurrentValue = {}
-
-						if (p.id === value.current_palette) {
-							Object.keys(p).map((maybeColor) => {
-								if (
-									maybeColor.indexOf('color') === 0 &&
-									value[maybeColor]
-								) {
-									maybeCurrentValue[maybeColor] =
-										value[maybeColor]
-								}
-							})
-						}
-
-						const result = {
-							...Object.keys(p).reduce(
-								(all, currentKey) => ({
-									...all,
-									...(p[currentKey]
-										? {
-												[currentKey]: p[currentKey],
-										  }
-										: {}),
-								}),
-								{}
-							),
-							...Object.keys(maybeCurrentlyInValue || {}).reduce(
-								(all, currentKey) => ({
-									...all,
-									...(maybeCurrentlyInValue[currentKey]
-										? {
-												[currentKey]:
-													maybeCurrentlyInValue[
-														currentKey
-													],
-										  }
-										: {}),
-								}),
-								{}
-							),
-							...maybeCurrentValue,
-						}
-
-						return result
-					}),
-			  }
-			: {}),
-	}
+	// Dont persist the palettes in the database.
+	const { palettes, current_palette, ...properValue } = value
 
 	return (
-		<div>
-			<OutsideClickHandler
-				disabled={!isOpen}
-				useCapture={false}
-				className="ct-palettes-preview"
-				additionalRefs={[popoverProps.ref]}
-				onOutsideClick={() => {
-					setIsOpen(false)
+		<div className="ct-color-palette-preview">
+			<PalettePreview
+				currentPalette={properValue}
+				option={option}
+				onChange={(optionId, optionValue) => {
+					onChange(optionValue)
 				}}
-				wrapperProps={{
-					ref: colorPalettesWrapper,
-					onClick: (e) => {
-						e.preventDefault()
+			/>
 
-						if (
-							e.target.closest('.ct-color-picker-modal') ||
-							e.target.classList.contains('ct-color-picker-modal')
-						) {
-							return
-						}
-
-						if (!properValue.palettes) {
-							return
-						}
-
-						setIsOpen(true)
-					},
-				}}>
-				<PalettePreview
-					onClick={() => {
-						if (!properValue.palettes) {
-							return
-						}
-						setIsOpen(true)
-					}}
-					value={properValue}
-					onChange={(optionId, optionValue) => {
-						onChange({
-							...properValue,
-							...optionValue,
-							...(properValue.palettes
-								? {
-										palettes: properValue.palettes.map(
-											(p) =>
-												p.id ===
-												properValue.current_palette
-													? {
-															...p,
-															...optionValue,
-													  }
-													: p
-										),
-								  }
-								: {}),
-						})
-					}}
-				/>
-			</OutsideClickHandler>
-
-			{(isTransitioning || isOpen) &&
-				createPortal(
-					<Transition
-						items={isOpen}
-						onRest={(isOpen) => {
-							stopTransitioning()
-						}}
-						config={{
-							duration: 100,
-							easing: bezierEasing(0.25, 0.1, 0.25, 1.0),
-						}}
-						from={
-							isOpen
-								? {
-										transform: 'scale3d(0.95, 0.95, 1)',
-										opacity: 0,
-								  }
-								: { opacity: 1 }
-						}
-						enter={
-							isOpen
-								? {
-										transform: 'scale3d(1, 1, 1)',
-										opacity: 1,
-								  }
-								: {
-										opacity: 1,
-								  }
-						}
-						leave={
-							!isOpen
-								? {
-										transform: 'scale3d(0.95, 0.95, 1)',
-										opacity: 0,
-								  }
-								: {
-										opacity: 1,
-								  }
-						}>
-						{(style, item) => {
-							if (!item) {
-								return null
-							}
-
-							return (
-								<ColorPalettesModal
-									wrapperProps={{
-										style: {
-											...style,
-											...styles,
-										},
-										...popoverProps,
-									}}
-									onChange={(value) => {
-										setIsOpen(false)
-										onChange(value)
-									}}
-									value={properValue}
-									option={option}
-								/>
-							)
-						}}
-					</Transition>,
-					document.body
+			<Overlay
+				items={isEditingPalettes}
+				className={classnames(
+					'ct-admin-modal ct-color-palettes-modal',
+					{
+						'ct-no-tabs': (customPalettes || []).length === 0,
+						'ct-has-tabs': (customPalettes || []).length > 0,
+					}
 				)}
+				onDismiss={() => setIsEditingPalettes(false)}
+				render={() => (
+					<ColorPalettesModal
+						onChange={(value) => {
+							onChange(value)
+						}}
+						setIsEditingPalettes={setIsEditingPalettes}
+						value={properValue}
+						option={option}
+					/>
+				)}
+			/>
 		</div>
+	)
+}
+
+ColorPalettes.MetaWrapper = ({ getActualOption }) => {
+	const [isEditingPalettes, setIsEditingPalettes] = useState(false)
+	const [customPalettes, setCustomPalettes] = useState([])
+
+	useEffect(() => {
+		fetch(
+			`${window.ajaxurl}?action=blocksy_get_custom_palettes`,
+
+			{
+				method: 'POST',
+				headers: {
+					Accept: 'application/json',
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({}),
+			}
+		)
+			.then((response) => response.json())
+			.then((data) => {
+				if (data.data.palettes) {
+					setCustomPalettes(data.data.palettes)
+				}
+			})
+	}, [])
+
+	return (
+		<ColorPalettesContext.Provider
+			value={{
+				customPalettes,
+				setCustomPalettes: (palettes) => {
+					setCustomPalettes(palettes)
+					fetch(
+						`${window.ajaxurl}?action=blocksy_sync_custom_palettes`,
+
+						{
+							method: 'POST',
+							headers: {
+								Accept: 'application/json',
+								'Content-Type': 'application/json',
+							},
+							body: JSON.stringify({
+								palettes,
+							}),
+						}
+					)
+						.then((response) => response.json())
+						.then((data) => {})
+				},
+				isEditingPalettes,
+				setIsEditingPalettes,
+			}}>
+			{getActualOption()}
+		</ColorPalettesContext.Provider>
+	)
+}
+
+ColorPalettes.LabelToolbar = ({ option, value, onChange }) => {
+	const { setIsEditingPalettes, customPalettes, setCustomPalettes } =
+		useContext(ColorPalettesContext)
+
+	const canSave = ![...option.palettes, ...(customPalettes || [])].find(
+		(palette) => {
+			const actualColors = Object.keys(value).reduce(
+				(finalValue, currentId) => ({
+					...finalValue,
+					...(currentId.indexOf('color') === 0
+						? {
+								[currentId]: value[currentId].color,
+						  }
+						: {}),
+				}),
+				{}
+			)
+
+			const paletteColors = Object.keys(palette).reduce(
+				(finalValue, currentId) => ({
+					...finalValue,
+					...(currentId.indexOf('color') === 0
+						? {
+								[currentId]: palette[currentId].color,
+						  }
+						: {}),
+				}),
+				{}
+			)
+
+			if (
+				Object.keys(actualColors).length !==
+				Object.keys(paletteColors).length
+			) {
+				return false
+			}
+
+			return Object.keys(actualColors).every((key) => {
+				return actualColors[key] === paletteColors[key]
+			})
+		}
+	)
+
+	return (
+		<Fragment>
+			<Dropdown
+				contentClassName="ct-options-popover"
+				popoverProps={{ placement: 'bottom-start', offset: 3 }}
+				renderToggle={({ isOpen, onToggle }) => (
+					<span
+						className="ct-more-options-trigger"
+						data-tooltip="top">
+						<button
+							className="components-button components-dropdown-menu__toggle is-small has-icon"
+							onClick={(e) => {
+								e.preventDefault()
+								onToggle()
+							}}>
+							<svg
+								viewBox="0 0 24 24"
+								width="24"
+								height="24"
+								fill="currentColor">
+								<path d="M13 19h-2v-2h2v2zm0-6h-2v-2h2v2zm0-6h-2V5h2v2z"></path>
+							</svg>
+						</button>
+
+						<i className="ct-tooltip">
+							{__('Advanced', 'blocksy')}
+						</i>
+					</span>
+				)}
+				renderContent={({ onClose }) => (
+					<div className="components-dropdown-menu__menu">
+						<div className="components-menu-group">
+							<button
+								className="components-button components-menu-item__button"
+								onClick={(e) => {
+									e.preventDefault()
+									setIsEditingPalettes(true)
+									onClose()
+								}}>
+								<span className="components-menu-item__item">
+									{__('Color Palettes', 'blocksy')}
+								</span>
+							</button>
+
+							<button
+								className="components-button components-menu-item__button"
+								disabled={!canSave}
+								onClick={(e) => {
+									e.preventDefault()
+									onClose()
+
+									// Dont persist the palettes in the database.
+									const {
+										palettes,
+										current_palette,
+										...properValue
+									} = value
+
+									setCustomPalettes([
+										...customPalettes,
+										properValue,
+									])
+								}}>
+								<span className="components-menu-item__item">
+									{__('Save Palette', 'blocksy')}
+								</span>
+							</button>
+						</div>
+
+						<div className="components-menu-group">
+							<button
+								className="components-button components-menu-item__button"
+								onClick={(e) => {
+									e.preventDefault()
+
+									onClose()
+
+									// Dont persist the palettes in the database.
+									const {
+										palettes,
+										current_palette,
+										...properValue
+									} = value
+
+									const allColors = Object.keys(properValue)
+										.filter(
+											(key) => key.indexOf('color') > -1
+										)
+										.map((key) =>
+											parseFloat(key.replace('color', ''))
+										)
+										.sort((a, b) => a - b)
+
+									onChange({
+										...properValue,
+										[`color${
+											allColors[allColors.length - 1] + 1
+										}`]: {
+											color: 'CT_CSS_SKIP_RULE',
+										},
+									})
+								}}>
+								<span className="components-menu-item__item">
+									{__('Add New Color', 'blocksy')}
+								</span>
+							</button>
+						</div>
+					</div>
+				)}
+			/>
+		</Fragment>
 	)
 }
 

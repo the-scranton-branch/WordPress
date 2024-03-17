@@ -374,7 +374,7 @@ $options = [
 						'label' => __( 'Columns Spacing', 'blocksy' ),
 						'type' => 'ct-slider',
 						'min' => 0,
-						'max' => 200,
+						'max' => 500,
 						'value' => 50,
 						'responsive' => true,
 						'divider' => 'bottom',
@@ -406,15 +406,12 @@ $options = [
 				'setting' => [ 'transport' => 'postMessage' ],
 			],
 
-			blocksy_rand_md5() => [
-				'type' => 'ct-divider',
-			],
-
 			'footer_row_vertical_alignment' => [
 				'type' => 'ct-radio',
 				'label' => __( 'Vertical Alignment', 'blocksy' ),
 				'view' => 'text',
 				'design' => 'block',
+				'divider' => 'top:full',
 				'responsive' => true,
 				'attr' => [ 'data-type' => 'vertical-alignment' ],
 				'setting' => [ 'transport' => 'postMessage' ],
@@ -426,16 +423,13 @@ $options = [
 				],
 			],
 
-			blocksy_rand_md5() => [
-				'type' => 'ct-divider',
-			],
-
 			'footerRowWidth' => [
 				'label' => __( 'Container Width', 'blocksy' ),
 				'type' => 'ct-radio',
 				'value' => 'fixed',
 				'view' => 'text',
 				'design' => 'block',
+				'divider' => 'top:full',
 				'setting' => [ 'transport' => 'postMessage' ],
 				'choices' => [
 					'fixed' => __( 'Default', 'blocksy' ),
@@ -443,14 +437,11 @@ $options = [
 				],
 			],
 
-			blocksy_rand_md5() => [
-				'type' => 'ct-divider',
-			],
-
 			'footerRowVisibility' => [
 				'label' => __( 'Row Visibility', 'blocksy' ),
 				'type' => 'ct-visibility',
 				'design' => 'block',
+				'divider' => 'top:full',
 				'setting' => [ 'transport' => 'postMessage' ],
 
 				'value' => [
@@ -506,27 +497,27 @@ $options = [
 								'id' => 'default',
 								'inherit_source' => 'global',
 								'inherit' => [
-									'var(--heading-1-color, var(--headings-color))' => [
+									'var(--theme-heading-1-color, var(--theme-headings-color))' => [
 										'widgets_title_wrapper' => 'h1'
 									],
 
-									'var(--heading-2-color, var(--headings-color))' => [
+									'var(--theme-heading-2-color, var(--theme-headings-color))' => [
 										'widgets_title_wrapper' => 'h2'
 									],
 
-									'var(--heading-3-color, var(--headings-color))' => [
+									'var(--theme-heading-3-color, var(--theme-headings-color))' => [
 										'widgets_title_wrapper' => 'h3'
 									],
 
-									'var(--heading-4-color, var(--headings-color))' => [
+									'var(--theme-heading-4-color, var(--theme-headings-color))' => [
 										'widgets_title_wrapper' => 'h4'
 									],
 
-									'var(--heading-5-color, var(--headings-color))' => [
+									'var(--theme-heading-5-color, var(--theme-headings-color))' => [
 										'widgets_title_wrapper' => 'h5'
 									],
 
-									'var(--heading-6-color, var(--headings-color))' => [
+									'var(--theme-heading-6-color, var(--theme-headings-color))' => [
 										'widgets_title_wrapper' => 'h6'
 									]
 								]
@@ -540,7 +531,7 @@ $options = [
 						'value' => blocksy_typography_default_values([
 							// 'size' => '16px',
 						]),
-						'divider' => 'top:full',
+						'divider' => 'top',
 						'setting' => [ 'transport' => 'postMessage' ],
 					],
 
@@ -569,19 +560,19 @@ $options = [
 							[
 								'title' => __( 'Text Initial', 'blocksy' ),
 								'id' => 'default',
-								'inherit' => 'var(--color)'
+								'inherit' => 'var(--theme-text-color)'
 							],
 
 							[
 								'title' => __( 'Link Initial', 'blocksy' ),
 								'id' => 'link_initial',
-								'inherit' => 'var(--color)'
+								'inherit' => 'var(--theme-text-color)'
 							],
 
 							[
 								'title' => __( 'Link Hover', 'blocksy' ),
 								'id' => 'link_hover',
-								'inherit' => 'var(--linkHoverColor)'
+								'inherit' => 'var(--theme-link-hover-color)'
 							],
 						],
 					],

@@ -22,12 +22,22 @@ if (function_exists('is_buddypress')) {
 	$prefixes[] = 'buddypress_single';
 }
 
+if (class_exists('Tribe__Events__Main')) {
+	$prefixes[] = 'tribe_events_single';
+	$prefixes[] = 'tribe_events_archive';
+}
+
 $supported_post_types = blocksy_manager()->post_types->get_supported_post_types();
 
 foreach ($supported_post_types as $cpt) {
 	$prefixes[] = $cpt . '_single';
 	$prefixes[] = $cpt . '_archive';
 }
+
+$prefixes = apply_filters(
+	'blocksy:hero:dynamic-styles:prefixes',
+	$prefixes
+);
 
 foreach ($prefixes as $prefix) {
 	blocksy_theme_get_dynamic_styles([

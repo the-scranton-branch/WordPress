@@ -128,11 +128,10 @@ blocksy_output_colors([
 					'to_add' => '.widget-title'
 				])
 			),
-			'variable' => 'heading-color'
+			'variable' => 'theme-heading-color'
 		],
 	],
 ]);
-
 
 // Widgets font & color
 blocksy_output_font_css([
@@ -172,7 +171,7 @@ blocksy_output_colors([
 					'to_add' => '.ct-widget'
 				])
 			),
-			'variable' => 'color'
+			'variable' => 'theme-text-color'
 		],
 
 		'link_initial' => [
@@ -183,7 +182,7 @@ blocksy_output_colors([
 					'to_add' => '.ct-widget'
 				])
 			),
-			'variable' => 'linkInitialColor'
+			'variable' => 'theme-link-initial-color'
 		],
 
 		'link_hover' => [
@@ -194,7 +193,7 @@ blocksy_output_colors([
 					'to_add' => '.ct-widget'
 				])
 			),
-			'variable' => 'linkHoverColor'
+			'variable' => 'theme-link-hover-color'
 		],
 	],
 ]);
@@ -212,7 +211,7 @@ blocksy_output_border([
 			'to_add' => '> div'
 		])
 	),
-	'variableName' => 'border',
+	'variableName' => 'theme-border',
 	'value' => blocksy_akg('footerColumnsDivider', $atts),
 	'default' => [
 		'width' => 1,
@@ -264,7 +263,7 @@ if (isset($footerRowTopDivider['desktop']) || is_customize_preview()) {
 		'tablet_css' => $tablet_css,
 		'mobile_css' => $mobile_css,
 		'selector' => blocksy_assemble_selector($top_has_border_selector),
-		'variableName' => 'border-top',
+		'variableName' => 'theme-border-top',
 		'value' => $footerRowTopDivider,
 		'default' => $footerRowTopDividerDefault,
 		'responsive' => true
@@ -275,7 +274,7 @@ if (isset($footerRowTopDivider['desktop']) || is_customize_preview()) {
 		'tablet_css' => $tablet_css,
 		'mobile_css' => $mobile_css,
 		'selector' => blocksy_assemble_selector($top_has_no_border_selector),
-		'variableName' => 'border-top',
+		'variableName' => 'theme-border-top',
 		'value' => [
 			'desktop' => 'none',
 			'tablet' => 'none',
@@ -326,7 +325,7 @@ if (isset($footerRowBottomDivider['desktop']) || is_customize_preview()) {
 		'tablet_css' => $tablet_css,
 		'mobile_css' => $mobile_css,
 		'selector' => blocksy_assemble_selector($bottom_has_border_selector),
-		'variableName' => 'border-bottom',
+		'variableName' => 'theme-border-bottom',
 		'value' => $footerRowBottomDivider,
 		'default' => $footerRowBottomDividerDefault,
 		'responsive' => true
@@ -337,7 +336,7 @@ if (isset($footerRowBottomDivider['desktop']) || is_customize_preview()) {
 		'tablet_css' => $tablet_css,
 		'mobile_css' => $mobile_css,
 		'selector' => blocksy_assemble_selector($bottom_has_no_border_selector),
-		'variableName' => 'border-bottom',
+		'variableName' => 'theme-border-bottom',
 		'value' => [
 			'desktop' => 'none',
 			'tablet' => 'none',

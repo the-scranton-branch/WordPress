@@ -3,18 +3,24 @@ import cls from 'classnames'
 import { __, sprintf } from 'ct-i18n'
 import Ratio from './ct-ratio'
 
+import { useCustomizerValues } from '../../customizer/controls/customizer-values-context'
+
 const WooCommerceRatio = ({
 	value,
 	onChange,
 	onChangeFor,
-	values,
-	values: {
-		woocommerce_thumbnail_cropping_custom_width,
-		woocommerce_thumbnail_cropping_custom_height,
-	},
 	option,
+
+	option: {
+		croppingKey = 'woocommerce_archive_thumbnail_cropping',
+		customWidthKey = 'woocommerce_archive_thumbnail_cropping_custom_width',
+		customHeightKey = 'woocommerce_archive_thumbnail_cropping_custom_height',
+	},
+
 	...props
 }) => {
+	const [values, onChangeGlobalFor] = useCustomizerValues()
+
 	return (
 		<Ratio
 			onChange={(val) => {
@@ -22,40 +28,37 @@ const WooCommerceRatio = ({
 				let [width, height] = val.split(isCustom ? ':' : '/')
 
 				if (val === 'original') {
-					onChangeFor('woocommerce_thumbnail_cropping', 'uncropped')
+					onChangeGlobalFor(croppingKey, 'uncropped')
 					onChange('uncropped')
 					return
 				}
 
 				onChange(isCustom ? 'custom' : 'predefined')
-				onChangeFor('woocommerce_thumbnail_cropping', 'custom')
+				onChangeGlobalFor(croppingKey, 'custom')
 
-				onChangeFor(
-					'woocommerce_thumbnail_cropping_custom_height',
+				onChangeGlobalFor(
+					customHeightKey,
 					parseFloat(height || '0') || 0
 				)
 
-				onChangeFor(
-					'woocommerce_thumbnail_cropping_custom_width',
-					parseFloat(width || '0') || 0
-				)
+				onChangeGlobalFor(customWidthKey, parseFloat(width || '0') || 0)
 			}}
 			value={
 				value === 'uncropped'
 					? 'original'
 					: value === '1:1'
 					? `1/1`
-					: `${woocommerce_thumbnail_cropping_custom_width}${
+					: `${values[customWidthKey]}${
 							value === 'custom' ? ':' : '/'
-					  }${woocommerce_thumbnail_cropping_custom_height}`
+					  }${values[customHeightKey]}`
 			}
 			option={{
 				...option,
 				value: '1/1',
 			}}
-			onChangeFor={onChangeFor}
-			values={values}
+			onChangeFor={onChangeGlobalFor}
 			{...props}
+			values={values}
 		/>
 	)
 }

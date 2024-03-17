@@ -4,14 +4,16 @@ import {
 	useRef,
 	useCallback,
 	useMemo,
+	useEffect,
 	createRef,
 	Fragment,
 } from '@wordpress/element'
 import ColorPickerIris from './color-picker-iris.js'
 import classnames from 'classnames'
-import { __ } from 'ct-i18n'
+import { sprintf, __ } from 'ct-i18n'
 
 import { nullifyTransforms } from '../../helpers/usePopoverMaker'
+import { getComputedStyleValue } from './utils.js'
 
 export const getNoColorPropFor = (option) =>
 	option.noColorTransparent ? 'transparent' : `CT_CSS_SKIP_RULE`
@@ -48,6 +50,17 @@ const getLeftForEl = (modal, el) => {
 	}
 }
 
+const getComputedColorValue = (color) => {
+	const maybeRootVar = getComputedStyle(document.documentElement)
+		.getPropertyValue(color.replace(/var\(/, '').replace(/\)/, ''))
+		.trim()
+		.replace(/\s/g, '')
+
+	if (maybeRootVar) {
+		return maybeRootVar
+	}
+}
+
 const PickerModal = ({
 	containerRef,
 	el,
@@ -61,6 +74,26 @@ const PickerModal = ({
 	appendToBody,
 	inheritValue,
 }) => {
+	const palettesRef = useRef()
+
+	useEffect(() => {
+		if (!palettesRef.current) {
+			palettesRef.current = (
+				window.ct_customizer_localizations || window.ct_localizations
+			).current_palette.map((c) =>
+				c.replace('color', 'theme-palette-color-')
+			)
+
+			const styles = Object.values({ ...document.documentElement.style })
+
+			if (styles.includes('--theme-palette-color-1')) {
+				palettesRef.current = styles
+					.filter((key) => key.includes('--theme-palette-color'))
+					.map((key) => key.replace('--', ''))
+			}
+		}
+	}, [])
+
 	const getValueForPicker = useMemo(() => {
 		if (value.color === getNoColorPropFor(option)) {
 			return { color: '', key: 'empty' }
@@ -79,24 +112,14 @@ const PickerModal = ({
 		) {
 			return {
 				key: 'picker' + inheritValue,
-				color: getComputedStyle(document.documentElement)
-					.getPropertyValue(
-						inheritValue.replace(/var\(/, '').replace(/\)/, '')
-					)
-					.trim()
-					.replace(/\s/g, ''),
+				color: getComputedStyleValue(inheritValue),
 			}
 		}
 
 		if ((value.color || '').indexOf('var') > -1) {
 			return {
 				key: 'var' + value.color,
-				color: getComputedStyle(document.documentElement)
-					.getPropertyValue(
-						value.color.replace(/var\(/, '').replace(/\)/, '')
-					)
-					.trim()
-					.replace(/\s/g, ''),
+				color: value.color,
 			}
 		}
 
@@ -137,104 +160,47 @@ const PickerModal = ({
 					...(style ? style : {}),
 				}}
 				{...wrapperProps}>
-				{!option.predefined && (
-					<div className="ct-color-picker-top">
-						<ul className="ct-color-picker-skins">
-							{[
-								'paletteColor1',
-								'paletteColor2',
-								'paletteColor3',
-								'paletteColor4',
-								'paletteColor5',
-								'paletteColor6',
-								'paletteColor7',
-								'paletteColor8',
-							].map((color) => (
-								<li
-									key={color}
-									style={{
-										background: `var(--${color})`,
-									}}
-									className={classnames({
-										active:
-											valueToCheck === `var(--${color})`,
-									})}
-									onClick={() =>
-										onChange({
-											...value,
-											color: `var(--${color})`,
-										})
-									}>
-									<div className="ct-tooltip-top">
-										{
-											{
-												paletteColor1: __(
-													'Color 1',
-													'blocksy'
-												),
-												paletteColor2: __(
-													'Color 2',
-													'blocksy'
-												),
-												paletteColor3: __(
-													'Color 3',
-													'blocksy'
-												),
-												paletteColor4: __(
-													'Color 4',
-													'blocksy'
-												),
-												paletteColor5: __(
-													'Color 5',
-													'blocksy'
-												),
-												paletteColor6: __(
-													'Color 6',
-													'blocksy'
-												),
-												paletteColor7: __(
-													'Color 7',
-													'blocksy'
-												),
-												paletteColor8: __(
-													'Color 8',
-													'blocksy'
-												),
-											}[color]
-										}
-									</div>
-								</li>
-							))}
-
-							{!option.skipNoColorPill && false && (
-								<li
-									onClick={() =>
-										onChange({
-											...value,
-											color: getNoColorPropFor(option),
-										})
-									}
-									className={classnames('ct-no-color-pill', {
-										active:
-											value.color ===
-											getNoColorPropFor(option),
-									})}>
-									<i className="ct-tooltip-top">
-										{__('No Color', 'blocksy')}
-									</i>
-								</li>
-							)}
-						</ul>
-					</div>
-				)}
-
 				<ColorPickerIris
 					onChange={(v) => onChange(v)}
+					option={option}
+					picker={picker}
 					value={{
 						...value,
 						color: getValueForPicker.color,
 					}}
 				/>
+
+				{!option.predefined && (
+					<div className="ct-color-picker-palette">
+						{(palettesRef.current || []).map((color) => (
+							<span
+								key={color}
+								style={{
+									background: `var(--${color})`,
+								}}
+								className={classnames({
+									active: valueToCheck === `var(--${color})`,
+								})}
+								data-tooltip="top"
+								onClick={() =>
+									onChange({
+										...value,
+										color: `var(--${color})`,
+									})
+								}>
+								<i className="ct-tooltip">
+									{sprintf(
+										__('Color %s', 'blocksy'),
+										color.replace(
+											'theme-palette-color-',
+											''
+										)
+									)}
+								</i>
+							</span>
+						))}
+					</div>
+				)}
 			</div>
 		</Fragment>
 	)

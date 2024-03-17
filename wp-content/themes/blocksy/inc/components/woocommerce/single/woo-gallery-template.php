@@ -100,8 +100,8 @@ $gallery_images = apply_filters(
 );
 
 $ratio = '3/4';
-$single_ratio = get_theme_mod('product_gallery_ratio', '3/4');
-$has_lazy_load_single_product_image = get_theme_mod(
+$single_ratio = blocksy_get_theme_mod('product_gallery_ratio', '3/4');
+$has_lazy_load_single_product_image = blocksy_get_theme_mod(
 	'has_lazy_load_single_product_image',
 	'yes'
 ) === 'yes';
@@ -117,17 +117,35 @@ if (! $blocksy_is_quick_view) {
 
 ob_start();
 
-echo '<div ' . blocksy_attr_to_html($product_view_attr) . '>';
+$badges = [];
+$location_key = $blocksy_is_quick_view ? 'archive' : 'single';
 
 if ($product->is_in_stock()) {
-	if (get_theme_mod('has_product_single_onsale', 'yes') === 'yes') {
+	$has_sale_badge = blocksy_get_theme_mod('has_sale_badge', [
+		'single' => true,
+		'archive' => true
+	]);
+
+	if ($has_sale_badge[$location_key]) {
+		ob_start();
 		woocommerce_show_product_sale_flash();
+		$badges[] = ob_get_clean();
 	}
 } else {
-	echo blocksy_get_woo_out_of_stock_badge([
-		'location' => 'single'
+	$maybe_stock_badge = blocksy_get_woo_out_of_stock_badge([
+		'location' => $location_key
 	]);
+
+	if ($maybe_stock_badge) {
+		$badges[] = $maybe_stock_badge;
+	}
 }
+
+do_action('blocksy:woocommerce:product-gallery:before');
+
+echo '<div class="ct-product-gallery-container">';
+
+echo implode('', apply_filters('blocksy:woocommerce:single:after-sale-badge', $badges));
 
 $maybe_custom_content = null;
 
@@ -141,15 +159,27 @@ if (! $blocksy_is_quick_view) {
 	);
 }
 
-do_action('blocksy:woocommerce:product-view:start', $gallery_images);
 
+do_action('blocksy:woocommerce:product-view:start', $gallery_images);
 
 $gallery_actions = [];
 
 if (
-	get_theme_mod('has_product_single_lightbox', 'no') === 'yes'
-	&&
-	get_theme_mod('has_product_single_zoom', 'yes') === 'yes'
+	(
+		(
+			blocksy_get_theme_mod('has_product_single_lightbox', 'no') === 'yes'
+			&&
+			blocksy_get_theme_mod('has_product_single_zoom', 'yes') === 'yes'
+		)
+		||
+		(
+			$product->get_type() === 'external'
+			&&
+			blocksy_get_theme_mod('woo_single_affiliate_image_link', 'no') === 'yes'
+			&&
+			blocksy_get_theme_mod('has_product_single_lightbox', 'no') === 'yes'
+		)
+	)
 	&&
 	! isset($blocksy_is_quick_view)
 	&&
@@ -192,27 +222,32 @@ if (! $maybe_custom_content && count($gallery_images) === 1) {
 		$image_href = $image_href[0];
 	}
 
-	echo blocksy_image([
-		'no_image_type' => 'woo',
-		'attachment_id' => $gallery_images[0],
-		'post_id' => $product->get_id(),
-		'size' => 'woocommerce_single',
-		'ratio' => $is_single ? $single_ratio : $default_ratio,
-		'tag_name' => 'a',
-		'size' => 'woocommerce_single',
-		'html_atts' => array_merge([
-			'href' => $image_href
-		], $width ? [
-			'data-width' => $width,
-			'data-height' => $height
-		] : []),
-		'display_video' => true,
-		'lazyload' => $has_lazy_load_single_product_image
-	]);
+	echo blocksy_media(
+		apply_filters(
+			'blocksy:woocommerce:image_additional_attributes',
+			[
+				'no_image_type' => 'woo',
+				'attachment_id' => $gallery_images[0],
+				'post_id' => $product->get_id(),
+				'size' => 'woocommerce_single',
+				'ratio' => $is_single ? $single_ratio : $default_ratio,
+				'tag_name' => 'figure',
+				'size' => 'woocommerce_single',
+				'html_atts' => array_merge([
+					'data-src' => $image_href
+				], $width ? [
+					'data-width' => $width,
+					'data-height' => $height
+				] : []),
+				'display_video' => true,
+				'lazyload' => $has_lazy_load_single_product_image
+			]
+		)
+	);
 }
 
 if (! $maybe_custom_content && count($gallery_images) > 1) {
-	$has_lazy_load_single_product_image = get_theme_mod(
+	$has_lazy_load_single_product_image = blocksy_get_theme_mod(
 		'has_lazy_load_single_product_image',
 		'yes'
 	) === 'yes';
@@ -236,16 +271,33 @@ if ($maybe_custom_content) {
 	echo $maybe_custom_content;
 }
 
-do_action('blocksy:woocommerce:product-view:end', $gallery_images);
 do_action('woocommerce_product_thumbnails');
 
 echo '</div>';
 
+do_action('blocksy:woocommerce:product-gallery:after');
+
 $result_html = ob_get_clean();
 
-echo apply_filters(
-	'woocommerce_single_product_image_thumbnail_html',
-	$result_html,
-	$gallery_images[0]
-);
+$prefix = blocksy_manager()->screen->get_prefix();
+
+if (is_customize_preview()) {
+	$product_view_attr['data-shortcut'] = 'border:outside';
+	$product_view_attr['data-shortcut-location'] = blocksy_first_level_deep_link($prefix) . ':woo_product_gallery';
+}
+
+if (! empty($result_html)) {
+	$result_html = blocksy_html_tag(
+		'div',
+		$product_view_attr,
+		$result_html
+	);
+
+	echo apply_filters(
+		'woocommerce_single_product_image_thumbnail_html',
+		$result_html,
+		$gallery_images[0]
+	);
+}
+
 

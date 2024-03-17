@@ -13,7 +13,7 @@ add_filter(
 		$notice = $parser->add_attribute_to_images_with_tag(
 			$notice,
 			'data-position',
-			get_theme_mod('store_notice_position', 'bottom'),
+			blocksy_get_theme_mod('store_notice_position', 'bottom'),
 			'p'
 		);
 

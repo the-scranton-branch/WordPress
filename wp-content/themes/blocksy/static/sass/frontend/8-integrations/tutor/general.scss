@@ -1,19 +1,11 @@
 :root {
-	// --tutor-primary-color: var(--paletteColor1);
-	// --tutor-primary-hover-color: var(--paletteColor2);
-	// --tutor-text-color: var(--color);
-
-	--tutor-body-color: var(--color);
+	--tutor-body-color: var(--theme-text-color);
 }
 
 .tutor-segment-title,
 .tutor-course-header-h1,
 .tutor-single-course-segment .tutor-segment-title {
-	color: var(--headings-color);
-}
-
-.tutor-container {
-	--listItemSpacing: 0;
+	color: var(--theme-headings-color);
 }
 
 .tutor-table {

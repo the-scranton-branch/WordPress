@@ -1,20 +1,21 @@
 // quote
 .wp-block-quote {
+	margin-inline: 0;
 
 	// style
 	&:not(.is-style-plain) {
 
 		&:not(.has-text-align-center):not(.has-text-align-right) {
-			border-inline-start: 4px solid var(--paletteColor1);
+			border-inline-start: 4px solid var(--theme-palette-color-1);
 		}
 
 		&.has-text-align-center {
 			padding-block: 1.5em;
-			border-block: 3px solid var(--paletteColor1);
+			border-block: 3px solid var(--theme-palette-color-1);
 		}
 
 		&.has-text-align-right {
-			border-inline-end: 4px solid var(--paletteColor1);
+			border-inline-end: 4px solid var(--theme-palette-color-1);
 		}
 	}
 
@@ -26,6 +27,19 @@
 	&.has-text-align-right {
 		padding-inline-end: 1.5em;
 	}
+
+	p {
+		margin-top: 0;
+
+		&:last-of-type {
+			margin-bottom: 0;
+		}
+	}
+
+	cite {
+		margin-top: 15px;
+		font-size: 14px;
+	}
 }
 
 
@@ -36,7 +50,7 @@
 	text-align: initial;
 	border-width: 10px;
 	border-style: solid;
-	border-color: var(--paletteColor1);
+	border-color: var(--theme-palette-color-1);
 
 	blockquote {
 		margin: 0;
@@ -63,6 +77,11 @@
 			&:last-child {
 				margin-bottom: 0;
 			}
+		}
+
+		cite {
+			font-size: 16px;
+			font-weight: 500;
 		}
 	}
 }

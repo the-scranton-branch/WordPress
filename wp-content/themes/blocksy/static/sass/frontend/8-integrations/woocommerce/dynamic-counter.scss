@@ -5,7 +5,7 @@
 	position: absolute;
 	z-index: 1;
 	top: -9px;
-	right: -9px;
+	inset-inline-end: -9px;
 	min-width: 16px;
 	cursor: pointer;
 	height: 16px;
@@ -14,8 +14,8 @@
 	font-weight: 600;
 	font-style: normal;
 	border-radius: 10px;
-	color: var(--cartBadgeText, #fff);
-	background: var(--cartBadgeBackground, var(--paletteColor1));
+	color: var(--theme-cart-badge-text, #fff);
+	background: var(--theme-cart-badge-background, var(--theme-palette-color-1));
 
 	&[data-count='0'] {
 		display: none;

@@ -3,6 +3,7 @@
 	grid-template-columns: var(--grid-columns, repeat(2, 1fr));
 	grid-column-gap: var(--column-gap, 23px);
 	grid-row-gap: var(--row-gap, 23px);
+	margin: 0;
 
 	&[data-columns='3'] {
 		--grid-columns: repeat(3, 1fr);
@@ -48,7 +49,7 @@
 		}
 
 		&.active {
-			background: var(--accentColor);
+			background: var(--ui-accent-color);
 			box-shadow: 0px 5px 15px 0px rgba(0, 0, 0, 0.05);
 
 			span svg {
@@ -59,10 +60,7 @@
 		// ratio
 		> *:first-child {
 			position: absolute;
-			top: 0;
-			left: 0;
-			width: 100%;
-			height: 100%;
+			inset: 0;
 		}
 
 		&:before {
@@ -72,8 +70,6 @@
 			padding-bottom: var(--ratio, 69.67%);
 		}
 	}
-
-
 
 	// ratio
 	&[data-ratio="2:1"] li:before {
@@ -97,7 +93,6 @@
 			animation: rotation 3.5s infinite linear;
 			animation-play-state: paused;
 			will-change: transform;
-			// display: none;
 		}
 
 		&.active {
@@ -113,16 +108,6 @@
 			to {
 				transform: rotate(359deg);
 			}
-		}
-	}
-
-
-	// tooltip
-	li:hover {
-		.ct-tooltip-top {
-			opacity: 1;
-			visibility: visible;
-			transform: translate3d(0px, -40px, 0px);
 		}
 	}
 }

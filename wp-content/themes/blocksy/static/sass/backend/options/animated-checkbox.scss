@@ -1,20 +1,40 @@
+.ct-checkboxes-container {
+	display: grid;
+	gap: 20px;
+
+	&[data-type*="grid"] {
+		grid-template-columns: repeat(2, 1fr);
+		gap: 10px;
+	}
+
+	&[data-type*="bordered"] > * {
+		padding: 10px 15px;
+		border-radius: 4px;
+		border: 1px solid rgba(179, 189, 201, 0.3);
+	}
+
+	&[data-type*="reversed"] > * {
+		flex-direction: row-reverse;
+		justify-content: space-between;
+	}
+}
+
 .ct-checkbox-container {
 	--checkMarkColor: #fff;
 	--background: rgba(179, 189, 201, 0.8);
-	--backgroundActive: var(--accentColor);
+	--backgroundActive: var(--ui-accent-color);
 
 
 	display: flex;
 	align-items: center;
-	justify-content: space-between;
-	padding: 10px 0;
+	gap: 10px;
+	// padding: 10px 0;
 	transition: color 0.15s ease;
 
 	&:not(.activated) {
 		cursor: pointer;
 
 		&:hover {
-			color: #0e8ecc;
 
 			.ct-checkbox:not(.active) {
 				--background: var(--backgroundActive);

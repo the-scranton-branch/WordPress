@@ -5,6 +5,8 @@ import { useDeviceManagerState } from '../../customizer/components/useDeviceMana
 
 import useForceUpdate from './use-force-update'
 
+let pendingRequests = []
+
 const Condition = ({
 	renderingChunk,
 	value,
@@ -54,7 +56,7 @@ const Condition = ({
 			valueForCondition = Object.keys(conditionToWatch).reduce(
 				(current, key) => ({
 					...current,
-					[key]: wp.customize(key)(),
+					[key.split(':')[0]]: wp.customize(key.split(':')[0])(),
 				}),
 				{}
 			)
@@ -88,6 +90,113 @@ const Condition = ({
 					valueForCondition[singleReplace.key] === singleReplace.from
 				) {
 					valueForCondition[singleReplace.key] = singleReplace.to
+				}
+			})
+		}
+
+		const finalOverrides = {
+			...(window.ct_customizer_localizations
+				? ct_customizer_localizations.conditions_override
+				: {}),
+
+			...(window.ct_localizations
+				? ct_localizations.conditions_override
+				: {}),
+		}
+
+		if (finalOverrides['shop_cards_type']) {
+			if (
+				valueForCondition.shop_cards_type === 'type-1' ||
+				valueForCondition.shop_cards_type === 'type-2'
+			) {
+				finalOverrides['shop_cards_type'] =
+					valueForCondition.shop_cards_type
+			}
+		}
+
+		valueForCondition = {
+			...valueForCondition,
+			...finalOverrides,
+		}
+
+		if (conditionOption.computed_fields) {
+			conditionOption.computed_fields.map((computedField) => {
+				if (
+					computedField === 'woo_single_layout' &&
+					(valueForCondition.product_view_type ===
+						'columns-top-gallery' ||
+						valueForCondition.product_view_type === 'top-gallery')
+				) {
+					valueForCondition[computedField] = [
+						...(valueForCondition.woo_single_split_layout.left ||
+							[]),
+						...(valueForCondition.woo_single_split_layout.right ||
+							[]),
+					]
+				}
+
+				if (computedField === 'has_svg_logo') {
+					const ids = ['custom_logo']
+
+					if (
+						valueForCondition.builderSettings &&
+						valueForCondition.builderSettings
+							.has_transparent_header === 'yes'
+					) {
+						ids.push('transparent_logo')
+					}
+
+					if (
+						valueForCondition.builderSettings &&
+						valueForCondition.builderSettings.has_sticky_header ===
+							'yes'
+					) {
+						ids.push('sticky_logo')
+					}
+
+					const hasSvg = ids.some((id) => {
+						const attachmentIds = [
+							...new Set(
+								Object.values(
+									valueForCondition[id] || {}
+								).filter((value) => typeof value === 'number')
+							),
+						]
+
+						return attachmentIds.some((attachmentId) => {
+							const attachment = wp.media
+								.attachment(attachmentId)
+								.toJSON()
+
+							if (attachment && attachment.url) {
+								return attachment.url.match(/\.svg$/)
+							}
+
+							if (pendingRequests.includes(attachmentId)) {
+								return false
+							}
+
+							if (!pendingRequests.includes(attachmentId)) {
+								pendingRequests.push(attachmentId)
+
+								wp.media
+									.attachment(attachmentId)
+									.fetch()
+									.then(() => {
+										pendingRequests =
+											pendingRequests.filter(
+												(id) => id !== attachmentId
+											)
+
+										forceUpdate()
+									})
+							}
+
+							return false
+						})
+					})
+
+					valueForCondition['has_svg_logo'] = hasSvg ? 'yes' : 'no'
 				}
 			})
 		}

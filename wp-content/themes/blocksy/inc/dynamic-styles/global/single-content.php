@@ -16,7 +16,7 @@ if (! isset($source)) {
 		'css' => $css,
 		'tablet_css' => $tablet_css,
 		'mobile_css' => $mobile_css,
-		'value' => get_theme_mod(
+		'value' => blocksy_get_theme_mod(
 			$prefix . '_background',
 			blocksy_background_default_value([
 				'backgroundColor' => [
@@ -91,7 +91,7 @@ if (blocksy_some_device($has_boxed, 'boxed')) {
 			blocksy_background_default_value([
 				'backgroundColor' => [
 					'default' => [
-						'color' => 'var(--paletteColor8)'
+						'color' => 'var(--theme-palette-color-8)'
 					],
 				],
 			])
@@ -105,12 +105,11 @@ if (blocksy_some_device($has_boxed, 'boxed')) {
 		'tablet_css' => $tablet_css,
 		'mobile_css' => $mobile_css,
 		'selector' => blocksy_prefix_selector($selector, $prefix),
-		'property' => 'border-radius',
+		'property' => 'theme-boxed-content-border-radius',
 		'value' => blocksy_akg_or_customizer(
 			'content_boxed_radius',
 			$source,
 			blocksy_spacing_value([
-				'linked' => true,
 				'top' => '3px',
 				'left' => '3px',
 				'right' => '3px',
@@ -124,7 +123,7 @@ if (blocksy_some_device($has_boxed, 'boxed')) {
 		'tablet_css' => $tablet_css,
 		'mobile_css' => $mobile_css,
 		'selector' => blocksy_prefix_selector($selector, $prefix),
-		'variableName' => 'boxed-content-border',
+		'variableName' => 'theme-boxed-content-border',
 		'value' => blocksy_akg_or_customizer(
 			'content_boxed_border',
 			$source,
@@ -152,27 +151,24 @@ if (blocksy_some_device($has_boxed, 'boxed')) {
 		'tablet_css' => $tablet_css,
 		'mobile_css' => $mobile_css,
 		'selector' => blocksy_prefix_selector($selector, $prefix),
-		'property' => 'boxed-content-spacing',
+		'property' => 'theme-boxed-content-spacing',
 		'value' => blocksy_akg_or_customizer(
 			'boxed_content_spacing',
 			$source,
 			[
 				'desktop' => blocksy_spacing_value([
-					'linked' => true,
 					'top' => '40px',
 					'left' => '40px',
 					'right' => '40px',
 					'bottom' => '40px',
 				]),
 				'tablet' => blocksy_spacing_value([
-					'linked' => true,
 					'top' => '35px',
 					'left' => '35px',
 					'right' => '35px',
 					'bottom' => '35px',
 				]),
 				'mobile'=> blocksy_spacing_value([
-					'linked' => true,
 					'top' => '20px',
 					'left' => '20px',
 					'right' => '20px',
@@ -202,6 +198,7 @@ if (blocksy_some_device($has_boxed, 'boxed')) {
 				],
 			])
 		),
+		'variableName' => 'theme-boxed-content-box-shadow',
 		'responsive' => true
 	]);
 }

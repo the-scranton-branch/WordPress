@@ -1,5 +1,5 @@
 [data-frame="default"] {
-	border: var(--frame-size, 0px) solid var(--frame-color);
+	border: var(--theme-frame-size, 0px) solid var(--theme-frame-color);
 
 	&:before, &:after {
 		position: fixed;
@@ -7,8 +7,8 @@
 		z-index: 99999;
 		left: 0;
 		width: 100%;
-		height: var(--frame-size, 0px);
-		background: var(--frame-color);
+		height: var(--theme-frame-size, 0px);
+		background: var(--theme-frame-color);
 	}
 
 	&:before {

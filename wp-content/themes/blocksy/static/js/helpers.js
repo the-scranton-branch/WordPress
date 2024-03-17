@@ -1,5 +1,7 @@
 import ctEvents from 'ct-events'
 import { isTouchDevice } from './frontend/helpers/is-touch-device'
+import { isIosDevice } from './frontend/helpers/is-ios-device'
+import $ from 'jquery'
 
 const loadSingleEntryPoint = ({
 	els,
@@ -77,6 +79,27 @@ const loadSingleEntryPoint = ({
 			})
 		}
 
+		if (trigger.includes('change')) {
+			allEls.map((el) => {
+				if (el.hasLazyLoadChangeListener) {
+					return
+				}
+
+				el.hasLazyLoadChangeListener = true
+
+				const cb = (event) => {
+					event.preventDefault()
+					load().then((arg) => mount({ ...arg, event, el }))
+				}
+
+				if ($) {
+					$(el).on('change', cb)
+				} else {
+					el.addEventListener('change', cb)
+				}
+			})
+		}
+
 		if (trigger.includes('scroll')) {
 			allEls.map((el) => {
 				if (el.hasLazyLoadScrollListener) {
@@ -103,6 +126,21 @@ const loadSingleEntryPoint = ({
 					document.addEventListener('scroll', cb)
 				}, 500)
 			})
+		}
+
+		if (trigger.includes('slight-mousemove')) {
+			if (!document.body.hasSlightMousemoveListenerTheme) {
+				document.body.hasSlightMousemoveListenerTheme = true
+
+				const cb = (event) => {
+					allEls.map((el) => {
+						load().then((arg) => mount({ ...arg, el }))
+					})
+				}
+
+				document.addEventListener('mousemove', cb, { once: true })
+				// document.addEventListener('touchstart', cb, { once: true })
+			}
 		}
 
 		if (trigger.includes('input')) {
@@ -135,7 +173,7 @@ const loadSingleEntryPoint = ({
 								el,
 							})
 						)
-					}, parseFloat(el.dataset.autoplay) * 1000)
+					}, 10)
 					return
 				}
 
@@ -173,21 +211,29 @@ const loadSingleEntryPoint = ({
 
 				el.hasLazyLoadClickHoverListener = true
 
+				const l = (event) => {
+					// iOS devices will prevent the click by default, no need
+					// to prevent it manually
+					if (!isIosDevice()) {
+						event.preventDefault()
+					}
+
+					load().then((arg) =>
+						mount({
+							...arg,
+							event,
+							el,
+						})
+					)
+				}
+
 				el.addEventListener(
 					isTouchDevice() ? 'click' : 'mouseover',
-					(event) => {
-						event.preventDefault()
-
-						load().then((arg) =>
-							mount({
-								...arg,
-								event,
-								el,
-							})
-						)
-					},
+					l,
 					{ once: true }
 				)
+
+				el.addEventListener('focus', l, { once: true })
 			})
 		}
 

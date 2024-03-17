@@ -1,5 +1,9 @@
 <?php
 
+if (! isset($device)) {
+	$device = 'desktop';
+}
+
 $class = 'ct-header-search ct-toggle';
 
 $item_visibility = blocksy_default_akg('header_search_visibility', $atts, [
@@ -20,7 +24,10 @@ $label_class .= ' ' . blocksy_visibility_classes(blocksy_akg('search_label_visib
 	]
 ));
 
-$search_label = blocksy_akg('search_label', $atts, __('Search', 'blocksy'));
+$search_label = blocksy_expand_responsive_value(
+	blocksy_default_akg('search_label', $atts, __('Search', 'blocksy'))
+)[$device];
+
 $search_label_position = blocksy_expand_responsive_value(
 	blocksy_akg('search_label_position', $atts, 'left')
 );
@@ -36,7 +43,9 @@ if (function_exists('blc_get_icon') && isset($atts['icon'])) {
 			'icon' => 'blc blc-search'
 		]),
 		'icon_container' => false,
-		'icon_class' => 'ct-icon'
+		'icon_html_atts' => [
+			'class' => 'ct-icon',
+		]
 	]);
 }
 
@@ -45,7 +54,7 @@ if (function_exists('blc_get_icon') && isset($atts['icon'])) {
 <button
 	data-toggle-panel="#search-modal"
 	class="<?php echo esc_attr($class) ?>"
-	aria-label="<?php echo __('Open search form', 'blocksy')?>"
+	aria-label="<?php echo $search_label; ?>"
 	data-label="<?php echo $search_label_position[$device] ?>"
 	<?php echo blocksy_attr_to_html($attr) ?>>
 

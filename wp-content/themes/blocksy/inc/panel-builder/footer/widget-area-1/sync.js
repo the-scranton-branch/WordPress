@@ -104,7 +104,7 @@ export const handleWidgetAreaVariables = ({ selector }) => ({ itemId }) => ({
 					to_add: '.ct-widget',
 				})
 			),
-			variable: 'color',
+			variable: 'theme-text-color',
 			type: 'color:default',
 			responsive: true,
 		},
@@ -124,7 +124,7 @@ export const handleWidgetAreaVariables = ({ selector }) => ({ itemId }) => ({
 					to_add: '.ct-widget',
 				})
 			),
-			variable: 'linkInitialColor',
+			variable: 'theme-link-initial-color',
 			type: 'color:link_initial',
 			responsive: true,
 		},
@@ -144,7 +144,7 @@ export const handleWidgetAreaVariables = ({ selector }) => ({ itemId }) => ({
 					to_add: '.ct-widget',
 				})
 			),
-			variable: 'linkHoverColor',
+			variable: 'theme-link-hover-color',
 			type: 'color:link_hover',
 			responsive: true,
 		},

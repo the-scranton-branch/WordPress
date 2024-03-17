@@ -14,7 +14,10 @@ const OptionsPanel = (props) => {
 		options,
 		value,
 		onChange, // default | customizer
+
+		// default | taxonomy | gutenberg
 		purpose = 'default',
+
 		hasRevertButton = true,
 		renderOptions = null,
 		parentValue,

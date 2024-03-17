@@ -16,7 +16,7 @@ if (empty($default_background)) {
 	$default_background = blocksy_background_default_value([
 		'backgroundColor' => [
 			'default' => [
-				'color' => 'var(--paletteColor8)',
+				'color' => 'var(--theme-palette-color-8)',
 			],
 		],
 	]);
@@ -142,7 +142,7 @@ blocksy_output_border([
 	'tablet_css' => $tablet_css,
 	'mobile_css' => $mobile_css,
 	'selector' => blocksy_assemble_selector($top_has_border_selector),
-	'variableName' => 'borderTop',
+	'variableName' => 'theme-border-top',
 	'value' => blocksy_akg('headerRowTopBorder', $atts),
 	'default' => [
 		'width' => 1,
@@ -159,7 +159,7 @@ blocksy_output_responsive([
 	'tablet_css' => $tablet_css,
 	'mobile_css' => $mobile_css,
 	'selector' => blocksy_assemble_selector($top_has_no_border_selector),
-	'variableName' => 'borderTop',
+	'variableName' => 'theme-border-top',
 	'value' => [
 		'desktop' => 'none',
 		'tablet' => 'none',
@@ -194,7 +194,7 @@ blocksy_output_border([
 	'tablet_css' => $tablet_css,
 	'mobile_css' => $mobile_css,
 	'selector' => blocksy_assemble_selector($bottom_has_border_selector),
-	'variableName' => 'borderBottom',
+	'variableName' => 'theme-border-bottom',
 	'value' => blocksy_akg('headerRowBottomBorder', $atts),
 	'default' => [
 		'width' => 1,
@@ -211,7 +211,7 @@ blocksy_output_responsive([
 	'tablet_css' => $tablet_css,
 	'mobile_css' => $mobile_css,
 	'selector' => blocksy_assemble_selector($bottom_has_no_border_selector),
-	'variableName' => 'borderBottom',
+	'variableName' => 'theme-border-bottom',
 	'value' => [
 		'desktop' => 'none',
 		'tablet' => 'none',
@@ -351,7 +351,7 @@ if (isset($has_transparent_header) && $has_transparent_header) {
 			'operation' => 'el-prefix',
 			'to_add' => '[data-transparent-row="yes"]'
 		])),
-		'variableName' => 'borderTop',
+		'variableName' => 'theme-border-top',
 		'value' => blocksy_akg('transparentHeaderRowTopBorder', $atts),
 		'default' => [
 			'width' => 1,
@@ -374,7 +374,7 @@ if (isset($has_transparent_header) && $has_transparent_header) {
 			'to_add' => '[data-transparent-row="yes"]'
 		])),
 
-		'variableName' => 'borderTop',
+		'variableName' => 'theme-border-top',
 		'value' => [
 			'desktop' => 'none',
 			'tablet' => 'none',
@@ -395,7 +395,7 @@ if (isset($has_transparent_header) && $has_transparent_header) {
 			'to_add' => '[data-transparent-row="yes"]'
 		])),
 
-		'variableName' => 'borderBottom',
+		'variableName' => 'theme-border-bottom',
 		'value' => blocksy_akg('transparentHeaderRowBottomBorder', $atts),
 		'default' => [
 			'width' => 1,
@@ -418,7 +418,7 @@ if (isset($has_transparent_header) && $has_transparent_header) {
 			'to_add' => '[data-transparent-row="yes"]'
 		])),
 
-		'variableName' => 'borderBottom',
+		'variableName' => 'theme-border-bottom',
 		'value' => [
 			'desktop' => 'none',
 			'tablet' => 'none',
@@ -624,7 +624,7 @@ if (
 			'selector' => $top_has_border_selector,
 			'to_add' => '[data-sticky*="yes"]'
 		])),
-		'variableName' => 'borderTop',
+		'variableName' => 'theme-border-top',
 		'value' => blocksy_akg('stickyHeaderRowTopBorder', $atts),
 		'default' => [
 			'width' => 1,
@@ -646,7 +646,7 @@ if (
 			'to_add' => '[data-sticky*="yes"]'
 		])),
 
-		'variableName' => 'borderTop',
+		'variableName' => 'theme-border-top',
 		'value' => [
 			'desktop' => 'none',
 			'tablet' => 'none',
@@ -666,7 +666,7 @@ if (
 			'to_add' => '[data-sticky*="yes"]'
 		])),
 
-		'variableName' => 'borderBottom',
+		'variableName' => 'theme-border-bottom',
 		'value' => blocksy_akg('stickyHeaderRowBottomBorder', $atts),
 		'default' => [
 			'width' => 1,
@@ -688,7 +688,7 @@ if (
 			'to_add' => '[data-sticky*="yes"]'
 		])),
 
-		'variableName' => 'borderBottom',
+		'variableName' => 'theme-border-bottom',
 		'value' => [
 			'desktop' => 'none',
 			'tablet' => 'none',
@@ -728,9 +728,9 @@ blocksy_output_spacing([
 	'mobile_css' => $mobile_css,
 	'selector' => blocksy_assemble_selector($root_selector),
 	'property' => 'row-border-radius',
-	'value' => blocksy_akg('header_row_border_radius', $atts,
-		blocksy_spacing_value([
-			'linked' => true,
-		])
+	'value' => blocksy_akg(
+		'header_row_border_radius',
+		$atts,
+		blocksy_spacing_value()
 	)
 ]);

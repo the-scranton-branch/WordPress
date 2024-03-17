@@ -13,6 +13,8 @@ if ($mobile_menu_interactive === 'yes') {
 	);
 }
 
+$attr['data-submenu-dots'] = blocksy_akg('mobile_menu_submenu_dots', $atts, 'yes');
+
 
 ob_start();
 
@@ -32,7 +34,6 @@ $menu_args['child_indicator_type'] = $mobile_menu_type;
 if ($mobile_menu_interactive !== 'yes') {
 	$menu_args['child_indicator_type'] = 'skip';
 }
-
 
 add_filter(
 	'walker_nav_menu_start_el',
@@ -81,8 +82,8 @@ if (strpos($menu_output, 'sub-menu')) {
 
 ?>
 
-<nav 
-	class="<?php echo $class ?>" 
+<nav
+	class="<?php echo $class ?>"
 	<?php echo blocksy_attr_to_html($attr) ?>
 	aria-label="<?php echo __('Off Canvas Menu', 'blocksy')?>">
 	<?php echo $menu_output ?>

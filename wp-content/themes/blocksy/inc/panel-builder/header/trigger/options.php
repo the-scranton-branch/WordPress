@@ -51,13 +51,31 @@ $options = [
 				'value' => 'simple',
 				'view' => 'text',
 				'design' => 'block',
-				'divider' => 'top',
+				'divider' => 'top:full',
 				'setting' => [ 'transport' => 'postMessage' ],
-
 				'choices' => [
 					'simple' => __( 'Simple', 'blocksy' ),
 					'outline' => __( 'Outline', 'blocksy' ),
 					'solid' => __( 'Solid', 'blocksy' ),
+				],
+			],
+
+			blocksy_rand_md5() => [
+				'type' => 'ct-condition',
+				'condition' => [ 'trigger_design' => '!simple' ],
+				'options' => [
+
+					'trigger_icon_container_spacing' => [
+						'label' => __( 'Container Spacing', 'blocksy' ),
+						'type' => 'ct-slider',
+						'min' => 5,
+						'max' => 50,
+						'value' => 10,
+						'divider' => 'top',
+						'responsive' => true,
+						'setting' => [ 'transport' => 'postMessage' ],
+					],
+
 				],
 			],
 
@@ -201,13 +219,13 @@ $options = [
 									[
 										'title' => __( 'Initial', 'blocksy' ),
 										'id' => 'default',
-										'inherit' => 'var(--color)'
+										'inherit' => 'var(--theme-text-color)'
 									],
 
 									[
 										'title' => __( 'Hover', 'blocksy' ),
 										'id' => 'hover',
-										'inherit' => 'var(--linkHoverColor)'
+										'inherit' => 'var(--theme-link-hover-color)'
 									],
 								],
 							],
@@ -328,13 +346,13 @@ $options = [
 							[
 								'title' => __( 'Initial', 'blocksy' ),
 								'id' => 'default',
-								'inherit' => 'var(--color)'
+								'inherit' => 'var(--theme-text-color)'
 							],
 
 							[
 								'title' => __( 'Hover', 'blocksy' ),
 								'id' => 'hover',
-								'inherit' => 'var(--paletteColor2)',
+								'inherit' => 'var(--theme-palette-color-2)',
 							],
 						],
 					],
@@ -585,9 +603,7 @@ $options = [
 				'label' => __( 'Margin', 'blocksy' ),
 				'type' => 'ct-spacing',
 				'setting' => [ 'transport' => 'postMessage' ],
-				'value' => blocksy_spacing_value([
-					'linked' => true,
-				]),
+				'value' => blocksy_spacing_value(),
 				'responsive' => true,
 				'divider' => 'top'
 			],

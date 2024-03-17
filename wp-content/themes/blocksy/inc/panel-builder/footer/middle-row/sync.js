@@ -81,7 +81,7 @@ export const handleRowVariables = ({ itemId }) => ({
 				selector: assembleSelector(
 					getRootSelectorFor({ itemId, panelType: 'footer' })
 				),
-				variable: 'border-top',
+				variable: 'theme-border-top',
 				type: 'border',
 				responsive: true,
 
@@ -111,7 +111,7 @@ export const handleRowVariables = ({ itemId }) => ({
 						to_add: '> div',
 					})
 				),
-				variable: 'border-top',
+				variable: 'theme-border-top',
 				type: 'border',
 				responsive: true,
 				fullValue: true,
@@ -138,7 +138,7 @@ export const handleRowVariables = ({ itemId }) => ({
 				selector: assembleSelector(
 					getRootSelectorFor({ itemId, panelType: 'footer' })
 				),
-				variable: 'border-bottom',
+				variable: 'theme-border-bottom',
 				type: 'border',
 				responsive: true,
 
@@ -168,7 +168,7 @@ export const handleRowVariables = ({ itemId }) => ({
 						to_add: '> div',
 					})
 				),
-				variable: 'border-bottom',
+				variable: 'theme-border-bottom',
 				type: 'border',
 				responsive: true,
 				fullValue: true,
@@ -196,7 +196,7 @@ export const handleRowVariables = ({ itemId }) => ({
 				to_add: '.widget-title',
 			})
 		),
-		variable: 'heading-color',
+		variable: 'theme-heading-color',
 		type: 'color',
 		responsive: true,
 	},
@@ -226,7 +226,7 @@ export const handleRowVariables = ({ itemId }) => ({
 					to_add: '.ct-widget',
 				})
 			),
-			variable: 'color',
+			variable: 'theme-text-color',
 			type: 'color:default',
 			responsive: true,
 		},
@@ -242,7 +242,7 @@ export const handleRowVariables = ({ itemId }) => ({
 					to_add: '.ct-widget',
 				})
 			),
-			variable: 'linkInitialColor',
+			variable: 'theme-link-initial-color',
 			type: 'color:link_initial',
 			responsive: true,
 		},
@@ -258,7 +258,7 @@ export const handleRowVariables = ({ itemId }) => ({
 					to_add: '.ct-widget',
 				})
 			),
-			variable: 'linkHoverColor',
+			variable: 'theme-link-hover-color',
 			type: 'color:link_hover',
 			responsive: true,
 		},
@@ -272,7 +272,7 @@ export const handleRowVariables = ({ itemId }) => ({
 				to_add: '> div',
 			})
 		),
-		variable: 'border',
+		variable: 'theme-border',
 		type: 'border',
 	},
 

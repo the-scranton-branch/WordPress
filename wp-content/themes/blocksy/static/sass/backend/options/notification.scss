@@ -11,11 +11,11 @@
 
 	&[data-type="background:yellow"] {
 		background: #fcf9e8;
-		border-left: 4px solid #dba617;
+		border-inline-start: 4px solid #dba617;
 	}
 
 	&[data-type="background:white"] {
 		background: #fff;
-		border-left: 4px solid var(--accentColor);
+		border-inline-start: 4px solid var(--ui-accent-color);
 	}
 }

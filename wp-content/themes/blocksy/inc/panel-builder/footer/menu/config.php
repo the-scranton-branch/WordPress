@@ -1,7 +1,7 @@
 <?php
 
 $config = [
-	'name' => __('Footer Menu', 'blocksy'),
+	'name' => __('Menu', 'blocksy'),
 	'typography_keys' => ['footerMenuFont'],
 	'selective_refresh' => ['menu']
 ];

@@ -39,6 +39,10 @@ if (! isset($is_tutorlms)) {
 	$is_tutorlms = false;
 }
 
+if (! isset($is_tribe_events)) {
+	$is_tribe_events = false;
+}
+
 if (! isset($is_woo)) {
 	$is_woo = false;
 }
@@ -97,7 +101,7 @@ if ($is_author) {
 if (
 	(
 		$is_single || $is_home
-	) && !$is_bbpress
+	) && ! $is_bbpress
 ) {
 	$custom_description_layer_name = __('Excerpt', 'blocksy');
 }
@@ -120,7 +124,7 @@ $default_hero_elements[] = array_merge([
 	] : []
 ));
 
-if (! $is_tutorlms) {
+if (! $is_tutorlms && ! $is_tribe_events) {
 	$default_hero_elements[] = [
 		'id' => 'custom_description',
 		'enabled' => $prefix !== 'product_',
@@ -135,7 +139,7 @@ if (! $is_tutorlms) {
 if (
 	(
 		$is_single || $is_author
-	) && !$is_bbpress && !$is_tutorlms
+	) && !$is_bbpress && !$is_tutorlms && !$is_tribe_events
 ) {
 	$default_hero_elements[] = [
 		'id' => 'custom_meta',
@@ -225,7 +229,7 @@ $when_enabled_general_settings = [
 					'prefix' => $prefix,
 					'render' => function ($args) {
 						echo blocksy_output_hero_section([
-							'type' => get_theme_mod(
+							'type' => blocksy_get_theme_mod(
 								$args['prefix'] . '_hero_section',
 								'type-1'
 							)
@@ -273,9 +277,6 @@ $when_enabled_general_settings = [
 			'settings' => [
 				'breadcrumbs' => [
 					'label' => __('Breadcrumbs', 'blocksy'),
-					'options_condition' => [
-						'itemIndex' => '!0'
-					],
 					'options' => [
 						blocksy_rand_md5() => [
 							'type' => 'ct-condition',
@@ -293,7 +294,30 @@ $when_enabled_general_settings = [
 										'id' => $prefix . 'hero_elements_spacing',
 									],
 								],
+
 							]
+						],
+
+						'breadcrumbs_visibility' => [
+							'label' => __( 'Visibility', 'blocksy' ),
+							'type' => 'ct-visibility',
+							'design' => 'block',
+
+							'value' => [
+								'desktop' => true,
+								'tablet' => true,
+								'mobile' => true,
+							],
+
+							'choices' => blocksy_ordered_keys([
+								'desktop' => __( 'Desktop', 'blocksy' ),
+								'tablet' => __( 'Tablet', 'blocksy' ),
+								'mobile' => __( 'Mobile', 'blocksy' ),
+							]),
+
+							'sync' => [
+								'id' => $prefix . 'hero_elements_spacing',
+							],
 						],
 
 					],
@@ -345,9 +369,9 @@ $when_enabled_general_settings = [
 						],
 
 						[
-							($is_archive || $is_bbpress) ? [
+							($is_archive || $is_bbpress || $is_home) ? [
 								'has_category_label' => [
-									'label' => __('Category Label', 'blocksy'),
+									'label' => __('Archive Label', 'blocksy'),
 									'type' => 'ct-switch',
 									'value' => 'yes',
 								]
@@ -565,9 +589,6 @@ $when_enabled_general_settings = [
 
 				'author_social_channels' => [
 					'label' => __('Social Channels', 'blocksy'),
-					'options_condition' => [
-						'itemIndex' => '!0'
-					],
 					'options' => [
 						blocksy_rand_md5() => [
 							'type' => 'ct-condition',
@@ -629,12 +650,14 @@ $when_enabled_general_settings = [
 				$prefix . 'hero_margin' => [
 					'label' => __( 'Container Bottom Spacing', 'blocksy' ),
 					'type' => 'ct-slider',
-					'value' => 40,
-					'min' => 0,
-					'max' => 300,
+					'value' => '40px',
+					'units' => blocksy_units_config([
+						[ 'unit' => 'px', 'min' => 0, 'max' => 300 ],
+						['unit' => '', 'type' => 'custom'],
+					]),
 					'responsive' => true,
+					'sync' => 'live',
 					'divider' => 'top',
-					'setting' => [ 'transport' => 'postMessage' ],
 				],
 			],
 		],
@@ -654,9 +677,9 @@ $when_enabled_general_settings = [
 					'design' => 'block',
 					'sync' => 'live',
 					'choices' => [
-						'left' => '',
+						'start' => '',
 						'center' => '',
-						'right' => '',
+						'end' => '',
 					],
 				],
 
@@ -802,10 +825,7 @@ $when_enabled_general_settings = [
 					'design' => 'block',
 					'units' => [
 						[ 'unit' => 'px','min' => 0, 'max' => 1000 ],
-						[ 'unit' => 'vw', 'min' => 0, 'max' => 100 ],
-						[ 'unit' => 'vh', 'min' => 0, 'max' => 100 ],
-						[ 'unit' => 'em', 'min' => 0, 'max' => 100 ],
-						[ 'unit' => 'rem', 'min' => 0, 'max' => 100 ],
+						['unit' => '', 'type' => 'custom'],
 					],
 					'responsive' => true,
 					'sync' => 'live'
@@ -850,27 +870,27 @@ $when_enabled_design_settings = [
 							'title' => __( 'Initial', 'blocksy' ),
 							'id' => 'default',
 							'inherit' => [
-								'var(--heading-1-color, var(--headings-color))' => [
+								'var(--theme-heading-1-color, var(--theme-headings-color))' => [
 									$prefix . 'hero_elements:array-ids:custom_title:heading_tag' => 'h1'
 								],
 
-								'var(--heading-2-color, var(--headings-color))' => [
+								'var(--theme-heading-2-color, var(--theme-headings-color))' => [
 									$prefix . 'hero_elements:array-ids:custom_title:heading_tag' => 'h2'
 								],
 
-								'var(--heading-3-color, var(--headings-color))' => [
+								'var(--theme-heading-3-color, var(--theme-headings-color))' => [
 									$prefix . 'hero_elements:array-ids:custom_title:heading_tag' => 'h3'
 								],
 
-								'var(--heading-4-color, var(--headings-color))' => [
+								'var(--theme-heading-4-color, var(--theme-headings-color))' => [
 									$prefix . 'hero_elements:array-ids:custom_title:heading_tag' => 'h4'
 								],
 
-								'var(--heading-5-color, var(--headings-color))' => [
+								'var(--theme-heading-5-color, var(--theme-headings-color))' => [
 									$prefix . 'hero_elements:array-ids:custom_title:heading_tag' => 'h5'
 								],
 
-								'var(--heading-6-color, var(--headings-color))' => [
+								'var(--theme-heading-6-color, var(--theme-headings-color))' => [
 									$prefix . 'hero_elements:array-ids:custom_title:heading_tag' => 'h6'
 								]
 							]
@@ -934,13 +954,13 @@ $when_enabled_design_settings = [
 						[
 							'title' => __( 'Initial', 'blocksy' ),
 							'id' => 'default',
-							'inherit' => 'var(--color)'
+							'inherit' => 'var(--theme-text-color)'
 						],
 
 						[
 							'title' => __( 'Hover', 'blocksy' ),
 							'id' => 'hover',
-							'inherit' => 'var(--linkHoverColor)'
+							'inherit' => 'var(--theme-link-hover-color)'
 						],
 					],
 				],
@@ -954,7 +974,7 @@ $when_enabled_design_settings = [
 							'type'  => 'ct-color-picker',
 							'design' => 'inline',
 							'divider' => 'top',
-							'noColor' => [ 'background' => 'var(--color)'],
+							'noColor' => [ 'background' => 'var(--theme-text-color)'],
 							'sync' => 'live',
 							'value' => [
 								'default' => [
@@ -970,13 +990,13 @@ $when_enabled_design_settings = [
 								[
 									'title' => __( 'Initial', 'blocksy' ),
 									'id' => 'default',
-									'inherit' => 'var(--buttonTextInitialColor)'
+									'inherit' => 'var(--theme-button-text-initial-color)'
 								],
 
 								[
 									'title' => __( 'Hover', 'blocksy' ),
 									'id' => 'hover',
-									'inherit' => 'var(--buttonTextHoverColor)'
+									'inherit' => 'var(--theme-button-text-hover-color)'
 								],
 							],
 						],
@@ -985,7 +1005,7 @@ $when_enabled_design_settings = [
 							'label' => __( 'Meta Button Background', 'blocksy' ),
 							'type'  => 'ct-color-picker',
 							'design' => 'inline',
-							'noColor' => [ 'background' => 'var(--color)'],
+							'noColor' => [ 'background' => 'var(--theme-text-color)'],
 							'sync' => 'live',
 							'value' => [
 								'default' => [
@@ -1001,13 +1021,13 @@ $when_enabled_design_settings = [
 								[
 									'title' => __( 'Initial', 'blocksy' ),
 									'id' => 'default',
-									'inherit' => 'var(--buttonInitialColor)'
+									'inherit' => 'var(--theme-button-background-initial-color)'
 								],
 
 								[
 									'title' => __( 'Hover', 'blocksy' ),
 									'id' => 'hover',
-									'inherit' => 'var(--buttonHoverColor)'
+									'inherit' => 'var(--theme-button-background-hover-color)'
 								],
 							],
 						],
@@ -1032,7 +1052,7 @@ $when_enabled_design_settings = [
 			'options' => [
 				$prefix . 'pageExcerptFont' => [
 					'type' => 'ct-typography',
-					'label' => $is_single ? __( 'Excerpt Font', 'blocksy' ) : sprintf(
+					'label' => $is_single ? __( 'Excerpt Font', 'blocksy' ) : blocksy_safe_sprintf(
 						// translators: %s entity of font
 						__('%s Font', 'blocksy'),
 						$custom_description_layer_name
@@ -1044,7 +1064,7 @@ $when_enabled_design_settings = [
 				],
 
 				$prefix . 'pageExcerptColor' => [
-					'label' => $is_single ? __('Excerpt Font Color', 'blocksy' ) : sprintf(
+					'label' => $is_single ? __('Excerpt Font Color', 'blocksy' ) : blocksy_safe_sprintf(
 						// translators: %s entity of font color
 						__('%s Font Color', 'blocksy'),
 						$custom_description_layer_name
@@ -1063,7 +1083,7 @@ $when_enabled_design_settings = [
 						[
 							'title' => __( 'Initial', 'blocksy' ),
 							'id' => 'default',
-							'inherit' => 'var(--color)'
+							'inherit' => 'var(--theme-text-color)'
 						],
 					],
 				],
@@ -1109,19 +1129,19 @@ $when_enabled_design_settings = [
 						[
 							'title' => __( 'Text', 'blocksy' ),
 							'id' => 'default',
-							'inherit' => 'var(--color)'
+							'inherit' => 'var(--theme-text-color)'
 						],
 
 						[
 							'title' => __( 'Link Initial', 'blocksy' ),
 							'id' => 'initial',
-							'inherit' => 'var(--linkInitialColor)'
+							'inherit' => 'var(--theme-link-initial-color)'
 						],
 
 						[
 							'title' => __( 'Link Hover', 'blocksy' ),
 							'id' => 'hover',
-							'inherit' => 'var(--linkHoverColor)'
+							'inherit' => 'var(--theme-link-hover-color)'
 						],
 					],
 				],
@@ -1176,7 +1196,7 @@ $when_enabled_design_settings = [
 				'value' => blocksy_background_default_value([
 					'backgroundColor' => [
 						'default' => [
-							'color' => 'var(--paletteColor6)'
+							'color' => 'var(--theme-palette-color-6)'
 						],
 					],
 				])
@@ -1192,7 +1212,6 @@ $when_enabled_design_settings = [
 					'left' => 'auto',
 					'right' => 'auto',
 					'bottom' => '50px',
-					'linked' => true,
 				]),
 				'responsive' => true
 			],

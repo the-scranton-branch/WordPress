@@ -33,10 +33,10 @@
 
 // checkboxes
 .mp-ticket-payments input[type="radio"] {
-	border: var(--form-selection-control-border-width, var(--form-field-border-width, 1px)) solid var(--form-selection-control-initial-color) !important;
+	border: var(--form-selection-control-border-width, var(--theme-form-field-border-width, 1px)) solid var(--theme-form-selection-field-initial-color) !important;
 
 	&:checked {
-		border-color: var(--form-selection-control-accent-color) !important;
-		background-color: var(--form-selection-control-accent-color) !important;
+		border-color: var(--theme-form-selection-field-active-color) !important;
+		background-color: var(--theme-form-selection-field-active-color) !important;
 	}
 }

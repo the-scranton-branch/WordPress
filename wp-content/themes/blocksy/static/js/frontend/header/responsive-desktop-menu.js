@@ -1,8 +1,9 @@
 import ctEvents from 'ct-events'
 import { getItemsDistribution } from './get-items-distribution'
+import { getCurrentScreen } from '../helpers/current-screen'
 
 const isEligibleForSubmenu = (el) =>
-	el.classList.contains('animated-submenu') &&
+	el.className.includes('animated-submenu') &&
 	(!el.parentNode.classList.contains('menu') ||
 		(el.className.indexOf('ct-mega-menu') === -1 &&
 			el.parentNode.classList.contains('menu')))
@@ -12,7 +13,9 @@ let cacheInfo = {}
 export const getCacheFor = (id) => cacheInfo[id]
 
 const getNavRootEl = (nav) => {
-	return Array.from(nav.children).filter((t) => !t.matches('link'))[0]
+	return Array.from(nav.children).filter(
+		(t) => !t.matches('link') && !t.matches('style')
+	)[0]
 }
 
 const maybeCreateMoreItemsFor = (nav, onDone) => {
@@ -25,12 +28,13 @@ const maybeCreateMoreItemsFor = (nav, onDone) => {
 
 	moreContainer.classList.add('menu-item-has-children')
 	moreContainer.classList.add('more-items-container')
-	moreContainer.classList.add('animated-submenu')
+	moreContainer.classList.add('animated-submenu-block')
 	moreContainer.classList.add('menu-item')
+	moreContainer.role = 'none'
 
 	moreContainer.insertAdjacentHTML(
 		'afterbegin',
-		`<a href="#" class="ct-menu-link">
+		`<a href="#" class="ct-menu-link" role="menuitem">
       ${ct_localizations.more_text}
       <span class="ct-toggle-dropdown-desktop">
         <svg class="ct-icon" width="8" height="8" viewBox="0 0 15 15">
@@ -38,8 +42,8 @@ const maybeCreateMoreItemsFor = (nav, onDone) => {
         </svg>
       </span>
     </a>
-    <button class="ct-toggle-dropdown-desktop-ghost" aria-expanded="false" aria-label="${ct_localizations.expand_submenu}"></button>
-    <ul class="sub-menu"></ul>`
+    <button class="ct-toggle-dropdown-desktop-ghost" aria-expanded="false" aria-label="${ct_localizations.expand_submenu}" role="menuitem"></button>
+    <ul class="sub-menu" role="menu"></ul>`
 	)
 
 	getNavRootEl(nav).appendChild(moreContainer)
@@ -54,20 +58,43 @@ const computeItemsWidth = (nav) => {
 				el.firstElementChild
 		)
 		.map((el, index) => {
-			const a = el.firstElementChild
-			a.innerHTML = `<span>${a.innerHTML}</span>`
+			if (el.firstElementChild.matches('a') && !el.querySelector('svg')) {
+				const a = el.firstElementChild
+				a.innerHTML = `<span>${a.innerHTML}</span>`
 
-			const props = window.getComputedStyle(a, null)
+				const props = window.getComputedStyle(a, null)
 
-			let actualWidth =
-				a.firstElementChild.getBoundingClientRect().width +
-				parseInt(props.getPropertyValue('padding-left'), 10) +
-				parseInt(props.getPropertyValue('padding-right'), 10) +
-				(a.querySelector('.ct-toggle-dropdown-desktop') ? 13 : 0)
+				let extraWidth = 0
 
-			a.innerHTML = a.firstElementChild.innerHTML
+				let parentComputedStyle = window.getComputedStyle(
+					el.parentNode,
+					null
+				)
 
-			return actualWidth
+				if (parentComputedStyle.gap !== 'normal') {
+					extraWidth = parseFloat(parentComputedStyle.gap)
+
+					if (
+						el.parentNode.firstElementChild === el ||
+						el === el.parentNode.lastElementChild
+					) {
+						extraWidth = extraWidth / 2
+					}
+				}
+
+				let actualWidth =
+					a.firstElementChild.getBoundingClientRect().width +
+					parseInt(props.getPropertyValue('padding-left'), 10) +
+					parseInt(props.getPropertyValue('padding-right'), 10) +
+					(a.querySelector('.ct-toggle-dropdown-desktop') ? 13 : 0) +
+					extraWidth
+
+				a.innerHTML = a.firstElementChild.innerHTML
+
+				return actualWidth
+			}
+
+			return el.firstElementChild.getBoundingClientRect().width
 		})
 }
 
@@ -112,6 +139,16 @@ const maybeMakeCacheForAllNavs = (nav) => {
 	})
 }
 
+new ResizeObserver(() => {
+	const els = [
+		...document.querySelectorAll(
+			'header [data-device="desktop"] [data-id^="menu"][data-responsive]'
+		),
+	]
+
+	els.map((nav) => mount(nav))
+}).observe(document.body)
+
 export const mount = (nav) => {
 	if (!getNavRootEl(nav)) {
 		return
@@ -128,6 +165,10 @@ export const mount = (nav) => {
 
 	cacheInfo[nav.__id].previousRenderedWidth = window.innerWidth
 
+	if (getCurrentScreen() !== 'desktop') {
+		return
+	}
+
 	let { fit, notFit } = getItemsDistribution(nav)
 
 	if (notFit.length === 0) {
@@ -138,13 +179,27 @@ export const mount = (nav) => {
 					nav.querySelector('.more-items-container')
 				)
 
+				if (
+					el.matches(
+						'.menu-item-has-children, .page_item_has_children'
+					)
+				) {
+					el.classList.remove('animated-submenu-inline')
+					el.classList.add('animated-submenu-block')
+				}
+
 				Array.from(
 					el.querySelectorAll(
 						'.menu-item-has-children, .page_item_has_children'
 					)
 				)
 					.filter((el) => !!el.closest('[class*="ct-mega-menu"]'))
-					.map((el) => el.classList.remove('animated-submenu'))
+					.map((el) => {
+						el.classList.remove(
+							'animated-submenu-block',
+							'animated-submenu-inline'
+						)
+					})
 			})
 
 			nav.querySelector('.more-items-container').remove()
@@ -164,13 +219,12 @@ export const mount = (nav) => {
 		notFit.map((el) => {
 			nav.querySelector('.more-items-container .sub-menu').appendChild(el)
 
-			el.classList.add('animated-submenu')
-
-			Array.from(
-				el.querySelectorAll(
-					'.menu-item-has-children, .page_item_has_children'
-				)
-			).map((el) => el.classList.add('animated-submenu'))
+			if (
+				el.matches('.menu-item-has-children, .page_item_has_children')
+			) {
+				el.classList.add('animated-submenu-inline')
+				el.classList.remove('animated-submenu-block')
+			}
 		})
 
 		fit.map((el) => {
@@ -179,13 +233,25 @@ export const mount = (nav) => {
 				nav.querySelector('.more-items-container')
 			)
 
+			if (
+				el.matches('.menu-item-has-children, .page_item_has_children')
+			) {
+				el.classList.remove('animated-submenu-inline')
+				el.classList.add('animated-submenu-block')
+			}
+
 			Array.from(
 				el.querySelectorAll(
 					'.menu-item-has-children, .page_item_has_children'
 				)
 			)
 				.filter((el) => !!el.closest('[class*="ct-mega-menu"]'))
-				.map((el) => el.classList.remove('animated-submenu'))
+				.map((el) => {
+					el.classList.remove(
+						'animated-submenu-block',
+						'animated-submenu-inline'
+					)
+				})
 		})
 
 		resetSubmenus()

@@ -3,7 +3,7 @@
 	top: 70px;
 
 	.comment-reply-title {
-		--fontWeight: 700;
-		color: var(--headings-color);
+		font-weight: 700;
+		color: var(--theme-headings-color);
 	}
 }

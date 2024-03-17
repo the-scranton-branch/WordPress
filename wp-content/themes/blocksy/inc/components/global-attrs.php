@@ -19,17 +19,22 @@ function blocksy_main_attr() {
 }
 
 add_filter('body_class', function ($classes) {
-	// if (get_theme_mod('has_passepartout', 'no') === 'yes') {
+	// if (blocksy_get_theme_mod('has_passepartout', 'no') === 'yes') {
 	// 	$classes[] = 'ct-passepartout';
 	// };
 
-	$classes[] = 'ct-loading';
+	// $classes[] = 'ct-loading';
+
+	if (! $classes || ! is_array($classes)) {
+		$classes = [];
+	}
 
 	if (function_exists('is_product_category')) {
 		if (is_product_category() || is_product_tag()) {
 			$classes[] = 'woocommerce-archive';
 		}
 	}
+
 
 	if (in_array('elementor-default', $classes)) {
 		$current_template = blocksy_manager()->get_current_template();
@@ -72,15 +77,29 @@ add_filter('body_class', function ($classes) {
 	return $classes;
 }, 999999);
 
+if (! function_exists('blocksy_html_attr')) {
+	function blocksy_html_attr() {
+		$attrs = [];
+
+		$attrs = apply_filters('blocksy:general:html-attr', $attrs);
+
+		if (empty($attrs)) {
+			return '';
+		}
+
+		return ' ' . blocksy_attr_to_html($attrs);
+	}
+}
+
 if (! function_exists('blocksy_body_attr')) {
 	function blocksy_body_attr() {
 		$attrs = [];
 
-		if (get_theme_mod('has_passepartout', 'no') === 'yes') {
+		if (blocksy_get_theme_mod('has_passepartout', 'no') === 'yes') {
 			$attrs['data-frame'] = 'default';
 		};
 
-		$attrs['data-prefix'] = blocksy_manager()->screen->get_prefix() . blocksy_manager()->screen->get_prefix_addition();
+		$attrs['data-prefix'] = esc_attr(blocksy_manager()->screen->get_prefix() . blocksy_manager()->screen->get_prefix_addition());
 
 		if (is_customize_preview()) {
 			$prefix_custom = [];
@@ -184,12 +203,14 @@ if (! function_exists('blocksy_body_attr')) {
 			$reveal_result[] = 'mobile';
 		}
 
-		if (count($reveal_result) > 0) {
+		if (count($reveal_result) > 0 && isset($attrs['data-footer'])) {
 			$attrs['data-footer'] .= ':reveal';
 		}
 
+		$attrs = apply_filters('blocksy:general:body-attr', $attrs);
+
 		return blocksy_attr_to_html(array_merge([
-			'data-link' => get_theme_mod('content_link_type', 'type-2'),
+			'data-link' => blocksy_get_theme_mod('content_link_type', 'type-2'),
 		], $attrs, blocksy_schema_org_definitions('single', ['array' => true])));
 	}
 }

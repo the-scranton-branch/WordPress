@@ -4,11 +4,8 @@ import { sprintf, __ } from 'ct-i18n'
 import ctEvents from 'ct-events'
 
 const Heading = () => {
-	const {
-		theme_name,
-		theme_custom_description,
-		dashboard_has_heading,
-	} = useContext(DashboardContext)
+	const { theme_name, theme_custom_description, dashboard_has_heading } =
+		useContext(DashboardContext)
 	let afterContent = { content: null }
 	ctEvents.trigger('ct:dashboard:heading:after', afterContent)
 
@@ -23,12 +20,9 @@ const Heading = () => {
 					<svg
 						width="35"
 						height="35"
-						viewBox="0 0 50 50"
-						xmlns="http://www.w3.org/2000/svg">
-						<path
-							d="M25 0c13.807 0 25 11.193 25 25S38.807 50 25 50 0 38.807 0 25 11.193 0 25 0zm5.469 25.701a.246.246 0 00-.332 0L19.36 35.812c-.073.07-.021.188.083.188h10.085a.486.486 0 00.331-.129l4.73-4.438c.548-.515.548-1.351 0-1.867zm0-11a.246.246 0 00-.332 0l-12 11.259a.427.427 0 00-.137.311v8.374c0 .098.126.147.2.078l15.551-14.666c.55-.516.55-1.748 0-2.264zM28.279 14H18.233c-.129 0-.234.099-.234.22v9.425c0 .098.126.148.2.078l10.161-9.535c.074-.07.022-.188-.083-.188z"
-							fill="#23282D"
-							fill-rule="evenodd"
+						viewBox="0 0 35 35">
+						<path fill="#1e1e1e" d="M35,17.5C35,7.8,27.2,0,17.5,0C7.8,0,0,7.8,0,17.5C0,27.2,7.8,35,17.5,35C27.2,35,35,27.2,35,17.5z"/>
+						<path fill="#ffffff" d="M16.3,13.7h3.9c0.5,0,0.9,0.4,0.9,1c0,0.5-0.4,1-1,1h-3.1L16.3,13.7z M24.2,17.6c0.6-0.8,1-1.9,1-3c0-1.1-0.4-2.1-1-2.9c-0.9-1.2-2.3-2-3.9-2.1c0,0-0.1,0-0.1,0v0h-9.4c-0.2,0-0.4,0.3-0.3,0.5l2.3,5.5h-1.9c-0.2,0-0.4,0.3-0.3,0.5l3.9,9.5h5.8c2.7,0,5-2.2,5-5C25.2,19.5,24.8,18.5,24.2,17.6C24.2,17.6,24.2,17.6,24.2,17.6zM16.3,19.6h3.9c0.5,0,0.9,0.4,0.9,1c0,0.5-0.4,1-1,1h-3.1L16.3,19.6z"/>
 						/>
 					</svg>
 				)}

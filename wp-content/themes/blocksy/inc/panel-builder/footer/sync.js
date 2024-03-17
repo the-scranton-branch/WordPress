@@ -22,11 +22,63 @@ ctEvents.on(
 					mutateSelector({
 						selector: getRootSelectorFor({ panelType: 'footer' }),
 						operation: 'suffix',
-						to_add: 'footer.ct-footer',
+						to_add: '.ct-footer',
 					})
 				),
 				responsive: true,
 			}),
+
+			footer_spacing: {
+				selector: assembleSelector(
+					mutateSelector({
+						selector: getRootSelectorFor({ panelType: 'footer' }),
+						operation: 'suffix',
+						to_add: '.ct-footer',
+					})
+				),
+				type: 'spacing',
+				variable: 'footer-container-padding',
+				responsive: true,
+			},
+
+			footer_boxed_offset: {
+				selector: assembleSelector(
+					mutateSelector({
+						selector: getRootSelectorFor({ panelType: 'footer' }),
+						operation: 'suffix',
+						to_add: 'footer.ct-container',
+					})
+				),
+				variable: 'footer-container-bottom-offset',
+				responsive: true,
+				unit: 'px',
+			},
+
+			footer_boxed_spacing: {
+				selector: assembleSelector(
+					mutateSelector({
+						selector: getRootSelectorFor({ panelType: 'footer' }),
+						operation: 'suffix',
+						to_add: 'footer.ct-container',
+					})
+				),
+				type: 'spacing',
+				variable: 'footer-container-padding',
+				responsive: true,
+			},
+
+			footer_container_border_radius: {
+				selector: assembleSelector(
+					mutateSelector({
+						selector: getRootSelectorFor({ panelType: 'footer' }),
+						operation: 'suffix',
+						to_add: '.ct-container',
+					})
+				),
+				type: 'spacing',
+				variable: 'footer-container-border-radius',
+				responsive: true,
+			},
 
 			...withKeys(
 				['has_reveal_effect', 'footerShadow'],
@@ -39,7 +91,7 @@ ctEvents.on(
 										panelType: 'footer',
 									}),
 									operation: 'suffix',
-									to_add: 'footer.ct-footer',
+									to_add: '.ct-footer',
 								}),
 								operation: 'container-suffix',
 								to_add: '[data-footer*="reveal"]',
@@ -94,9 +146,10 @@ ctEvents.on(
 								color: { color: 'rgba(0, 0, 0, 0.1)' },
 							},
 						}) => {
-							let value = maybePromoteScalarValueIntoResponsive(
-								footerShadow
-							)
+							let value =
+								maybePromoteScalarValueIntoResponsive(
+									footerShadow
+								)
 
 							if (
 								!has_reveal_effect.desktop &&
@@ -128,9 +181,9 @@ ctEvents.on(
 )
 
 ctEvents.on('ct:footer:sync:item:global', (changeDescriptor) => {
-	if (changeDescriptor.optionId === 'has_reveal_effect') {
-		const footer = document.querySelector('.ct-footer')
+	const footer = document.querySelector('.ct-footer')
 
+	if (changeDescriptor.optionId === 'has_reveal_effect') {
 		let revealComponents = []
 
 		if (changeDescriptor.optionValue.desktop) {
@@ -149,6 +202,34 @@ ctEvents.on('ct:footer:sync:item:global', (changeDescriptor) => {
 
 		if (revealComponents.length > 0) {
 			document.body.dataset.footer += ':reveal'
+		}
+	}
+
+	if (changeDescriptor.optionId === 'footer_container_structure') {
+		const rows = footer.querySelectorAll('[data-row] > div')
+
+		rows.forEach((row) => {
+			row.classList.remove('ct-container-auto')
+			row.classList.remove('ct-container-fluid')
+			row.classList.add('ct-container')
+		})
+
+		if (changeDescriptor.optionValue === 'boxed') {
+			footer.classList.add('ct-container')
+
+			rows.forEach((row) => {
+				row.classList.remove('ct-container')
+				row.classList.add('ct-container-auto')
+			})
+		} else {
+			footer.classList.remove('ct-container')
+		}
+
+		if (changeDescriptor.optionValue === 'fluid') {
+			rows.forEach((row) => {
+				row.classList.remove('ct-container')
+				row.classList.add('ct-container-fluid')
+			})
 		}
 	}
 })

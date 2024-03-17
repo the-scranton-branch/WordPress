@@ -5,17 +5,17 @@ $buttons-type-2:
 ;
 
 #{$buttons-type-2} {
-	--buttonTextInitialColor: var(--buttonInitialColor);
+	--theme-button-text-initial-color: var(--theme-button-background-initial-color);
 
 	border-width: 2px;
 	border-style: solid;
-	color: var(--buttonTextInitialColor);
+	color: var(--theme-button-text-initial-color);
+	border-color: var(--theme-button-background-initial-color);
 	background-color: transparent;
-	border-color: var(--buttonInitialColor);
 
 	&:hover {
-		color: var(--buttonTextHoverColor);
-		border-color: var(--buttonHoverColor);
-		background-color: var(--buttonHoverColor);
+		color: var(--theme-button-text-hover-color);
+		border-color: var(--theme-button-background-hover-color);
+		background-color: var(--theme-button-background-hover-color);
 	}
 }

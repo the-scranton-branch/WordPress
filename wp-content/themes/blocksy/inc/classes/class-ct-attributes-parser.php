@@ -137,26 +137,28 @@ class Blocksy_Attributes_Parser {
 		$content,
 		$attribute_name,
 		$attribute_value,
-		$tag = 'img'
+		$tag = 'img',
+		$self_closing = true
 	) {
-		if ( ! preg_match_all( '/<' . $tag . ' [^>]+>/', $content, $matches ) ) {
+		if (! preg_match_all('/<' . $tag . ' [^>]+>/', $content, $matches)) {
 			return $content;
 		}
 
 		$selected_images = array();
 
-		foreach ( $matches[0] as $image ) {
+		foreach ($matches[0] as $image) {
 			$selected_images[] = $image;
 		}
 
-		foreach ( $selected_images as $image ) {
+		foreach ($selected_images as $image) {
 			$content = str_replace(
 				$image,
 				$this->add_attribute_to_single_image(
 					$image,
 					$attribute_name,
 					$attribute_value,
-					$tag
+					$tag,
+					$self_closing
 				),
 				$content
 			);
@@ -285,19 +287,28 @@ class Blocksy_Attributes_Parser {
 		$image,
 		$attribute_name,
 		$attribute_value,
-		$tag = 'img'
+		$tag = 'img',
+		$self_closing = true
 	) {
-		$attr = sprintf(
+		$attr = blocksy_safe_sprintf(
 			' %s="%s"',
-			esc_attr( $attribute_name ),
-			esc_attr( $attribute_value )
+			esc_attr($attribute_name),
+			esc_attr($attribute_value)
 		);
 
-		$val = preg_replace(
-			'/<' . $tag . ' ([^>]+?)[\\/ ]*>/',
-			'<' . $tag . ' $1' . $attr . ' />',
-			$this->remove_attribute_from_images( $image, $attribute_name )
-		);
+		if ($self_closing) {
+			$val = preg_replace(
+				'/<' . $tag . ' ([^>]+?)[\\/ ]*>/',
+				'<' . $tag . ' $1' . $attr . ' />',
+				$this->remove_attribute_from_images($image, $attribute_name)
+			);
+		} else {
+			$val = preg_replace(
+				'/<' . $tag . ' ([^>]+?)[\\/ ]*>/',
+				'<' . $tag . ' $1' . $attr . ' >',
+				$this->remove_attribute_from_images($image, $attribute_name)
+			);
+		}
 
 		return $val;
 	}

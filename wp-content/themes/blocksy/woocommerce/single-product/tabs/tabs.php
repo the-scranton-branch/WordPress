@@ -42,7 +42,27 @@ if ( ! empty( $product_tabs ) ) : ?>
 		</ul>
 		<article>
 		<?php foreach ( $product_tabs as $key => $product_tab ) : ?>
-			<div class="woocommerce-Tabs-panel woocommerce-Tabs-panel--<?php echo esc_attr( $key ); ?> panel entry-content wc-tab" id="tab-<?php echo esc_attr( $key ); ?>" role="tabpanel" aria-labelledby="tab-title-<?php echo esc_attr( $key ); ?>">
+			<?php
+				$classes = [
+					'woocommerce-Tabs-panel',
+					'woocommerce-Tabs-panel--' . esc_attr($key),
+					'panel',
+					'entry-content',
+					'wc-tab'
+				];
+
+				if ($key === 'description' || $key === 'additional_information') {
+					if (
+						blocksy_get_theme_mod('woo_tabs_type', 'type-1') === 'type-4'
+						||
+						blocksy_get_theme_mod('woo_has_product_tabs_description', 'no') === 'yes'
+					) {
+						$classes[] = 'ct-has-heading';
+					}
+				}
+			?>
+
+			<div class="<?php echo implode(' ', $classes) ?>" id="tab-<?php echo esc_attr( $key ); ?>" role="tabpanel" aria-labelledby="tab-title-<?php echo esc_attr( $key ); ?>">
 				<?php
 				if ( isset( $product_tab['callback'] ) ) {
 					call_user_func( $product_tab['callback'], $key, $product_tab );

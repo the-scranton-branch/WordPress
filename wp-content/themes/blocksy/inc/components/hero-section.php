@@ -26,9 +26,29 @@ if (! function_exists('blocksy_get_page_title_source')) {
 			}
 		}
 
+		$maybe_custom_source = apply_filters(
+			'blocksy:hero:custom-source',
+			null
+		);
+
+		if ($maybe_custom_source !== null) {
+			$result = $maybe_custom_source;
+			return $result;
+		}
+
 		$prefix = blocksy_manager()->screen->get_prefix();
 
 		if ($prefix === 'ct_content_block_single') {
+			$result = false;
+			return $result;
+		}
+
+		if ($prefix === 'ct_product_tab_single') {
+			$result = false;
+			return $result;
+		}
+
+		if ($prefix === 'ct_size_guide_single') {
 			$result = false;
 			return $result;
 		}
@@ -38,7 +58,7 @@ if (! function_exists('blocksy_get_page_title_source')) {
 			return $result;
 		}
 
-		if (strpos($prefix, 'single') !== false || (
+		if ($prefix && strpos($prefix, 'single') !== false || (
 			function_exists('is_shop') && is_shop()
 		) && ! is_search()) {
 			$post_options = blocksy_get_post_options();
@@ -60,11 +80,15 @@ if (! function_exists('blocksy_get_page_title_source')) {
 
 		$default_value = 'yes';
 
-		if ($prefix === 'blog') {
+		if (
+			$prefix === 'blog'
+			||
+			$prefix === 'tribe_events_single'
+		) {
 			$default_value = 'no';
 		}
 
-		if (get_theme_mod($prefix . '_hero_enabled', $default_value) === 'no') {
+		if (blocksy_get_theme_mod($prefix . '_hero_enabled', $default_value) === 'no') {
 			$result = false;
 			return $result;
 		}
@@ -112,13 +136,13 @@ if (! function_exists('blocksy_first_level_deep_link')) {
 			return 'woocommerce_single';
 		}
 
-		if (strpos($prefix, '_archive') !== false) {
+		if ($prefix && strpos($prefix, '_archive') !== false) {
 			return 'post_type_archive_' . str_replace(
 				'_archive', '', $prefix
 			);
 		}
 
-		if (strpos($prefix, '_single') !== false) {
+		if ($prefix && strpos($prefix, '_single') !== false) {
 			return 'post_type_single_' . str_replace(
 				'_single', '', $prefix
 			);
@@ -236,7 +260,7 @@ if (! function_exists('blocksy_output_hero_section')) {
 			blocksy_hero_get_deep_link(blocksy_get_page_title_source())
 		) {
 			$attr['data-shortcut'] = 'border';
-			$attr['data-location'] = blocksy_hero_get_deep_link(blocksy_get_page_title_source());
+			$attr['data-shortcut-location'] = blocksy_hero_get_deep_link(blocksy_get_page_title_source());
 		}
 
 		echo blocksy_render_view(

@@ -1,6 +1,6 @@
 label {
-	--fontSize: 15px;
-	--lineHeight: inherit;
+	font-size: 15px;
+	line-height: inherit;
 	cursor: pointer;
 	margin: 0 0 0.5em 0;
 
@@ -18,7 +18,6 @@ $selector:
 
 #{$selector} {
 	label {
-		--fontSize: 13px;
-		// margin-left: 0.3em;
+		font-size: 13px;
 	}
 }

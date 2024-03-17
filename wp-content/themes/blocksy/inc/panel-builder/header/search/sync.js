@@ -16,7 +16,7 @@ ctEvents.on(
 		variableDescriptors['search'] = ({ itemId }) => ({
 			searchHeaderIconSize: {
 				selector: assembleSelector(getRootSelectorFor({ itemId })),
-				variable: 'icon-size',
+				variable: 'theme-icon-size',
 				responsive: true,
 				unit: 'px',
 			},
@@ -24,14 +24,14 @@ ctEvents.on(
 			searchHeaderIconColor: [
 				{
 					selector: assembleSelector(getRootSelectorFor({ itemId })),
-					variable: 'icon-color',
+					variable: 'theme-icon-color',
 					type: 'color:default',
 					responsive: true,
 				},
 
 				{
 					selector: assembleSelector(getRootSelectorFor({ itemId })),
-					variable: 'icon-hover-color',
+					variable: 'theme-icon-hover-color',
 					type: 'color:hover',
 					responsive: true,
 				},
@@ -52,14 +52,14 @@ ctEvents.on(
 			header_search_font_color: [
 				{
 					selector: assembleSelector(getRootSelectorFor({ itemId })),
-					variable: 'linkInitialColor',
+					variable: 'theme-link-initial-color',
 					type: 'color:default',
 					responsive: true,
 				},
 
 				{
 					selector: assembleSelector(getRootSelectorFor({ itemId })),
-					variable: 'linkHoverColor',
+					variable: 'theme-link-hover-color',
 					type: 'color:hover',
 					responsive: true,
 				},
@@ -75,7 +75,7 @@ ctEvents.on(
 							to_add: '[data-transparent-row="yes"]',
 						})
 					),
-					variable: 'linkInitialColor',
+					variable: 'theme-link-initial-color',
 					type: 'color:default',
 					responsive: true,
 				},
@@ -88,7 +88,7 @@ ctEvents.on(
 							to_add: '[data-transparent-row="yes"]',
 						})
 					),
-					variable: 'linkHoverColor',
+					variable: 'theme-link-hover-color',
 					type: 'color:hover',
 					responsive: true,
 				},
@@ -104,7 +104,7 @@ ctEvents.on(
 						})
 					),
 
-					variable: 'icon-color',
+					variable: 'theme-icon-color',
 					type: 'color:default',
 					responsive: true,
 				},
@@ -118,7 +118,7 @@ ctEvents.on(
 						})
 					),
 
-					variable: 'icon-hover-color',
+					variable: 'theme-icon-hover-color',
 					type: 'color:hover',
 					responsive: true,
 				},
@@ -134,7 +134,7 @@ ctEvents.on(
 							to_add: '[data-sticky*="yes"]',
 						})
 					),
-					variable: 'linkInitialColor',
+					variable: 'theme-link-initial-color',
 					type: 'color:default',
 					responsive: true,
 				},
@@ -147,7 +147,7 @@ ctEvents.on(
 							to_add: '[data-sticky*="yes"]',
 						})
 					),
-					variable: 'linkHoverColor',
+					variable: 'theme-link-hover-color',
 					type: 'color:hover',
 					responsive: true,
 				},
@@ -162,7 +162,7 @@ ctEvents.on(
 							to_add: '[data-sticky*="yes"]',
 						})
 					),
-					variable: 'icon-color',
+					variable: 'theme-icon-color',
 					type: 'color:default',
 					responsive: true,
 				},
@@ -175,7 +175,7 @@ ctEvents.on(
 							to_add: '[data-sticky*="yes"]',
 						})
 					),
-					variable: 'icon-hover-color',
+					variable: 'theme-icon-hover-color',
 					type: 'color:hover',
 					responsive: true,
 				},
@@ -188,25 +188,29 @@ ctEvents.on(
 				selector: assembleSelector(
 					`${
 						getRootSelectorFor({ itemId })[0]
-					} #search-modal .ct-search-results a`
+					} #search-modal .ct-search-results`
 				),
 			}),
 
 			searchHeaderLinkColor: [
 				{
 					selector: assembleSelector(
-						`${getRootSelectorFor({ itemId })[0]} #search-modal`
+						`${
+							getRootSelectorFor({ itemId })[0]
+						} #search-modal .ct-search-form`
 					),
-					variable: 'linkInitialColor',
+					variable: 'theme-link-initial-color',
 					type: 'color:default',
 					responsive: true,
 				},
 
 				{
 					selector: assembleSelector(
-						`${getRootSelectorFor({ itemId })[0]} #search-modal`
+						`${
+							getRootSelectorFor({ itemId })[0]
+						} #search-modal .ct-search-form`
 					),
-					variable: 'linkHoverColor',
+					variable: 'theme-link-hover-color',
 					type: 'color:hover',
 					responsive: true,
 				},
@@ -215,18 +219,46 @@ ctEvents.on(
 			searchHeaderInputColor: [
 				{
 					selector: assembleSelector(
-						`${getRootSelectorFor({ itemId })[0]} #search-modal`
+						`${
+							getRootSelectorFor({ itemId })[0]
+						} #search-modal .ct-search-form`
 					),
-					variable: 'form-text-initial-color',
+					variable: 'theme-form-text-initial-color',
 					type: 'color:default',
 					responsive: true,
 				},
 
 				{
 					selector: assembleSelector(
-						`${getRootSelectorFor({ itemId })[0]} #search-modal`
+						`${
+							getRootSelectorFor({ itemId })[0]
+						} #search-modal .ct-search-form`
 					),
-					variable: 'form-text-focus-color',
+					variable: 'theme-form-text-focus-color',
+					type: 'color:focus',
+					responsive: true,
+				},
+			],
+
+			searchHeaderInputBorderColor: [
+				{
+					selector: assembleSelector(
+						`${
+							getRootSelectorFor({ itemId })[0]
+						} #search-modal .ct-search-form`
+					),
+					variable: 'theme-form-field-border-initial-color',
+					type: 'color:default',
+					responsive: true,
+				},
+
+				{
+					selector: assembleSelector(
+						`${
+							getRootSelectorFor({ itemId })[0]
+						} #search-modal .ct-search-form`
+					),
+					variable: 'theme-form-field-border-focus-color',
 					type: 'color:focus',
 					responsive: true,
 				},
@@ -237,9 +269,9 @@ ctEvents.on(
 					selector: assembleSelector(
 						`${
 							getRootSelectorFor({ itemId })[0]
-						} #search-modal form button`
+						} #search-modal .ct-search-form`
 					),
-					variable: 'icon-color',
+					variable: 'theme-button-text-initial-color',
 					type: 'color:default',
 					responsive: true,
 				},
@@ -248,9 +280,9 @@ ctEvents.on(
 					selector: assembleSelector(
 						`${
 							getRootSelectorFor({ itemId })[0]
-						} #search-modal form button`
+						} #search-modal .ct-search-form`
 					),
-					variable: 'icon-focus-color',
+					variable: 'theme-button-text-hover-color',
 					type: 'color:hover',
 					responsive: true,
 				},
@@ -261,9 +293,9 @@ ctEvents.on(
 					selector: assembleSelector(
 						`${
 							getRootSelectorFor({ itemId })[0]
-						} #search-modal form button`
+						} #search-modal .ct-search-form`
 					),
-					variable: 'search-button-background',
+					variable: 'theme-button-background-initial-color',
 					type: 'color:default',
 					responsive: true,
 				},
@@ -272,9 +304,9 @@ ctEvents.on(
 					selector: assembleSelector(
 						`${
 							getRootSelectorFor({ itemId })[0]
-						} #search-modal form button`
+						} #search-modal .ct-search-form`
 					),
-					variable: 'search-button-focus-background',
+					variable: 'theme-button-background-hover-color',
 					type: 'color:hover',
 					responsive: true,
 				},
@@ -287,7 +319,7 @@ ctEvents.on(
 							getRootSelectorFor({ itemId })[0]
 						} #search-modal .ct-toggle-close`
 					),
-					variable: 'icon-color',
+					variable: 'theme-icon-color',
 					type: 'color:default',
 				},
 
@@ -297,7 +329,7 @@ ctEvents.on(
 							getRootSelectorFor({ itemId })[0]
 						} #search-modal .ct-toggle-close:hover`
 					),
-					variable: 'icon-color',
+					variable: 'theme-icon-color',
 					type: 'color:hover',
 				},
 			],
@@ -352,7 +384,7 @@ ctEvents.on(
 						getRootSelectorFor({ itemId })[0]
 					} #search-modal .ct-toggle-close`
 				),
-				variable: 'icon-size',
+				variable: 'theme-icon-size',
 				unit: 'px',
 			},
 
@@ -394,6 +426,40 @@ ctEvents.on('ct:header:sync:item:search', ({ optionId, optionValue }) => {
 				label.innerHTML = optionValue
 			})
 		})
+
+		updateAndSaveEl(
+			selector,
+			(el) => {
+				if (!optionValue.desktop) {
+					optionValue = {
+						desktop: optionValue,
+						mobile: optionValue,
+					}
+				}
+
+				;[...el.querySelectorAll('.ct-label')].map((label) => {
+					label.innerHTML = optionValue.desktop
+				})
+			},
+			{ onlyView: 'desktop' }
+		)
+
+		updateAndSaveEl(
+			selector,
+			(el) => {
+				if (!optionValue.desktop) {
+					optionValue = {
+						desktop: optionValue,
+						mobile: optionValue,
+					}
+				}
+
+				;[...el.querySelectorAll('.ct-label')].map((label) => {
+					label.innerHTML = optionValue.mobile
+				})
+			},
+			{ onlyView: 'mobile' }
+		)
 	}
 
 	if (optionId === 'search_label_visibility') {
@@ -477,8 +543,22 @@ ctEvents.on('ct:header:sync:item:search', ({ optionId, optionValue }) => {
 		}
 
 		searchModal.dataset.liveResults = liveResultsAttr.join(':')
-		searchModal.querySelector('[name="ct_product_price"]').value =
-			optionValue === 'yes'
+	}
+
+	if (optionId === 'searchHeaderProductStatus') {
+		let searchModal = document.querySelector(
+			'#search-modal [data-live-results]'
+		)
+		let liveResultsAttr = searchModal.dataset.liveResults.split(':')
+		if (optionValue === 'yes') {
+			liveResultsAttr.push('product_status')
+		} else {
+			liveResultsAttr = liveResultsAttr.filter(
+				(attr) => attr !== 'product_status'
+			)
+		}
+
+		searchModal.dataset.liveResults = liveResultsAttr.join(':')
 	}
 
 	if (optionId === 'search_close_button_type') {

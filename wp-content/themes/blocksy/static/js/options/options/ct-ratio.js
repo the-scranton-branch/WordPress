@@ -21,8 +21,6 @@ const Ratio = ({ option, value, onChange, onChangeFor, values }) => {
 		preview_width_key = null,
 	} = option || {}
 
-	const [currentModalTab, setCurrentTab] = useState('ratio')
-
 	let normal_ratios = ['4/3', '16/9', '2/1']
 	let reversed_ratios = ['3/4', '9/16', '1/2']
 
@@ -51,195 +49,171 @@ const Ratio = ({ option, value, onChange, onChangeFor, values }) => {
 
 	const inlineRatioView = (
 		<Fragment>
-			{option && option['inner-options'] && (
-				<ul className="ct-modal-tabs">
-					<li
-						onClick={() => setCurrentTab('ratio')}
-						className={cls({
-							active: currentModalTab === 'ratio',
-						})}>
-						{__('Image Ratio', 'blocksy')}
-					</li>
-					<li
-						onClick={() => setCurrentTab('size')}
-						className={cls({
-							active: currentModalTab === 'size',
-						})}>
-						{__('Image Size', 'blocksy')}
-					</li>
-				</ul>
-			)}
-
 			<div className="ct-ratio-content">
-				{currentModalTab === 'ratio' && (
-					<div
-						className={cls('ct-ratio-picker', {
-							reversed: isReversed,
-						})}>
-						<ul className="ct-radio-option ct-buttons-group">
-							{hasOriginalRatio && (
-								<li
-									className={cls({
-										active: currentTab === 'original',
-									})}
-									onClick={() => {
-										if (value !== 'original') {
-											onChange('original')
-										}
-									}}>
-									{__('Original', 'blocksy')}
-								</li>
-							)}
+				<div
+					className={cls('ct-ratio-picker', {
+						reversed: isReversed,
+					})}>
+					<ul className="ct-radio-option ct-buttons-group">
+						{hasOriginalRatio && (
 							<li
 								className={cls({
-									active: currentTab === 'predefined',
+									active: currentTab === 'original',
 								})}
 								onClick={() => {
-									if (
-										value.indexOf('/') === -1 ||
-										value === 'original'
-									) {
-										onChange(
-											option.value === 'original'
-												? '1/1'
-												: option.value
-										)
+									if (value !== 'original') {
+										onChange('original')
 									}
 								}}>
-								{__('Predefined', 'blocksy')}
+								{__('Original', 'blocksy')}
 							</li>
-							<li
-								className={cls({
-									active: currentTab === 'custom',
-								})}
-								onClick={() => {
-									if (
-										value.indexOf('/') !== -1 ||
+						)}
+						<li
+							className={cls({
+								active: currentTab === 'predefined',
+							})}
+							onClick={() => {
+								if (
+									value.indexOf('/') === -1 ||
+									value === 'original'
+								) {
+									onChange(
+										option.value === 'original'
+											? '1/1'
+											: option.value
+									)
+								}
+							}}>
+							{__('Predefined', 'blocksy')}
+						</li>
+						<li
+							className={cls({
+								active: currentTab === 'custom',
+							})}
+							onClick={() => {
+								if (
+									value.indexOf('/') !== -1 ||
+									value === 'original'
+								) {
+									let [first, second] = (
 										value === 'original'
-									) {
-										let [first, second] = (value ===
-										'original'
 											? option.value === 'original'
 												? '1/1'
 												: option.value
 											: value
-										).split('/')
-										onChange(`${first}:${second}`)
+									).split('/')
+									onChange(`${first}:${second}`)
+								}
+							}}>
+							{__('Custom', 'blocksy')}
+						</li>
+					</ul>
+
+					{currentTab === 'predefined' && (
+						<div className="ct-ratio-predefined">
+							<ul className="ct-buttons-group">
+								{[
+									'1/1',
+									...(isReversed
+										? reversed_ratios
+										: normal_ratios),
+								].map((ratio) => (
+									<li
+										key={ratio}
+										className={cls({
+											active: ratio === value,
+										})}
+										onClick={() => onChange(ratio)}>
+										{ratio}
+									</li>
+								))}
+							</ul>
+
+							<button
+								data-tooltip="top"
+								onClick={(e) => {
+									e.preventDefault()
+
+									if (value === '1/1') {
+										setIsReversed(!isReversed)
+										return
 									}
+
+									let [first_component, second_component] =
+										value.split('/')
+
+									setIsReversed(
+										+first_component < +second_component
+									)
+
+									onChange(
+										value.split('/').reverse().join('/')
+									)
 								}}>
-								{__('Custom', 'blocksy')}
-							</li>
-						</ul>
+								<span />
+								<i className="ct-tooltip">Reverse</i>
+							</button>
+						</div>
+					)}
 
-						{currentTab === 'predefined' && (
-							<div className="ct-ratio-predefined">
-								<ul className="ct-buttons-group">
-									{[
-										'1/1',
-										...(isReversed
-											? reversed_ratios
-											: normal_ratios),
-									].map((ratio) => (
-										<li
-											key={ratio}
-											className={cls({
-												active: ratio === value,
-											})}
-											onClick={() => onChange(ratio)}>
-											{ratio}
-										</li>
-									))}
-								</ul>
-
-								<button
-									onClick={(e) => {
-										e.preventDefault()
-
-										if (value === '1/1') {
-											setIsReversed(!isReversed)
-											return
-										}
-
-										let [
-											first_component,
-											second_component,
-										] = value.split('/')
-
-										setIsReversed(
-											+first_component < +second_component
-										)
-
+					{currentTab === 'custom' && (
+						<div className="ct-ratio-custom">
+							<div className="ct-option-input">
+								<input
+									type="text"
+									value={value.split(':')[0]}
+									onChange={({ target: { value: val } }) => {
 										onChange(
-											value.split('/').reverse().join('/')
+											`${val}:${value.split(':')[1]}`
 										)
-									}}>
-									<span />
-									<i className="ct-tooltip-top">Reverse</i>
-								</button>
-							</div>
-						)}
-
-						{currentTab === 'custom' && (
-							<div className="ct-ratio-custom">
-								<div className="ct-option-input">
-									<input
-										type="text"
-										value={value.split(':')[0]}
-										onChange={({
-											target: { value: val },
-										}) => {
-											onChange(
-												`${val}:${value.split(':')[1]}`
-											)
-										}}
-									/>
-								</div>
-								<span>:</span>
-								<div className="ct-option-input">
-									<input
-										type="text"
-										value={value.split(':')[1]}
-										onChange={({
-											target: { value: val },
-										}) => {
-											onChange(
-												`${value.split(':')[0]}:${val}`
-											)
-										}}
-									/>
-								</div>
-
-								<div
-									className="ct-notification"
-									dangerouslySetInnerHTML={{
-										__html: sprintf(
-											__(
-												'Use this online %stool%s for calculating a custom image ratio based on your image size.',
-												'blocksy'
-											),
-											'<a href="https://www.digitalrebellion.com/webapps/aspectcalc" target="_blank">',
-											'</a>'
-										),
 									}}
 								/>
 							</div>
-						)}
-
-						{currentTab === 'original' && (
-							<div className="ct-ratio-original">
-								<div className="ct-notification">
-									{__(
-										'Images will be displayed using the aspect ratio in which they were uploaded.',
-										'blocksy'
-									)}
-								</div>
+							<span>:</span>
+							<div className="ct-option-input">
+								<input
+									type="text"
+									value={value.split(':')[1]}
+									onChange={({ target: { value: val } }) => {
+										onChange(
+											`${value.split(':')[0]}:${val}`
+										)
+									}}
+								/>
 							</div>
-						)}
-					</div>
-				)}
-				{currentModalTab === 'size' && option['inner-options'] && (
+
+							<div
+								className="ct-notification"
+								dangerouslySetInnerHTML={{
+									__html: sprintf(
+										__(
+											'Use %sthis tool%s for calculating a custom image ratio based on your image size.',
+											'blocksy'
+										),
+										'<a href="https://www.digitalrebellion.com/webapps/aspectcalc" target="_blank">',
+										'</a>'
+									),
+								}}
+							/>
+						</div>
+					)}
+
+					{currentTab === 'original' && (
+						<div className="ct-ratio-original">
+							<div className="ct-notification">
+								{__(
+									'Displays the image using the aspect ratio in which they were uploaded.',
+									'blocksy'
+								)}
+							</div>
+						</div>
+					)}
+				</div>
+				{option['inner-options'] && (
 					<OptionsPanel
-						onChange={(key, val) => onChangeFor(key, val)}
+						onChange={(key, val) => {
+							onChangeFor(key, val)
+						}}
 						options={option['inner-options']}
 						value={values}
 					/>

@@ -29,7 +29,7 @@ $design_options = [
 			[
 				'title' => __( 'Initial', 'blocksy' ),
 				'id' => 'default',
-				'inherit' => 'var(--heading-1-color, var(--headings-color))'
+				'inherit' => 'var(--theme-heading-1-color, var(--theme-headings-color))'
 			],
 		],
 	],
@@ -68,13 +68,13 @@ $design_options = [
 			[
 				'title' => __( 'Initial', 'blocksy' ),
 				'id' => 'default',
-				'inherit' => 'var(--color)'
+				'inherit' => 'var(--theme-text-color)'
 			],
 
 			[
 				'title' => __( 'Hover', 'blocksy' ),
 				'id' => 'hover',
-				'inherit' => 'var(--linkHoverColor)'
+				'inherit' => 'var(--theme-link-hover-color)'
 			],
 		],
 	],
@@ -113,13 +113,13 @@ $design_options = [
 			[
 				'title' => __( 'Initial', 'blocksy' ),
 				'id' => 'default',
-				'inherit' => 'var(--color)'
+				'inherit' => 'var(--theme-text-color)'
 			],
 
 			[
 				'title' => __( 'Hover', 'blocksy' ),
 				'id' => 'hover',
-				'inherit' => 'var(--linkHoverColor)'
+				'inherit' => 'var(--theme-link-hover-color)'
 			],
 		],
 	],
@@ -153,7 +153,7 @@ $design_options = [
 			[
 				'title' => __( 'Initial', 'blocksy' ),
 				'id' => 'default',
-				'inherit' => 'var(--color)'
+				'inherit' => 'var(--theme-text-color)'
 			],
 		],
 	],
@@ -191,7 +191,7 @@ $options = [
 				'is_single' => true,
 				'is_cpt' => true,
 				'has_hero_elements' => false,
-				'enabled_label' => sprintf(
+				'enabled_label' => blocksy_safe_sprintf(
 					__('%s Title', 'blocksy'),
 					'Course'
 				),

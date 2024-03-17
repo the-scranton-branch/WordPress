@@ -5,40 +5,41 @@
 
 .ct-related-posts {
 	
-	.ct-block-title {
+	.ct-module-title {
 		text-align: var(--horizontal-alignment);
-
-		&:is(p, span) {
-			color: var(--heading-color);
-		}
 	}
 
-	.ct-image-container {
-		border-radius: var(--borderRadius, 5px);
+	.ct-media-container {
+		border-radius: var(--theme-border-radius, 5px);
 	}
 
 	.related-entry-title {
-		--fontSize: 16px;
 		margin: 15px 0 0 0;
 		word-break: break-word;
-		// --linkInitialColor: var(--heading-color, var(--heading-3-color, var(--headings-color)));
 
 		a {
 			&:not(:hover) {
 				color: inherit;
 			}
 		}
-
-		&:is(p, span) {
-			color: var(--heading-color);
-		}
 	}
 
 	.entry-meta {
-		--fontSize: 14px;
 		margin-top: 5px;
+		color: var(--theme-text-color);
 
-		color: var(--color);
-		--linkInitialColor: var(--color);
+		--theme-link-initial-color: var(--theme-text-color);
+	}
+
+
+	// slider type
+	.flexy-items {
+		margin-inline: calc(var(--grid-columns-gap, 30px) / -2);
+
+		.flexy-item {
+			flex: 0 0 var(--grid-columns-width, 25%);
+			width: var(--grid-columns-width, 25%);
+			padding-inline: calc(var(--grid-columns-gap, 30px) / 2);
+		}	
 	}
 }

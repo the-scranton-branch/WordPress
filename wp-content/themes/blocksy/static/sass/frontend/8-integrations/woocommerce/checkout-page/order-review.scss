@@ -1,6 +1,6 @@
 .ct-order-review {
 	align-self: flex-start;
-	border: 2px solid var(--border-color);
+	border: 2px solid var(--theme-border-color);
 
 	@include media-breakpoint-down (sm) {
 		padding: 30px 25px;
@@ -12,14 +12,9 @@
 
 
 	table.shop_table {
-		margin-bottom: 40px;
 
 		.product-total, tfoot td {
-			text-align: right;
-		}
-
-		.product-total {
-			vertical-align: top;
+			text-align: var(--theme-table-text-align, end);
 		}
 	}
 }

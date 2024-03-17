@@ -14,6 +14,8 @@ watchOptionsWithPrefix({
 		`${prefix}_share_box_visibility`,
 
 		`${prefix}_author_box_visibility`,
+		`${prefix}_post_tags_title`,
+		`${prefix}_post_tags_visibility`,
 		`${prefix}_post_nav_title_visibility`,
 		`${prefix}_post_nav_thumb_visibility`,
 		`${prefix}_post_nav_visibility`,
@@ -31,12 +33,13 @@ watchOptionsWithPrefix({
 		const visibilities = [
 			{ selector: '.ct-share-box', id: 'share_box_visibility' },
 			{ selector: '.author-box', id: 'author_box_visibility' },
+			{ selector: '.entry-tags', id: 'post_tags_visibility' },
 			{
 				selector: '.post-navigation .item-title',
 				id: 'post_nav_title_visibility',
 			},
 			{
-				selector: '.post-navigation .ct-image-container',
+				selector: '.post-navigation .ct-media-container',
 				id: 'post_nav_thumb_visibility',
 			},
 			{ selector: '.post-navigation', id: 'post_nav_visibility' },
@@ -47,6 +50,14 @@ watchOptionsWithPrefix({
 				document.querySelectorAll('.ct-share-box .ct-module-title')
 			).map((el) => {
 				el.innerHTML = getOptionFor('share_box_title', prefix)
+			})
+		}
+
+		if (id === `${prefix}_post_tags_title`) {
+			Array.from(
+				document.querySelectorAll('.entry-tags .ct-module-title')
+			).map((el) => {
+				el.innerHTML = getOptionFor('post_tags_title', prefix)
 			})
 		}
 
@@ -100,7 +111,7 @@ watchOptionsWithPrefix({
 		if (id === `${prefix}_related_featured_image_ratio`) {
 			Array.from(
 				document.querySelectorAll(
-					'.ct-related-posts .ct-image-container'
+					'.ct-related-posts .ct-media-container'
 				)
 			).map((el) => {
 				setRatioFor(
@@ -112,7 +123,7 @@ watchOptionsWithPrefix({
 
 		if (id === `${prefix}_related_label`) {
 			Array.from(
-				document.querySelectorAll('.ct-related-posts .ct-block-title')
+				document.querySelectorAll('.ct-related-posts .ct-module-title')
 			).map((el) => {
 				el.innerHTML = getOptionFor('related_label', prefix)
 			})

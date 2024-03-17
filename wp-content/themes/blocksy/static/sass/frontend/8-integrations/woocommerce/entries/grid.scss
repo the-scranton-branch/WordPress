@@ -1,8 +1,8 @@
 [data-products] {
 	display: grid;
-	grid-template-columns: var(--shop-columns) !important;
+	grid-template-columns: var(--shop-columns);
 	grid-column-gap: var(--grid-columns-gap, 30px);
-
+	grid-row-gap: var(--grid-rows-gap, 30px);
 
 	@include media-breakpoint-up (lg) {
 		&.columns-2 {

@@ -2,7 +2,6 @@
 
 class Blocksy_Static_Css_Files {
 	public function all_static_files() {
-
 		$should_load_comments_css = (
 			is_singular()
 			&&
@@ -17,6 +16,38 @@ class Blocksy_Static_Css_Files {
 			'blocksy:static-files:ct-comments-styles',
 			$should_load_comments_css
 		);
+
+		global $post;
+
+		$should_load_share_box = (
+			is_singular()
+			&&
+			(
+				blocksy_has_share_box()
+				||
+				is_customize_preview()
+				||
+				is_page(
+					blocksy_get_theme_mod('woocommerce_wish_list_page', '__EMPTY__')
+				)
+				||
+				(
+					function_exists('blocksy_has_product_share_box')
+					&&
+					blocksy_has_product_share_box()
+				)
+				||
+				(
+					function_exists('is_account_page')
+					&&
+					is_account_page()
+				)
+				||
+				has_shortcode($post->post_content, 'product_page')
+			)
+		);
+
+		$prefix = blocksy_manager()->screen->get_prefix();
 
 		return [
 			[
@@ -41,16 +72,6 @@ class Blocksy_Static_Css_Files {
 					is_customize_preview()
 					||
 					blocksy_get_page_title_source()
-				)
-			],
-
-			[
-				'id' => 'ct-back-to-top-styles',
-				'url' => '/static/bundle/back-to-top.min.css',
-				'enabled' => (
-					is_customize_preview()
-					||
-					get_theme_mod('has_back_top', 'no') === 'yes'
 				)
 			],
 
@@ -82,10 +103,28 @@ class Blocksy_Static_Css_Files {
 			],
 
 			[
+				'id' => 'ct-elementor-woocommerce-styles',
+				'url' => '/static/bundle/elementor-woocommerce-frontend.min.css',
+				'deps' => ['ct-main-styles'],
+				'enabled' => (
+					did_action('elementor/loaded')
+					&&
+					function_exists('is_woocommerce')
+				)
+			],
+
+			[
 				'id' => 'ct-tutor-styles',
 				'url' => '/static/bundle/tutor.min.css',
 				'deps' => ['ct-main-styles'],
 				'enabled' => function_exists('tutor_course_enrolled_lead_info')
+			],
+
+			[
+				'id' => 'ct-tribe-events-styles',
+				'url' => '/static/bundle/tribe-events.min.css',
+				'deps' => ['ct-main-styles'],
+				'enabled' => class_exists('Tribe__Events__Main')
 			],
 
 			[
@@ -102,7 +141,7 @@ class Blocksy_Static_Css_Files {
 						&&
 						is_woocommerce()
 						&&
-						get_theme_mod('has_woo_offcanvas_filter', 'no') === 'yes'
+						blocksy_get_theme_mod('has_woo_offcanvas_filter', 'no') === 'yes'
 					)
 				)
 			],
@@ -111,33 +150,7 @@ class Blocksy_Static_Css_Files {
 				'id' => 'ct-share-box-styles',
 				'url' => '/static/bundle/share-box.min.css',
 				'deps' => ['ct-main-styles'],
-				'enabled' => (
-					is_singular()
-					&&
-					(
-						blocksy_has_share_box()
-						||
-						is_customize_preview()
-						||
-						(
-							function_exists('is_product')
-							&&
-							is_product()
-							&&
-							get_theme_mod('product_has_share_box', 'no') === 'yes'
-						)
-						||
-						is_page(
-							get_theme_mod('woocommerce_wish_list_page', '__EMPTY__')
-						)
-						||
-						(
-							function_exists('is_account_page')
-							&&
-							is_account_page()
-						)
-					)
-				)
+				'enabled' => $should_load_share_box
 			],
 
 			[
@@ -182,9 +195,37 @@ class Blocksy_Static_Css_Files {
 				'url' => '/static/bundle/flexy.min.css',
 				'deps' => ['ct-main-styles'],
 				'enabled' => (
-					function_exists('is_woocommerce')
+					(
+						function_exists('is_woocommerce')
+						&&
+						is_product()
+					)
 					||
 					is_singular('blc-product-review')
+					||
+					(
+						is_singular()
+						&&
+						(
+							blocksy_get_theme_mod($prefix . '_related_posts_slideshow') === 'slider'
+							||
+							is_customize_preview()
+							||
+							(
+								has_shortcode(
+									$post->post_content,
+									'blocksy_posts'
+								)
+								&&
+								strpos(
+									$post->post_content,
+									'view="slider"'
+								) !== false
+							)
+							||
+							has_shortcode($post->post_content, 'product_page')
+						)
+					)
 				)
 			],
 
@@ -201,13 +242,6 @@ class Blocksy_Static_Css_Files {
 				'url' => '/static/bundle/jet-woo-builder.min.css',
 				'deps' => ['ct-main-styles'],
 				'enabled' => class_exists('Jet_Woo_Builder')
-			],
-
-			[
-				'id' => 'ct-tribe-events-styles',
-				'url' => '/static/bundle/tribe-events.min.css',
-				'deps' => ['ct-main-styles'],
-				'enabled' => class_exists('Tribe__Events__Main')
 			],
 
 			[

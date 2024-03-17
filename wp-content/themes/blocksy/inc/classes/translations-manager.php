@@ -1,11 +1,68 @@
 <?php
 
 class Blocksy_Translations_Manager {
+	public function init() {
+		add_action(
+			'customize_save_after',
+			[$this, 'register_wpml_translation_keys']
+		);
+
+		if (is_admin()) {
+			add_action(
+				'admin_init',
+				[$this, 'register_translation_keys']
+			);
+		}
+
+		add_action(
+			'init',
+			function () {
+				if (! class_exists('PLL_Translate_Option')) {
+					return;
+				}
+
+				$prefixes = blocksy_manager()->screen->get_single_prefixes();
+
+				$all_keys = [];
+
+				foreach ($prefixes as $prefix) {
+					if (
+						$prefix === 'single_blog_post'
+						||
+						$prefix === 'single_page'
+					) {
+						continue;
+					}
+
+					$related_label = blocksy_get_theme_mod(
+						$prefix . '_related_label',
+						'__empty__'
+					);
+
+					if ($related_label === '__empty__') {
+						continue;
+					}
+
+					$all_keys[$prefix . '_related_label'] = 1;
+				}
+
+				if (empty($all_keys)) {
+					return;
+				}
+
+				new PLL_Translate_Option('theme_mods_blocksy', $all_keys);
+				new PLL_Translate_Option('theme_mods_blocksy-child', $all_keys);
+
+				blocksy_manager()->db->wipe_cache();
+			}
+		);
+	}
+
 	public function get_all_translation_keys() {
 		$builder_keys = Blocksy_Manager::instance()->builder->translation_keys();
 
 		foreach (['blog', 'categories', 'search', 'author'] as $prefix) {
-			$archive_order = get_theme_mod($prefix . '_archive_order', null);
+			$archive_order = blocksy_get_theme_mod($prefix . '_archive_order', null);
 
 			if (! $archive_order) {
 				continue;
@@ -29,7 +86,7 @@ class Blocksy_Translations_Manager {
 		}
 
 		foreach (['blog', 'single_blog_post', 'single_page'] as $prefix) {
-			$hero_elements = get_theme_mod($prefix . '_hero_elements', null);
+			$hero_elements = blocksy_get_theme_mod($prefix . '_hero_elements', null);
 
 			if (! $hero_elements) {
 				continue;
@@ -84,13 +141,17 @@ class Blocksy_Translations_Manager {
 	}
 
 	public function register_translation_keys() {
-		if (!function_exists('pll_register_string')) {
+		if (! function_exists('pll_register_string')) {
 			return;
 		}
 
 		$builder_keys = $this->get_all_translation_keys();
 
 		foreach ($builder_keys as $single_key) {
+			if (! is_string($single_key['value'])) {
+				continue;
+			}
+
 			pll_register_string(
 				$single_key['key'],
 				$single_key['value'],
@@ -108,6 +169,10 @@ class Blocksy_Translations_Manager {
 		$builder_keys = $this->get_all_translation_keys();
 
 		foreach ($builder_keys as $single_key) {
+			if (! is_string($single_key['value'])) {
+				continue;
+			}
+
 			do_action(
 				'wpml_register_single_string',
 				'Blocksy',
@@ -256,4 +321,37 @@ if (! function_exists('blocksy_translate_dynamic')) {
 
 		return $text;
 	}
+}
+
+function blocksy_safe_sprintf($format, ...$args) {
+	$result = $format;
+
+	$is_error = false;
+
+	// vsprintf() triggers a warning on PHP < 8 and throws an exception on PHP 8+
+	// We need to handle both.
+	// https://www.php.net/manual/en/function.vsprintf.php#refsect1-function.vsprintf-errors
+
+	set_error_handler(function () use (&$is_error) {
+		$is_error = true;
+	});
+
+	if (interface_exists('Throwable')) {
+		try {
+			$result = vsprintf($format, $args);
+		} catch (\Throwable $e) {
+			$is_error = true;
+		}
+	} else {
+		$result = vsprintf($format, $args);
+	}
+
+	restore_error_handler();
+
+	if ($is_error) {
+		// TODO: maybe cleanup format from %s, %d, etc
+		return $format;
+	}
+
+	return $result;
 }

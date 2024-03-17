@@ -79,7 +79,8 @@ if (! function_exists('blocksy_main_menu_fallback')) {
 							'class' => 'ct-toggle-dropdown-desktop-ghost',
 							'aria-label' => __('Expand dropdown menu', 'blocksy'),
 							'aria-haspopup' => 'true',
-							'aria-expanded' => 'false'
+							'aria-expanded' => 'false',
+							'role' => 'menuitem'
 						],
 						''
 					);
@@ -240,7 +241,8 @@ if (! function_exists('blocksy_handle_nav_menu_start_el')) {
 						'class' => $toggle_ghost_class,
 						'aria-label' => __('Expand dropdown menu', 'blocksy'),
 						'aria-haspopup' => 'true',
-						'aria-expanded' => 'false'
+						'aria-expanded' => 'false',
+						'role' => 'menuitem'
 					],
 					$toggle_ghost_content
 				);
@@ -310,7 +312,21 @@ add_filter(
 			return $css_class;
 		}
 
-		$css_class[] = 'animated-submenu';
+		if (
+			isset($args['blocksy_always_inline'])
+			&&
+			$args['blocksy_always_inline']
+		) {
+			$classes[] = 'animated-submenu-inline';
+		} else {
+			if ($depth === 0) {
+				$classes[] = 'animated-submenu-block';
+			}
+
+			if ($depth > 0) {
+				$classes[] = 'animated-submenu-inline';
+			}
+		}
 
 		return $css_class;
 	},
@@ -355,11 +371,34 @@ add_filter(
 		}
 
 		if (
-			apply_filters('blocksy:menu:has_animated_submenu', true, $item, $args)
-			||
-			$depth === 0
+			(
+				apply_filters('blocksy:menu:has_animated_submenu', true, $item, $args)
+				||
+				$depth === 0
+			)
+			&&
+			(
+				! isset($args->blocksy_ajax_submenu)
+				||
+				! $args->blocksy_ajax_submenu
+			)
 		) {
-			$classes[] = 'animated-submenu';
+
+			if (
+				isset($args->blocksy_always_inline)
+				&&
+				$args->blocksy_always_inline
+			) {
+				$classes[] = 'animated-submenu-inline';
+			} else {
+				if ($depth === 0) {
+					$classes[] = 'animated-submenu-block';
+				}
+
+				if ($depth > 0) {
+					$classes[] = 'animated-submenu-inline';
+				}
+			}
 		}
 
 		return $classes;
@@ -376,9 +415,9 @@ add_filter('wp_nav_menu', function ($nav_menu, $args) {
 		return $nav_menu;
 	}
 
-	$nav_menu = str_replace(
-		'class="sub-menu"',
-		'class="sub-menu" role="menu"',
+	$nav_menu = preg_replace(
+		'/class="sub-menu(.*)"/',
+		'class="sub-menu$1" role="menu"',
 		$nav_menu
 	);
 

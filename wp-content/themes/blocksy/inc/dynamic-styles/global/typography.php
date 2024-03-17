@@ -1,7 +1,7 @@
 <?php
 
 blocksy_output_font_css([
-	'font_value' => get_theme_mod(
+	'font_value' => blocksy_get_theme_mod(
 		'rootTypography',
 		blocksy_typography_default_values([
 			'family' => 'System Default',
@@ -20,7 +20,7 @@ blocksy_output_font_css([
 ]);
 
 blocksy_output_font_css([
-	'font_value' => get_theme_mod(
+	'font_value' => blocksy_get_theme_mod(
 		'h1Typography',
 		blocksy_typography_default_values([
 			'size' => '40px',
@@ -35,7 +35,7 @@ blocksy_output_font_css([
 ]);
 
 blocksy_output_font_css([
-	'font_value' => get_theme_mod(
+	'font_value' => blocksy_get_theme_mod(
 		'h2Typography',
 		blocksy_typography_default_values([
 			'size' => '35px',
@@ -50,7 +50,7 @@ blocksy_output_font_css([
 ]);
 
 blocksy_output_font_css([
-	'font_value' => get_theme_mod(
+	'font_value' => blocksy_get_theme_mod(
 		'h3Typography',
 		blocksy_typography_default_values([
 			'size' => '30px',
@@ -65,7 +65,7 @@ blocksy_output_font_css([
 ]);
 
 blocksy_output_font_css([
-	'font_value' => get_theme_mod(
+	'font_value' => blocksy_get_theme_mod(
 		'h4Typography',
 		blocksy_typography_default_values([
 			'size' => '25px',
@@ -80,7 +80,7 @@ blocksy_output_font_css([
 ]);
 
 blocksy_output_font_css([
-	'font_value' => get_theme_mod(
+	'font_value' => blocksy_get_theme_mod(
 		'h5Typography',
 		blocksy_typography_default_values([
 			'size' => '20px',
@@ -95,7 +95,7 @@ blocksy_output_font_css([
 ]);
 
 blocksy_output_font_css([
-	'font_value' => get_theme_mod(
+	'font_value' => blocksy_get_theme_mod(
 		'h6Typography',
 		blocksy_typography_default_values([
 			'size' => '16px',
@@ -110,7 +110,7 @@ blocksy_output_font_css([
 ]);
 
 blocksy_output_font_css([
-	'font_value' => get_theme_mod(
+	'font_value' => blocksy_get_theme_mod(
 		'buttons',
 		blocksy_typography_default_values([
 			'size' => '15px',
@@ -125,7 +125,7 @@ blocksy_output_font_css([
 ]);
 
 blocksy_output_font_css([
-	'font_value' => get_theme_mod(
+	'font_value' => blocksy_get_theme_mod(
 		'quote',
 		blocksy_typography_default_values([])
 	),
@@ -136,7 +136,7 @@ blocksy_output_font_css([
 ]);
 
 blocksy_output_font_css([
-	'font_value' => get_theme_mod(
+	'font_value' => blocksy_get_theme_mod(
 		'pullquote',
 		blocksy_typography_default_values([
 			'family' => 'Georgia',
@@ -147,11 +147,11 @@ blocksy_output_font_css([
 	'css' => $css,
 	'tablet_css' => $tablet_css,
 	'mobile_css' => $mobile_css,
-	'selector' => '.wp-block-pullquote, .ct-quote-widget blockquote'
+	'selector' => '.wp-block-pullquote'
 ]);
 
 blocksy_output_font_css([
-	'font_value' => get_theme_mod(
+	'font_value' => blocksy_get_theme_mod(
 		'pre',
 		blocksy_typography_default_values([
 			'family' => 'monospace',
@@ -166,10 +166,23 @@ blocksy_output_font_css([
 ]);
 
 blocksy_output_font_css([
-	'font_value' => get_theme_mod(
+	'font_value' => blocksy_get_theme_mod(
+		'figcaption',
+		blocksy_typography_default_values([
+			'size' => '14px',
+		])
+	),
+	'css' => $css,
+	'tablet_css' => $tablet_css,
+	'mobile_css' => $mobile_css,
+	'selector' => 'figcaption'
+]);
+
+blocksy_output_font_css([
+	'font_value' => blocksy_get_theme_mod(
 		'sidebarWidgetsTitleFont',
 		blocksy_typography_default_values([
-			'size' => '18px',
+			'size' => '20px',
 		])
 	),
 	'css' => $css,
@@ -179,7 +192,7 @@ blocksy_output_font_css([
 ]);
 
 blocksy_output_font_css([
-	'font_value' => get_theme_mod(
+	'font_value' => blocksy_get_theme_mod(
 		'sidebarWidgetsFont',
 		blocksy_typography_default_values([
 			// 'size' => '18px',
@@ -188,11 +201,11 @@ blocksy_output_font_css([
 	'css' => $css,
 	'tablet_css' => $tablet_css,
 	'mobile_css' => $mobile_css,
-	'selector' => '.ct-sidebar .ct-widget > *:not(.widget-title):not(blockquote)'
+	'selector' => '.ct-sidebar .ct-widget > *:not(.widget-title)'
 ]);
 
 blocksy_output_font_css([
-	'font_value' => get_theme_mod(
+	'font_value' => blocksy_get_theme_mod(
 		'breadcrumbsFont',
 		blocksy_typography_default_values([
 			'size' => '12px',

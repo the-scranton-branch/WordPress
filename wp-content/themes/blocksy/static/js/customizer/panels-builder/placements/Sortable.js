@@ -71,12 +71,14 @@ class Sortable extends Component {
 								.map((el) => el.remove())
 						}
 
-						remote.props.onChange &&
-							remote.props.onChange(
-								remoteItems,
-								remote.sortable,
-								evt
-							)
+						setTimeout(() => {
+							remote.props.onChange &&
+								remote.props.onChange(
+									remoteItems,
+									remote.sortable,
+									evt
+								)
+						})
 					}
 
 					this.props.onChange &&

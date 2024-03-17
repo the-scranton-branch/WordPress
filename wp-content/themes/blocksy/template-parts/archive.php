@@ -19,15 +19,7 @@ if ($maybe_custom_output) {
 	return;
 }
 
-$blog_post_structure = blocksy_listing_page_structure([
-	'prefix' => $prefix
-]);
-
 $container_class = 'ct-container';
-
-if ($blog_post_structure === 'gutenberg') {
-	$container_class = 'ct-container-narrow';
-}
 
 
 /**
@@ -43,7 +35,6 @@ $section_class = '';
 if (! have_posts()) {
 	$section_class = 'class="ct-no-results"';
 }
-
 
 ?>
 
@@ -65,4 +56,3 @@ if (! have_posts()) {
 
 	<?php get_sidebar(); ?>
 </div>
-

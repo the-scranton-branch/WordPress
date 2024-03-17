@@ -63,3 +63,89 @@ if (isset($has_sticky_header) && $has_sticky_header) {
 	}
 }
 
+// background - initial state
+blocksy_output_background_css([
+	'selector' => blocksy_assemble_selector(
+		blocksy_mutate_selector([
+			'selector' => $root_selector,
+			'operation' => 'suffix',
+			'to_add' => '.ct-header'
+		])
+	),
+	'css' => $css,
+	'tablet_css' => $tablet_css,
+	'mobile_css' => $mobile_css,
+	'value' => blocksy_akg(
+		'headerBackground',
+		$atts,
+		blocksy_background_default_value([
+			'backgroundColor' => [
+				'default' => [
+					'color' => Blocksy_Css_Injector::get_skip_rule_keyword('DEFAULT')
+				],
+			],
+		])
+	),
+	'responsive' => true,
+	'forced_background_image' => true
+]);
+
+
+// background - transparent state
+if (isset($has_transparent_header) && $has_transparent_header) {
+
+	blocksy_output_background_css([
+		'selector' => blocksy_assemble_selector(
+			blocksy_mutate_selector([
+				'selector' => $root_selector,
+				'operation' => 'suffix',
+				'to_add' => '[data-transparent]'
+			])
+		),
+		'css' => $css,
+		'tablet_css' => $tablet_css,
+		'mobile_css' => $mobile_css,
+		'value' => blocksy_akg(
+			'transparentHeaderBackground',
+			$atts,
+			blocksy_background_default_value([
+				'backgroundColor' => [
+					'default' => [
+						'color' => Blocksy_Css_Injector::get_skip_rule_keyword('DEFAULT')
+					],
+				],
+			])
+		),
+		'responsive' => true,
+		'forced_background_image' => true
+	]);
+}
+
+// background - sticky state
+if (isset($has_sticky_header) && $has_sticky_header) {
+
+	blocksy_output_background_css([
+		'selector' => blocksy_assemble_selector(
+			blocksy_mutate_selector([
+				'selector' => $root_selector,
+				'to_add' => '[data-sticky*="yes"]'
+			])
+		),
+		'css' => $css,
+		'tablet_css' => $tablet_css,
+		'mobile_css' => $mobile_css,
+		'value' => blocksy_akg(
+			'stickyHeaderBackground',
+			$atts,
+			blocksy_background_default_value([
+				'backgroundColor' => [
+					'default' => [
+						'color' => Blocksy_Css_Injector::get_skip_rule_keyword('DEFAULT')
+					],
+				],
+			])
+		),
+		'responsive' => true,
+		'forced_background_image' => true
+	]);
+}

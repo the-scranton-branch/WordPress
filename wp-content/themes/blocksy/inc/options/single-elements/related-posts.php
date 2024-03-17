@@ -32,6 +32,88 @@ $options = [
 
 					[
 
+						apply_filters(
+							'blocksy_customizer_options:single:related:before',
+							[],
+							$prefix,
+							$post_type
+						),
+
+						blocksy_rand_md5() => [
+							'type' => 'ct-condition',
+							'condition' => [
+								$prefix . 'related_posts_slideshow' => '!slider',
+							],
+							'options' => [
+
+								blocksy_rand_md5() => [
+									'type' => 'ct-group',
+									'label' => __( 'Columns & Posts', 'blocksy' ),
+									'attr' => [ 'data-columns' => '2:medium' ],
+									'responsive' => true,
+									'options' => [
+
+										$prefix . 'related_posts_columns' => [
+											'label' => false,
+											'type' => 'ct-number',
+											'value' => [
+												'desktop' => 3,
+												'tablet' => 2,
+												'mobile' => 1
+											],
+											'min' => 1,
+											'max' => 4,
+											'design' => 'block',
+											'disableRevertButton' => true,
+											'attr' => [ 'data-width' => 'full' ],
+											'desc' => __('Number of columns', 'blocksy' ),
+											'sync' => 'live',
+											'responsive' => true,
+											'skipResponsiveControls' => true,
+										],
+
+										$prefix . 'related_posts_count' => [
+											'label' => false,
+											'type' => 'ct-number',
+											'value' => 3,
+											'min' => 1,
+											'max' => 20,
+											'design' => 'block',
+											'disableRevertButton' => true,
+											'attr' => [ 'data-width' => 'full' ],
+											'desc' => __( 'Number of posts', 'blocksy' ),
+											'markAsAutoFor' => ['tablet', 'mobile'],
+											'sync' => [
+												[
+													'prefix' => $prefix,
+													'selector' => '.ct-related-posts',
+													'render' => function () {
+														blocksy_related_posts();
+													}
+												],
+
+												[
+													'id' => $prefix . 'related_posts_count_skip',
+													'loader_selector' => 'skip',
+													'prefix' => $prefix,
+													'selector' => '.ct-related-posts',
+													'render' => function () {
+														blocksy_related_posts();
+													}
+												]
+											]
+										],
+
+									],
+								],
+		
+							]
+						],
+
+						blocksy_rand_md5() => [
+							'type' => 'ct-divider',
+						],
+
 						$prefix . 'related_criteria' => [
 							'label' => __( 'Related Criteria', 'blocksy' ),
 							'type' => $prefix === 'single_blog_post_' ? 'ct-select' : 'hidden',
@@ -108,7 +190,7 @@ $options = [
 							'sync' => [
 								'prefix' => $prefix,
 								'selector' => '.ct-related-posts',
-								'loader_selector' => '.ct-block-title',
+								'loader_selector' => '.ct-module-title',
 								'render' => function () {
 									blocksy_related_posts();
 								}
@@ -129,71 +211,6 @@ $options = [
 								'left' => '',
 								'center' => '',
 								'right' => '',
-							],
-						],
-
-						blocksy_rand_md5() => [
-							'type' => 'ct-divider',
-						],
-
-						blocksy_rand_md5() => [
-							'type' => 'ct-group',
-							'label' => __( 'Columns & Posts', 'blocksy' ),
-							'attr' => [ 'data-columns' => '2:medium' ],
-							'responsive' => true,
-							'options' => [
-
-								$prefix . 'related_posts_columns' => [
-									'label' => false,
-									'type' => 'ct-number',
-									'value' => [
-										'desktop' => 3,
-										'tablet' => 2,
-										'mobile' => 1
-									],
-									'min' => 1,
-									'max' => 4,
-									'design' => 'block',
-									'disableRevertButton' => true,
-									'attr' => [ 'data-width' => 'full' ],
-									'desc' => __('Number of columns', 'blocksy' ),
-									'sync' => 'live',
-									'responsive' => true,
-									'skipResponsiveControls' => true,
-								],
-
-								$prefix . 'related_posts_count' => [
-									'label' => false,
-									'type' => 'ct-number',
-									'value' => 3,
-									'min' => 1,
-									'max' => 20,
-									'design' => 'block',
-									'disableRevertButton' => true,
-									'attr' => [ 'data-width' => 'full' ],
-									'desc' => __( 'Number of posts', 'blocksy' ),
-									'markAsAutoFor' => ['tablet', 'mobile'],
-									'sync' => [
-										[
-											'prefix' => $prefix,
-											'selector' => '.ct-related-posts',
-											'render' => function () {
-												blocksy_related_posts();
-											}
-										],
-
-										[
-											'id' => $prefix . 'related_posts_count_skip',
-											'loader_selector' => 'skip',
-											'prefix' => $prefix,
-											'selector' => '.ct-related-posts',
-											'render' => function () {
-												blocksy_related_posts();
-											}
-										]
-									]
-								],
-
 							],
 						],
 
@@ -245,6 +262,19 @@ $options = [
 									],
 								],
 
+								$prefix . 'related_featured_image_has_link' => [
+									'label' => __('Link To Post', 'blocksy'),
+									'type' => 'ct-switch',
+									'value' => 'yes',
+									'sync' => [
+										'prefix' => $prefix,
+										'selector' => '.ct-related-posts',
+										'render' => function () {
+											blocksy_related_posts();
+										}
+									]
+								],
+
 							],
 						],
 
@@ -270,6 +300,19 @@ $options = [
 									'span' => 'span',
 								]
 							),
+							'sync' => [
+								'prefix' => $prefix,
+								'selector' => '.ct-related-posts',
+								'render' => function () {
+									blocksy_related_posts();
+								}
+							]
+						],
+
+						$prefix . 'related_featured_title_has_link' => [
+							'label' => __('Link To Post', 'blocksy'),
+							'type' => 'ct-switch',
+							'value' => 'yes',
 							'sync' => [
 								'prefix' => $prefix,
 								'selector' => '.ct-related-posts',
@@ -445,48 +488,53 @@ $options = [
 				'type' => 'tab',
 				'options' => [
 
+					$prefix . 'related_posts_label_font' => [
+						'type' => 'ct-typography',
+						'label' => __( 'Module Title Font', 'blocksy' ),
+						'sync' => 'live',
+						'value' => blocksy_typography_default_values([]),
+					],
+
 					$prefix . 'related_posts_label_color' => [
 						'label' => __( 'Module Title Font Color', 'blocksy' ),
 						'type'  => 'ct-color-picker',
 						'design' => 'inline',
 						'sync' => 'live',
-
 						'value' => [
 							'default' => [
 								'color' => Blocksy_Css_Injector::get_skip_rule_keyword('DEFAULT'),
 							],
 						],
-
 						'pickers' => [
 							[
 								'title' => __( 'Initial', 'blocksy' ),
 								'id' => 'default',
 								'inherit' => [
-									'var(--heading-1-color, var(--headings-color))' => [
+									'var(--theme-heading-1-color, var(--theme-headings-color))' => [
 										$prefix . 'related_label_wrapper' => 'h1'
 									],
 
-									'var(--heading-2-color, var(--headings-color))' => [
+									'var(--theme-heading-2-color, var(--theme-headings-color))' => [
 										$prefix . 'related_label_wrapper' => 'h2'
 									],
 
-									'var(--heading-3-color, var(--headings-color))' => [
+									'var(--theme-heading-3-color, var(--theme-headings-color))' => [
 										$prefix . 'related_label_wrapper' => 'h3'
 									],
 
-									'var(--heading-4-color, var(--headings-color))' => [
+									'var(--theme-heading-4-color, var(--theme-headings-color))' => [
 										$prefix . 'related_label_wrapper' => 'h4'
 									],
 
-									'var(--heading-5-color, var(--headings-color))' => [
+									'var(--theme-heading-5-color, var(--theme-headings-color))' => [
 										$prefix . 'related_label_wrapper' => 'h5'
 									],
 
-									'var(--heading-6-color, var(--headings-color))' => [
+									'var(--theme-heading-6-color, var(--theme-headings-color))' => [
 										$prefix . 'related_label_wrapper' => 'h6'
 									],
 
-									'var(--color)' => [
+									'var(--theme-text-color)' => [
 										$prefix . 'related_label_wrapper' => 'span|p'
 									],
 								]
@@ -494,13 +542,21 @@ $options = [
 						],
 					],
 
+					$prefix . 'related_posts_link_font' => [
+						'type' => 'ct-typography',
+						'label' => __( 'Posts Title Font', 'blocksy' ),
+						'sync' => 'live',
+						'divider' => 'top:full',
+						'value' => blocksy_typography_default_values([
+							'size' => '16px'
+						]),
+					],
+
 					$prefix . 'related_posts_link_color' => [
 						'label' => __( 'Posts Title Font Color', 'blocksy' ),
 						'type'  => 'ct-color-picker',
 						'design' => 'inline',
-						'divider' => 'top',
 						'sync' => 'live',
-
 						'value' => [
 							'default' => [
 								'color' => Blocksy_Css_Injector::get_skip_rule_keyword('DEFAULT'),
@@ -516,31 +572,31 @@ $options = [
 								'title' => __( 'Initial', 'blocksy' ),
 								'id' => 'default',
 								'inherit' => [
-									'var(--heading-1-color, var(--headings-color))' => [
+									'var(--theme-heading-1-color, var(--theme-headings-color))' => [
 										$prefix . 'related_posts_title_tag' => 'h1'
 									],
 
-									'var(--heading-2-color, var(--headings-color))' => [
+									'var(--theme-heading-2-color, var(--theme-headings-color))' => [
 										$prefix . 'related_posts_title_tag' => 'h2'
 									],
 
-									'var(--heading-3-color, var(--headings-color))' => [
+									'var(--theme-heading-3-color, var(--theme-headings-color))' => [
 										$prefix . 'related_posts_title_tag' => 'h3'
 									],
 
-									'var(--heading-4-color, var(--headings-color))' => [
+									'var(--theme-heading-4-color, var(--theme-headings-color))' => [
 										$prefix . 'related_posts_title_tag' => 'h4'
 									],
 
-									'var(--heading-5-color, var(--headings-color))' => [
+									'var(--theme-heading-5-color, var(--theme-headings-color))' => [
 										$prefix . 'related_posts_title_tag' => 'h5'
 									],
 
-									'var(--heading-6-color, var(--headings-color))' => [
+									'var(--theme-heading-6-color, var(--theme-headings-color))' => [
 										$prefix . 'related_posts_title_tag' => 'h6'
 									],
 
-									'var(--color)' => [
+									'var(--theme-text-color)' => [
 										$prefix . 'related_posts_title_tag' => 'span|p'
 									],
 								]
@@ -549,9 +605,19 @@ $options = [
 							[
 								'title' => __( 'Hover', 'blocksy' ),
 								'id' => 'hover',
-								'inherit' => 'var(--linkHoverColor)'
+								'inherit' => 'var(--theme-link-hover-color)'
 							],
 						],
+					],
+
+					$prefix . 'related_posts_meta_font' => [
+						'type' => 'ct-typography',
+						'label' => __( 'Posts Meta Font', 'blocksy' ),
+						'sync' => 'live',
+						'divider' => 'top:full',
+						'value' => blocksy_typography_default_values([
+							'size' => '14px'
+						]),
 					],
 
 					$prefix . 'related_posts_meta_color' => [
@@ -559,7 +625,6 @@ $options = [
 						'type'  => 'ct-color-picker',
 						'design' => 'inline',
 						'sync' => 'live',
-
 						'value' => [
 							'default' => [
 								'color' => Blocksy_Css_Injector::get_skip_rule_keyword('DEFAULT'),
@@ -574,13 +639,13 @@ $options = [
 							[
 								'title' => __( 'Initial', 'blocksy' ),
 								'id' => 'default',
-								'inherit' => 'var(--color)'
+								'inherit' => 'var(--theme-text-color)'
 							],
 
 							[
 								'title' => __( 'Hover', 'blocksy' ),
 								'id' => 'hover',
-								'inherit' => 'var(--linkHoverColor)'
+								'inherit' => 'var(--theme-link-hover-color)'
 							],
 						],
 					],
@@ -588,10 +653,8 @@ $options = [
 					$prefix . 'related_thumb_radius' => [
 						'label' => __( 'Image Border Radius', 'blocksy' ),
 						'type' => 'ct-spacing',
-						'divider' => 'top',
-						'value' => blocksy_spacing_value([
-							'linked' => true,
-						]),
+						'divider' => 'top:full',
+						'value' => blocksy_spacing_value(),
 						'inputAttr' => [
 							'placeholder' => '5'
 						],
@@ -615,11 +678,8 @@ $options = [
 								'type' => 'ct-slider',
 								'value' => '50px',
 								'units' => blocksy_units_config([
-									[
-										'unit' => 'px',
-										'min' => 0,
-										'max' => 150,
-									],
+									[ 'unit' => 'px', 'min' => 0, 'max' => 200],
+									['unit' => '', 'type' => 'custom'],
 								]),
 								'responsive' => true,
 								'sync' => 'live',
@@ -633,7 +693,7 @@ $options = [
 								'value' => blocksy_background_default_value([
 									'backgroundColor' => [
 										'default' => [
-											'color' => 'var(--paletteColor6)',
+											'color' => 'var(--theme-palette-color-6)',
 										],
 									],
 								]),

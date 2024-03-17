@@ -82,7 +82,7 @@ const SingleFont = ({
 					title={humanizeFontSource(family.source)}>
 					{humanizeFontSource(family.source)[0]}
 				</span>
-				
+
 				{familyForDisplay(family.display || family.family)}
 
 				{family.variable && <i>({__('Variable', 'blocksy')})</i>}

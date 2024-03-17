@@ -5,10 +5,10 @@ $config = [
 	'excluded_from' => ['offcanvas'],
 
 	'translation_keys' => [
-		['key' => 'header_search_placeholder'],
+		['key' => 'search_label'],
+		['key' => 'header_search_placeholder']
 	],
 	'selective_refresh' => [
 		'icon'
 	]
 ];
-

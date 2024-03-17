@@ -4,26 +4,26 @@
 	&:not(.is-style-plain) {
 
 		&:not(.has-text-align-center):not(.has-text-align-right) {
-			border-inline-start: 4px solid var(--paletteColor1);
+			border-inline-start: 4px solid var(--theme-palette-color-1);
 		}
 
 		&.has-text-align-center {
-			padding-block: 30px;
-			border-block: 3px solid var(--paletteColor1);
+			padding-block: 1.5em;
+			border-block: 3px solid var(--theme-palette-color-1);
 		}
 
 		&.has-text-align-right {
-			border-inline-end: 4px solid var(--paletteColor1);
+			border-inline-end: 4px solid var(--theme-palette-color-1);
 		}
 	}
 
 	// alignment
 	&:not(.has-text-align-center):not(.has-text-align-right) {
-		padding-inline-start: 30px;
+		padding-inline-start: 1.5em;
 	}
 
 	&.has-text-align-right {
-		padding-inline-end: 30px;
+		padding-inline-end: 1.5em;
 	}
 
 	// other
@@ -36,6 +36,6 @@
 	cite {
 		display: block;
 		margin-top: 15px;
-		font-size: 14px !important;
+		font-size: 14px;
 	}
 }

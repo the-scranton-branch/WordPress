@@ -51,7 +51,7 @@ blocksy_output_font_css([
 blocksy_output_colors([
 	'value' => blocksy_akg('siteTitleColor', $atts),
 	'default' => [
-		'default' => [ 'color' => 'var(--paletteColor4)' ],
+		'default' => [ 'color' => 'var(--theme-palette-color-4)' ],
 		'hover' => [ 'color' => Blocksy_Css_Injector::get_skip_rule_keyword('DEFAULT') ],
 	],
 	'css' => $css,
@@ -66,7 +66,7 @@ blocksy_output_colors([
 					'to_add' => '.site-title'
 				])
 			),
-			'variable' => 'linkInitialColor'
+			'variable' => 'theme-link-initial-color'
 		],
 
 		'hover' => [
@@ -77,7 +77,7 @@ blocksy_output_colors([
 					'to_add' => '.site-title'
 				])
 			),
-			'variable' => 'linkHoverColor'
+			'variable' => 'theme-link-hover-color'
 		],
 	],
 	'responsive' => true
@@ -107,7 +107,7 @@ if (isset($has_transparent_header) && $has_transparent_header) {
 						'to_add' => '[data-transparent-row="yes"]'
 					])
 				),
-				'variable' => 'linkInitialColor'
+				'variable' => 'theme-link-initial-color'
 			],
 
 			'hover' => [
@@ -122,7 +122,7 @@ if (isset($has_transparent_header) && $has_transparent_header) {
 						'to_add' => '[data-transparent-row="yes"]'
 					])
 				),
-				'variable' => 'linkHoverColor'
+				'variable' => 'theme-link-hover-color'
 			],
 		],
 		'responsive' => true
@@ -151,7 +151,7 @@ if (isset($has_transparent_header) && $has_transparent_header) {
 						'to_add' => '[data-transparent-row="yes"]'
 					])
 				),
-				'variable' => 'color'
+				'variable' => 'theme-text-color'
 			],
 		],
 		'responsive' => true
@@ -183,7 +183,7 @@ if (isset($has_sticky_header) && $has_sticky_header) {
 						'to_add' => '[data-sticky*="yes"]'
 					])
 				),
-				'variable' => 'linkInitialColor'
+				'variable' => 'theme-link-initial-color'
 			],
 
 			'hover' => [
@@ -198,7 +198,7 @@ if (isset($has_sticky_header) && $has_sticky_header) {
 						'to_add' => '[data-sticky*="yes"]'
 					])
 				),
-				'variable' => 'linkHoverColor'
+				'variable' => 'theme-link-hover-color'
 			],
 		],
 		'responsive' => true
@@ -227,7 +227,7 @@ if (isset($has_sticky_header) && $has_sticky_header) {
 						'to_add' => '[data-sticky*="yes"]'
 					])
 				),
-				'variable' => 'color'
+				'variable' => 'theme-text-color'
 			],
 		],
 		'responsive' => true
@@ -326,7 +326,7 @@ if ($has_tagline === 'yes') {
 						'to_add' => '.site-description'
 					])
 				),
-				'variable' => 'color'
+				'variable' => 'theme-text-color'
 			],
 		],
 		'responsive' => true
@@ -340,10 +340,9 @@ blocksy_output_spacing([
 	'selector' => blocksy_assemble_selector($root_selector),
 	'important' => true,
 	'value' => blocksy_default_akg(
-		'headerLogoMargin', $atts,
-		blocksy_spacing_value([
-			'linked' => true,
-		])
+		'headerLogoMargin',
+		$atts,
+		blocksy_spacing_value()
 	)
 ]);
 

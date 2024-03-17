@@ -26,8 +26,18 @@ ctEvents.on(
 					fullValue: true,
 				},
 
-				valueExtractor: ({ offcanvasBackground }) =>
-					offcanvasBackground,
+				valueExtractor: ({ offcanvasBackground }) => {
+					return (
+						offcanvasBackground || {
+							background_type: 'color',
+							backgroundColor: {
+								default: {
+									color: 'rgba(18, 21, 25, 0.98)',
+								},
+							},
+						}
+					)
+				},
 			}).section
 
 		const handleRootBackground = ({ itemId }) =>
@@ -40,9 +50,23 @@ ctEvents.on(
 				},
 
 				valueExtractor: ({
-					offcanvas_behavior,
-					offcanvasBackdrop,
-					offcanvasBackground,
+					offcanvas_behavior = 'panel',
+					offcanvasBackdrop = {
+						background_type: 'color',
+						backgroundColor: {
+							default: {
+								color: 'CT_CSS_SKIP_RULE',
+							},
+						},
+					},
+					offcanvasBackground = {
+						background_type: 'color',
+						backgroundColor: {
+							default: {
+								color: 'rgba(18, 21, 25, 0.98)',
+							},
+						},
+					},
 				}) =>
 					offcanvas_behavior === 'modal'
 						? offcanvasBackground
@@ -50,10 +74,14 @@ ctEvents.on(
 			}).section
 
 		variableDescriptors['offcanvas'] = ({ itemId }) => ({
-			offcanvas_behavior: [
-				...handleSectionBackground({ itemId }),
-				...handleRootBackground({ itemId }),
-			],
+			
+			offcanvas_heading_font_color: {
+				selector: '#offcanvas .ct-panel-actions',
+				variable: 'theme-text-color',
+				type: 'color:default',
+				responsive: true,
+			},
+
 			offcanvasBackground: [
 				...handleSectionBackground({ itemId }),
 				...handleRootBackground({ itemId }),
@@ -64,10 +92,10 @@ ctEvents.on(
 				selector: assembleSelector(
 					`${
 						getRootSelectorFor({ itemId })[0]
-					} [data-behaviour*="side"]`
+					} #offcanvas`
 				),
 				type: 'box-shadow',
-				variable: 'box-shadow',
+				variable: 'theme-box-shadow',
 				responsive: true,
 			},
 
@@ -171,7 +199,7 @@ ctEvents.on(
 							to_add: '.ct-toggle-close',
 						})
 					),
-					variable: 'icon-color',
+					variable: 'theme-icon-color',
 					type: 'color:default',
 					responsive: true,
 				},
@@ -184,7 +212,7 @@ ctEvents.on(
 							to_add: '.ct-toggle-close:hover',
 						})
 					),
-					variable: 'icon-color',
+					variable: 'theme-icon-color',
 					type: 'color:hover',
 					responsive: true,
 				},
@@ -209,8 +237,7 @@ ctEvents.on(
 						mutateSelector({
 							selector: getRootSelectorFor({ itemId }),
 							operation: 'suffix',
-							to_add:
-								'.ct-toggle-close[data-type="type-2"]:hover',
+							to_add: '.ct-toggle-close[data-type="type-2"]:hover',
 						})
 					),
 					variable: 'toggle-button-border-color',
@@ -238,8 +265,7 @@ ctEvents.on(
 						mutateSelector({
 							selector: getRootSelectorFor({ itemId }),
 							operation: 'suffix',
-							to_add:
-								'.ct-toggle-close[data-type="type-3"]:hover',
+							to_add: '.ct-toggle-close[data-type="type-3"]:hover',
 						})
 					),
 					variable: 'toggle-button-background',
@@ -256,7 +282,7 @@ ctEvents.on(
 						to_add: '.ct-toggle-close',
 					})
 				),
-				variable: 'icon-size',
+				variable: 'theme-icon-size',
 				unit: 'px',
 			},
 
@@ -280,27 +306,48 @@ ctEvents.on(
 	({ optionId, optionValue, values }) => {
 		const selector = '#offcanvas'
 
-		if (
-			optionId === 'offcanvas_behavior' ||
-			optionId === 'side_panel_position'
-		) {
+		if (optionId === 'side_panel_position') {
 			const el = document.querySelector('#offcanvas')
+			el.dataset.behaviour = `${optionValue}-side`
+		}
 
-			setTimeout(() => {
+		if (optionId === 'offcanvas_behavior') {
+			wp.customize.preview.trigger('ct:sync:refresh_partial', {
+				id: 'header_placements_offcanvas',
+			})
+
+			const cb = () => {
+				const el = document.querySelector('#offcanvas')
+				const offcanvas_behavior = values.offcanvas_behavior || 'panel'
+				const side_panel_position =
+					values.side_panel_position || 'right'
+
 				el.removeAttribute('data-behaviour')
-				el.classList.add('ct-disable-transitions')
+				el.dataset.behaviour =
+					offcanvas_behavior === 'modal'
+						? 'modal'
+						: `${side_panel_position}-side`
 
-				requestAnimationFrame(() => {
-					el.dataset.behaviour =
-						values.offcanvas_behavior === 'modal'
-							? 'modal'
-							: `${values.side_panel_position}-side`
+				ctEvents.off('ct:sync:dynamic-css:updated', cb)
+			}
 
-					setTimeout(() => {
-						el.classList.remove('ct-disable-transitions')
-					})
-				})
-			}, 300)
+			ctEvents.on('ct:sync:dynamic-css:updated', cb)
+		}
+
+		if (optionId === 'has_offcanvas_heading') {
+			wp.customize.preview.trigger('ct:sync:refresh_partial', {
+				id: 'header_placements_offcanvas',
+			})
+		}
+
+		if (optionId === 'offcanvas_heading') {
+			const maybeHeading = document.querySelector(
+				'#offcanvas .ct-panel-heading'
+			)
+
+			if (maybeHeading) {
+				maybeHeading.innerHTML = optionValue
+			}
 		}
 
 		if (optionId === 'menu_close_button_type') {

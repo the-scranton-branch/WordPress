@@ -3,8 +3,8 @@
 	table {
 
 		&:not(.has-border-color) {
-			td, th {
-				border-color: var(--table-border-color, var(--border-color));
+			thead, tfoot, td, th {
+				border-color: var(--theme-table-border-color, var(--theme-border-color));
 			}
 		}
 	}

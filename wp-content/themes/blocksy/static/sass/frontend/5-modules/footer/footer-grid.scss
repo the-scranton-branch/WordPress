@@ -5,9 +5,7 @@
 		grid-template-columns: var(--grid-template-columns);
 		grid-column-gap: var(--columns-gap, 50px);
 		grid-row-gap: var(--columns-gap, 50px);
-
-		padding-top: var(--container-spacing);
-		padding-bottom: var(--container-spacing);
+		padding-block: var(--container-spacing);
 	}
 }
 

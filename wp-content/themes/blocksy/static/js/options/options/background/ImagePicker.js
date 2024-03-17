@@ -49,23 +49,24 @@ const ImagePicker = ({ option, value, onChange, setOutsideClickFreezed }) => {
 				option={{
 					id: 'background_repeat',
 					label: __('Background Repeat', 'blocksy'),
-					attr: { 'data-type': 'repeat' },
 					type: 'ct-radio',
 					view: 'text',
 					design: 'block',
+					attr: { 'data-type': 'repeat' },
+					choice_attr: {'data-tooltip': 'top'},
 					value: option.value['background_repeat'],
 					choices: {
 						repeat: `<svg viewBox="0 0 16 16"><path d="M0,0h4v4H0V0z M6,0h4v4H6V0z M12,0h4v4h-4V0z M0,6h4v4H0V6z M6,6h4v4H6V6z M12,6h4v4h-4V6z M0,12h4v4H0V12z M6,12h4v4H6V12zM12,12h4v4h-4V12z"/></svg>
-							<span class="ct-tooltip-top">${__('Repeat', 'blocksy')}</span>`,
+							<span class="ct-tooltip">${__('Repeat', 'blocksy')}</span>`,
 
 						'repeat-y': `<svg viewBox="0 0 16 16"><rect x="6" width="4" height="4"/><rect x="6" y="6" width="4" height="4"/><rect x="6" y="12" width="4" height="4"/></svg>
-							<span class="ct-tooltip-top">${__('Repeat Y', 'blocksy')}</span>`,
+							<span class="ct-tooltip">${__('Repeat Y', 'blocksy')}</span>`,
 
 						'repeat-x': `<svg viewBox="0 0 16 16"><rect y="6" width="4" height="4"/><rect x="6" y="6" width="4" height="4"/><rect x="12" y="6" width="4" height="4"/></svg>
-							<span class="ct-tooltip-top">${__('Repeat X', 'blocksy')}</span>`,
+							<span class="ct-tooltip">${__('Repeat X', 'blocksy')}</span>`,
 
 						'no-repeat': `<svg viewBox="0 0 16 16"><rect x="6" y="6" width="4" height="4"/></svg>
-							<span class="ct-tooltip-top">${__('No Repeat', 'blocksy')}</span>`,
+							<span class="ct-tooltip">${__('No Repeat', 'blocksy')}</span>`,
 					},
 				}}
 				hasRevertButton={false}

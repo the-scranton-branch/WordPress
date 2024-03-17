@@ -6,4 +6,3 @@ add_filter('stackable_responsive_breakpoints', function ($breakpoints) {
 		'mobile' => '690'
 	];
 });
-

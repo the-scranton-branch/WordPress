@@ -56,13 +56,13 @@ $options = [
 					[
 						'title' => __( 'Initial', 'blocksy' ),
 						'id' => 'default',
-						'inherit' => 'var(--color)'
+						'inherit' => 'var(--theme-text-color)'
 					],
 
 					[
 						'title' => __( 'Focus', 'blocksy' ),
 						'id' => 'focus',
-						'inherit' => 'var(--color)'
+						'inherit' => 'var(--theme-text-color)'
 					],
 				],
 			],
@@ -89,11 +89,11 @@ $options = [
 				'setting' => [ 'transport' => 'postMessage' ],
 				'value' => [
 					'default' => [
-						'color' => 'var(--border-color)',
+						'color' => 'var(--theme-border-color)',
 					],
 
 					'focus' => [
-						'color' => 'var(--paletteColor1)',
+						'color' => 'var(--theme-palette-color-1)',
 					],
 				],
 
@@ -206,11 +206,11 @@ $options = [
 				'setting' => [ 'transport' => 'postMessage' ],
 				'value' => [
 					'default' => [
-						'color' => 'var(--border-color)',
+						'color' => 'var(--theme-border-color)',
 					],
 
 					'accent' => [
-						'color' => 'var(--paletteColor1)',
+						'color' => 'var(--theme-palette-color-1)',
 					],
 				],
 
@@ -261,7 +261,7 @@ $options = [
 					[
 						'title' => __( 'Initial', 'blocksy' ),
 						'id' => 'default',
-						'inherit' => 'var(--color)'
+						'inherit' => 'var(--theme-text-color)'
 					],
 
 					[
@@ -297,7 +297,7 @@ $options = [
 					[
 						'title' => __( 'Active', 'blocksy' ),
 						'id' => 'active',
-						'inherit' => 'var(--paletteColor1)'
+						'inherit' => 'var(--theme-palette-color-1)'
 					],
 				],
 			],

@@ -1,38 +1,23 @@
 import { createElement, Component } from '@wordpress/element'
 import classnames from 'classnames'
 
-const isActive = ({ option: { behavior = 'words' }, value }) =>
-	behavior === 'words' ? value === 'yes' : !!value
+import BlocksySwitch from './ct-switch/BlocksySwitch'
+import GutenbergSwitch from './ct-switch/GutenbergSwitch'
 
-const alternateValueFor = ({
-	option = {},
-	option: { behavior = 'words' },
-	value,
-}) =>
-	isActive({ option, value })
-		? behavior === 'words'
-			? 'no'
-			: false
-		: behavior === 'words'
-		? 'yes'
-		: true
+const Switch = (props) => {
+	const { purpose } = props
 
-const Switch = ({ value, option = {}, onChange, onClick }) => (
-	<div
-		className={classnames({
-			[`ct-option-switch`]: true,
-			[`ct-active`]: isActive({ option, value }),
-		})}
-		onClick={(e) => {
-			onClick && onClick(e)
-			onChange(alternateValueFor({ option, value }))
-		}}>
-		<span />
-	</div>
-)
+	if (purpose === 'gutenberg') {
+		return <GutenbergSwitch {...props} />
+	}
+
+	return <BlocksySwitch {...props} />
+}
 
 Switch.renderingConfig = {
 	design: 'inline',
 }
+
+Switch.supportedPurposes = ['default', 'gutenberg']
 
 export default Switch

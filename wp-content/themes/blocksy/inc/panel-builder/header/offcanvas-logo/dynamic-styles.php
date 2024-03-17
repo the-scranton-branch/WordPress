@@ -24,9 +24,8 @@ blocksy_output_spacing([
 	'selector' => blocksy_assemble_selector($root_selector),
 	'important' => true,
 	'value' => blocksy_default_akg(
-		'off_canvas_logo_margin', $atts,
-		blocksy_spacing_value([
-			'linked' => true,
-		])
+		'off_canvas_logo_margin',
+		$atts,
+		blocksy_spacing_value()
 	)
 ]);

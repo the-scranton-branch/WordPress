@@ -138,6 +138,15 @@ $options = [
 				'setting' => [ 'transport' => 'postMessage' ],
 			],
 
+			'figcaption' => [
+				'type' => 'ct-typography',
+				'label' => __( 'Figcaption', 'blocksy' ),
+				'value' => blocksy_typography_default_values([
+					'size' => '14px',
+				]),
+				'setting' => [ 'transport' => 'postMessage' ],
+			],
+
 			blocksy_rand_md5() => [
 				'type' => 'ct-divider',
 			],

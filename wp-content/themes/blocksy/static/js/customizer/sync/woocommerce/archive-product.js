@@ -10,31 +10,32 @@ export const replaceCards = () => {
 		el.classList.add('ct-disable-transitions')
 	})
 	;[...document.querySelectorAll('[data-products] > *')].map((product) => {
-		const productsContainer = product.closest('[data-products]')
-		const nextType = productsContainer.dataset.products
+		const woo_card_layout = wp.customize('woo_card_layout')()
 
-		// productsContainer.removeAttribute('data-alignment')
-
-		// if (nextType === 'type-1') {
-		// 	productsContainer.dataset.alignment = getOptionFor(
-		// 		'shop_cards_alignment_1'
-		// 	)
-		// }
-
-		const ratio = wp.customize('blocksy_woocommerce_thumbnail_cropping')()
-
-		setRatioFor(
-			ratio === 'uncropped'
-				? 'original'
-				: ratio === 'custom' || ratio === 'predefined'
-				? `${wp.customize(
-						'woocommerce_thumbnail_cropping_custom_width'
-				  )()}/${wp.customize(
-						'woocommerce_thumbnail_cropping_custom_height'
-				  )()}`
-				: '1/1',
-			product.querySelector('.ct-image-container')
+		const maybeProductImage = woo_card_layout.find(
+			({ id, enabled }) => enabled && id === 'product_image'
 		)
+
+		if (maybeProductImage) {
+			const ratio =
+				maybeProductImage.blocksy_woocommerce_archive_thumbnail_cropping ||
+				'predefined'
+
+			if (product.querySelector('.ct-media-container')) {
+				setRatioFor(
+					ratio === 'uncropped'
+						? 'original'
+						: ratio === 'custom' || ratio === 'predefined'
+						? `${wp.customize(
+								'woocommerce_archive_thumbnail_cropping_custom_width'
+						  )()}/${wp.customize(
+								'woocommerce_archive_thumbnail_cropping_custom_height'
+						  )()}`
+						: '1/1',
+					product.querySelector('.ct-media-container')
+				)
+			}
+		}
 	})
 	;[...document.querySelectorAll('[data-products]')].map((el) => {
 		if (el.closest('.related') || el.closest('.upsells')) {
@@ -58,13 +59,10 @@ export const replaceCards = () => {
 watchOptionsWithPrefix({
 	getOptionsForPrefix: () => [
 		'woocommerce_catalog_columns',
-		'blocksy_woocommerce_thumbnail_cropping',
-		'woocommerce_thumbnail_cropping_custom_width',
-		'woocommerce_thumbnail_cropping_custom_height',
-		// 'shop_cards_alignment_1',
+		'woo_card_layout',
+		'woocommerce_archive_thumbnail_cropping_custom_width',
+		'woocommerce_archive_thumbnail_cropping_custom_height',
 	],
-
-	events: ['ct:archive-product-replace-cards:perform'],
 
 	render: () => replaceCards(),
 })

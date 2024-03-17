@@ -1,6 +1,6 @@
 <?php
 
-if ( ! function_exists( 'blocksy_get_woo_out_of_stock_badge' ) ) {
+if (! function_exists('blocksy_get_woo_out_of_stock_badge')) {
 	function blocksy_get_woo_out_of_stock_badge($args = []) {
 		$args = wp_parse_args(
 			$args,
@@ -10,7 +10,7 @@ if ( ! function_exists( 'blocksy_get_woo_out_of_stock_badge' ) ) {
 			]
 		);
 
-		$has_stock_badge = get_theme_mod('has_stock_badge', [
+		$has_stock_badge = blocksy_get_theme_mod('has_stock_badge', [
 			'archive' => true,
 			'single' => true,
 		]);
@@ -20,18 +20,18 @@ if ( ! function_exists( 'blocksy_get_woo_out_of_stock_badge' ) ) {
 			||
 			$args['location'] === 'single' && ! $has_stock_badge['single']
 		) {
-			return;
+			return '';
 		}
 
 		return blocksy_html_tag(
 			'span',
 			[
 				'class' => 'out-of-stock-badge',
-				'data-shape' => get_theme_mod('sale_badge_shape', 'type-2')
+				'data-shape' => blocksy_get_theme_mod('sale_badge_shape', 'type-2')
 			],
-			get_theme_mod(
+			blocksy_get_theme_mod(
 				'stock_badge_value',
-				__('OUT OF STOCK', 'blocksy')
+				__('SOLD OUT', 'blocksy')
 			)
 		);
 	}

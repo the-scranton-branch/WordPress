@@ -64,7 +64,7 @@ const getVariables = ({ itemId, panelType }) => ({
 					to_add: '.site-title',
 				})
 			),
-			variable: 'linkInitialColor',
+			variable: 'theme-link-initial-color',
 			type: 'color:default',
 			responsive: true,
 		},
@@ -77,7 +77,7 @@ const getVariables = ({ itemId, panelType }) => ({
 					to_add: '.site-title',
 				})
 			),
-			variable: 'linkHoverColor',
+			variable: 'theme-link-hover-color',
 			type: 'color:hover',
 			responsive: true,
 		},
@@ -91,7 +91,7 @@ const getVariables = ({ itemId, panelType }) => ({
 				to_add: '.site-description',
 			})
 		),
-		variable: 'color',
+		variable: 'theme-text-color',
 		type: 'color:default',
 		responsive: true,
 	},
@@ -110,7 +110,7 @@ const getVariables = ({ itemId, panelType }) => ({
 				})
 			),
 
-			variable: 'linkInitialColor',
+			variable: 'theme-link-initial-color',
 			type: 'color:default',
 			responsive: true,
 		},
@@ -127,7 +127,7 @@ const getVariables = ({ itemId, panelType }) => ({
 				})
 			),
 
-			variable: 'linkHoverColor',
+			variable: 'theme-link-hover-color',
 			type: 'color:hover',
 			responsive: true,
 		},
@@ -145,7 +145,7 @@ const getVariables = ({ itemId, panelType }) => ({
 			})
 		),
 
-		variable: 'color',
+		variable: 'theme-text-color',
 		type: 'color:default',
 		responsive: true,
 	},
@@ -164,7 +164,7 @@ const getVariables = ({ itemId, panelType }) => ({
 					to_add: '[data-sticky*="yes"]',
 				})
 			),
-			variable: 'linkInitialColor',
+			variable: 'theme-link-initial-color',
 			type: 'color:default',
 			responsive: true,
 		},
@@ -181,7 +181,7 @@ const getVariables = ({ itemId, panelType }) => ({
 					to_add: '[data-sticky*="yes"]',
 				})
 			),
-			variable: 'linkHoverColor',
+			variable: 'theme-link-hover-color',
 			type: 'color:hover',
 			responsive: true,
 		},
@@ -199,7 +199,7 @@ const getVariables = ({ itemId, panelType }) => ({
 				to_add: '[data-sticky*="yes"]',
 			})
 		),
-		variable: 'color',
+		variable: 'theme-text-color',
 		type: 'color:default',
 		responsive: true,
 	},

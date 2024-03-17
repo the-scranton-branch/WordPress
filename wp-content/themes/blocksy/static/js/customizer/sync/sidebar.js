@@ -10,9 +10,6 @@ watchOptionsWithPrefix({
 		`${prefix}_sidebar_position`,
 		'separated_widgets',
 		'widgets_title_wrapper',
-
-		// 'has_sticky_sidebar',
-		// 'sidebar_stick_behavior',
 		'sidebar_type',
 		'sidebar_visibility',
 	],

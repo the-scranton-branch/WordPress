@@ -126,19 +126,19 @@ $options = [
 					[
 						'title' => __( 'Initial', 'blocksy' ),
 						'id' => 'default',
-						'inherit' => 'var(--color)'
+						'inherit' => 'var(--theme-text-color)'
 					],
 
 					[
 						'title' => __( 'Link Initial', 'blocksy' ),
 						'id' => 'link_initial',
-						'inherit' => 'var(--linkInitialColor)'
+						'inherit' => 'self:default'
 					],
 
 					[
 						'title' => __( 'Link Hover', 'blocksy' ),
 						'id' => 'link_hover',
-						'inherit' => 'var(--linkHoverColor)'
+						'inherit' => 'var(--theme-link-hover-color)'
 					],
 				],
 			],
@@ -148,9 +148,7 @@ $options = [
 				'type' => 'ct-spacing',
 				'divider' => 'top',
 				'setting' => [ 'transport' => 'postMessage' ],
-				'value' => blocksy_spacing_value([
-					'linked' => true,
-				]),
+				'value' => blocksy_spacing_value(),
 				'responsive' => true
 			],
 

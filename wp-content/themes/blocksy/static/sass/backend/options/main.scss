@@ -1,10 +1,4 @@
-:root {
-	--accentColor: #2271b1;
-	--accentColorHover: #135e96;
-	--optionBorderColor: #ddd;
-}
-
-
+@import 'options/root-styles';
 @import 'options/general';
 @import 'options/ct-panel';
 @import 'options/input';
@@ -34,14 +28,11 @@
 @import 'options/typography';
 @import 'options/image-position';
 @import 'options/ratio-picker';
-@import 'options/background/main';
 @import 'options/color/main';
-@import 'options/ct-editor';
+@import 'options/background/main';
 @import 'options/box-shadow';
 @import 'options/options-group';
 @import 'options/wp-editor';
-@import 'options/widget-area';
-@import 'options/widgets-backend';
 @import 'options/modal-tabs';
 @import 'options/labeled-group';
 @import 'options/icon-picker';
@@ -51,8 +42,18 @@
 @import 'options/options-inherit-state';
 @import 'options/taxonomies-options';
 @import 'options/animated-checkbox';
+@import 'options/more-options-trigger';
+@import 'options/thumbnail-actions';
+
+// widgets
+@import 'options/widgets-areas-screen';
+@import 'options/widgets-common';
+@import 'options/widgets-block-area';
 
 // woocommerce options
 @import 'options/woo-numbers';
 @import 'options/woo-image-variations';
-@import 'options/media-modal-video-options';
+
+// core options
+@import 'options/options-type-gutenberg';
+@import 'options/tools-panel-component';

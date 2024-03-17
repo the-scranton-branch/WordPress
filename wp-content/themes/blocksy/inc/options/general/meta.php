@@ -44,6 +44,12 @@ if (! isset($computed_cpt) || ! $computed_cpt) {
 	if ($is_page) {
 		$computed_cpt = 'single_page';
 	}
+
+	if (isset($post_type)) {
+		if ($post_type !== 'post' && $post_type !== 'page') {
+			$computed_cpt = $post_type . '_single';
+		}
+	}
 }
 
 if (! isset($post_type)) {
@@ -116,6 +122,29 @@ if (! isset($meta_elements)) {
 	]);
 }
 
+$comments_options = apply_filters(
+	'blocksy:general:card:options:icon',
+	[],
+	'blc blc-comments'
+);
+
+$comments_options_conditions = null;
+
+if (! empty($comments_options)) {
+	$comments_options_conditions = [
+		'meta_type' => 'icons',
+	];
+
+	$comments_options = [
+		blocksy_rand_md5() => [
+			'type' => 'ct-condition',
+			'condition' => [ 'meta_type' => 'icons' ],
+			'values_source' => 'parent',
+			'options' => $comments_options
+		]
+	];
+}
+
 $meta_elements = apply_filters(
 	'blocksy:options:meta:meta_default_elements',
 	$meta_elements,
@@ -124,44 +153,36 @@ $meta_elements = apply_filters(
 );
 
 $date_format_options = [
-	blocksy_rand_md5() => [
-		'type' => 'ct-group',
-		'attr' => [ 'data-columns' => '1' ],
-		'options' => [
-			'date_format_source' => [
-				'label' => __( 'Format', 'blocksy' ),
-				'type' => 'ct-select',
-				'value' => 'default',
-				'view' => 'text',
-				'design' => 'inline',
-				'choices' => blocksy_ordered_keys(
-					[
-						'default' => __( 'Default', 'blocksy' ),
-						'custom' => __( 'Custom', 'blocksy' ),
-					]
-				),
-			],
+	'date_format_source' => [
+		'label' => __('Date Format', 'blocksy'),
+		'type' => 'ct-radio',
+		'value' => 'default',
+		'view' => 'text',
+		'design' => 'block',
+		'choices' => [
+			'default' => __( 'Default', 'blocksy' ),
+			'custom' => __( 'Custom', 'blocksy' ),
+		],
+	],
 
-			blocksy_rand_md5() => [
-				'type' => 'ct-condition',
-				'condition' => [
-					'date_format_source' => 'custom'
-				],
-				'options' => [
-					'date_format' => [
-						'label' => false,
-						'type' => 'text',
-						'design' => 'block',
-						'value' => 'M j, Y',
-						// translators: The interpolations addes a html link around the word.
-						'desc' => sprintf(
-							__('Date format %sinstructions%s.', 'blocksy'),
-							'<a href="https://wordpress.org/support/article/formatting-date-and-time/#format-string-examples" target="_blank">',
-							'</a>'
-						),
-						'disableRevertButton' => true,
-					],
-				],
+	blocksy_rand_md5() => [
+		'type' => 'ct-condition',
+		'condition' => [
+			'date_format_source' => 'custom'
+		],
+		'options' => [
+			'date_format' => [
+				'label' => false,
+				'type' => 'text',
+				'design' => 'block',
+				'value' => 'M j, Y',
+				// translators: The interpolations addes a html link around the word.
+				'desc' => blocksy_safe_sprintf(
+					__('Date format %sinstructions%s.', 'blocksy'),
+					'<a href="https://wordpress.org/support/article/formatting-date-and-time/#format-string-examples" target="_blank">',
+					'</a>'
+				),
+				'disableRevertButton' => true,
 			],
 		],
 	],
@@ -222,29 +243,19 @@ $options = [
 						'condition' => [ 'meta_type' => 'icons' ],
 						'values_source' => 'parent',
 						'options' => apply_filters(
-							'blocksy:general:card:options:icon', 
+							'blocksy:general:card:options:icon',
 							[],
 							'blc blc-feather'
 						)
 					],
-					
+
 				],
 			],
 
 			'comments' => [
 				'label' => __('Comments', 'blocksy'),
-				'options' => [
-					blocksy_rand_md5() => [
-						'type' => 'ct-condition',
-						'condition' => [ 'meta_type' => 'icons' ],
-						'values_source' => 'parent',
-						'options' => apply_filters(
-							'blocksy:general:card:options:icon', 
-							[],
-							'blc blc-comments'
-						)
-					],
-				]
+				'options' => $comments_options,
+				'options_condition' => $comments_options_conditions,
 			],
 
 			'post_date' => [
@@ -272,13 +283,13 @@ $options = [
 							'condition' => [ 'meta_type' => 'icons' ],
 							'values_source' => 'parent',
 							'options' => apply_filters(
-								'blocksy:general:card:options:icon', 
+								'blocksy:general:card:options:icon',
 								[],
 								'blc blc-clock'
 							)
 						],
 					],
-					
+
 				],
 			],
 
@@ -307,7 +318,7 @@ $options = [
 							'condition' => [ 'meta_type' => 'icons' ],
 							'values_source' => 'parent',
 							'options' => apply_filters(
-								'blocksy:general:card:options:icon', 
+								'blocksy:general:card:options:icon',
 								[],
 								'blc blc-clock'
 							)
@@ -320,57 +331,76 @@ $options = [
 				'label' => __('Taxonomies', 'blocksy'),
 				'clone' => 5,
 				'options' => [
-					'taxonomy' => [
-						'label' => __( 'Taxonomy', 'blocksy' ),
-						'type' => 'ct-select',
-						'design' => 'inline',
-						'setting' => [ 'transport' => 'postMessage' ],
-						'view' => 'text',
-						'choices' => blocksy_ordered_keys($taxonomies_options),
-						'value' => blocksy_maybe_get_matching_taxonomy($post_type),
-					],
+					[
+						'taxonomy' => [
+							'label' => __( 'Taxonomy', 'blocksy' ),
+							'type' => 'ct-select',
+							'design' => 'block',
+							'setting' => [ 'transport' => 'postMessage' ],
+							'view' => 'text',
+							'choices' => blocksy_ordered_keys($taxonomies_options),
+							'value' => blocksy_maybe_get_matching_taxonomy($post_type),
+						],
 
-					'style' => array_merge([
-						'label' => __( 'Style', 'blocksy' ),
-						'type' => 'ct-select',
-						'design' => 'inline',
-						'setting' => [ 'transport' => 'postMessage' ],
-						'view' => 'text',
-						'choices' => blocksy_ordered_keys(
-							[
-								'simple' => __( 'Default', 'blocksy' ),
-								'pill' => __( 'Button', 'blocksy' ),
-								'underline' => __( 'Underline', 'blocksy' ),
-							]
-						),
-					]),
+						'style' => [
+							'label' => __( 'Style', 'blocksy' ),
+							'type' => 'ct-select',
+							'value' => 'simple',
+							'design' => 'block',
+							'setting' => [ 'transport' => 'postMessage' ],
+							'view' => 'text',
+							'choices' => blocksy_ordered_keys(
+								[
+									'simple' => __( 'Default', 'blocksy' ),
+									'pill' => __( 'Button', 'blocksy' ),
+									'underline' => __( 'Underline', 'blocksy' ),
+								]
+							),
+						],
 
-					blocksy_rand_md5() => [
-						'type' => 'ct-condition',
-						'condition' => [ 'meta_type' => 'label' ],
-						'values_source' => 'parent',
-						'options' => [
-							'label' => array_merge([
-								'label' => __('Label', 'blocksy'),
-								'type' => 'text',
-								'design' => 'inline',
-								'value' => __('In', 'blocksy')
-							], $skip_sync_id ? [
-								'sync' => $skip_sync_id
-							] : []),
+						blocksy_rand_md5() => [
+							'type' => 'ct-condition',
+							'condition' => [ 'meta_type' => 'label' ],
+							'values_source' => 'parent',
+							'options' => [
+								'label' => array_merge([
+									'label' => __('Label', 'blocksy'),
+									'type' => 'text',
+									'design' => 'inline',
+									'value' => __('In', 'blocksy')
+								], $skip_sync_id ? [
+									'sync' => $skip_sync_id
+								] : []),
+							],
+						],
+
+						blocksy_rand_md5() => [
+							'type' => 'ct-condition',
+							'condition' => [ 'meta_type' => 'icons' ],
+							'values_source' => 'parent',
+							'options' => apply_filters(
+								'blocksy:general:card:options:icon',
+								[],
+								'blc blc-box'
+							)
 						],
 					],
 
-					blocksy_rand_md5() => [
-						'type' => 'ct-condition',
-						'condition' => [ 'meta_type' => 'icons' ],
-						'values_source' => 'parent',
-						'options' => apply_filters(
-							'blocksy:general:card:options:icon', 
-							[],
-							'blc blc-box'
-						)
-					],
+					(
+						function_exists('blc_get_ext')
+						&&
+						blc_get_ext('post-types-extra')
+						&&
+						isset(blc_get_ext('post-types-extra')->taxonomies_customization)
+						&&
+						blc_get_ext('post-types-extra')->taxonomies_customization
+					) ? [
+						'has_term_accent_color' => [
+							'type'  => 'ct-switch',
+							'label' => __('Terms accent color', 'blocksy'),
+							'value' => 'yes',
+						]
+					] : []
 				],
 			]
 		] : [], apply_filters(

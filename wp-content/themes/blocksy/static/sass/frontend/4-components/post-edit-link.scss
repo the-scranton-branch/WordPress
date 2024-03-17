@@ -2,8 +2,8 @@
 	display: flex;
 	align-items: center;
 	font-size: 15px;
-	margin-top: var(--content-spacing);
-	--linkInitialColor: var(--color);
+	margin-top: var(--theme-content-spacing);
+	--theme-link-initial-color: var(--theme-text-color);
 
 	&:before {
 		font-family: 'dashicons';

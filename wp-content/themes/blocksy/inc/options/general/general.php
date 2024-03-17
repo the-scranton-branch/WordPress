@@ -56,7 +56,7 @@ $options = [
 							'setting' => [ 'transport' => 'postMessage' ],
 							'value' => [
 								'default' => [
-									'color' => 'var(--paletteColor1)',
+									'color' => 'var(--theme-palette-color-1)',
 								],
 							],
 

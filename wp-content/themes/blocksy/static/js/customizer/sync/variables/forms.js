@@ -33,7 +33,7 @@ export const getFormsVariablesFor = () => ({
 
 		{
 			selector: ':root',
-			variable: 'form-field-border-width',
+			variable: 'theme-form-field-border-width',
 			unit: '',
 			extractValue: (value) => {
 				if (value === 'modern-forms') {
@@ -48,7 +48,7 @@ export const getFormsVariablesFor = () => ({
 	formBorderSize: [
 		{
 			selector: ':root',
-			variable: 'form-field-border-width',
+			variable: 'theme-form-field-border-width',
 			unit: '',
 			extractValue: (value) => {
 				if (wp.customize('forms_type')() === 'modern-forms') {
@@ -70,65 +70,65 @@ export const getFormsVariablesFor = () => ({
 	formTextColor: [
 		{
 			selector: ':root',
-			variable: 'form-text-initial-color',
+			variable: 'theme-form-text-initial-color',
 			type: 'color:default',
 		},
 
 		{
 			selector: ':root',
-			variable: 'form-text-focus-color',
+			variable: 'theme-form-text-focus-color',
 			type: 'color:focus',
 		},
 	],
 
 	formFontSize: {
 		selector: ':root',
-		variable: 'form-font-size',
+		variable: 'theme-form-font-size',
 		unit: 'px',
 	},
 
 	formBackgroundColor: [
 		{
 			selector: ':root',
-			variable: 'form-field-initial-background',
+			variable: 'theme-form-field-background-initial-color',
 			type: 'color:default',
 		},
 
 		{
 			selector: ':root',
-			variable: 'form-field-focus-background',
+			variable: 'theme-form-field-background-focus-color',
 			type: 'color:focus',
 		},
 	],
 
 	formInputHeight: {
 		selector: ':root',
-		variable: 'form-field-height',
+		variable: 'theme-form-field-height',
 		unit: 'px',
 	},
 
 	formTextAreaHeight: {
 		selector: 'form textarea',
-		variable: 'form-field-height',
+		variable: 'theme-form-field-height',
 		unit: 'px',
 	},
 
 	formFieldBorderRadius: {
 		selector: ':root',
-		variable: 'form-field-border-radius',
+		variable: 'theme-form-field-border-radius',
 		unit: 'px',
 	},
 
 	formBorderColor: [
 		{
 			selector: ':root',
-			variable: 'form-field-border-initial-color',
+			variable: 'theme-form-field-border-initial-color',
 			type: 'color:default',
 		},
 
 		{
 			selector: ':root',
-			variable: 'form-field-border-focus-color',
+			variable: 'theme-form-field-border-focus-color',
 			type: 'color:focus',
 		},
 	],
@@ -151,13 +151,13 @@ export const getFormsVariablesFor = () => ({
 	formSelectBackgroundColor: [
 		{
 			selector: ':root',
-			variable: 'form-field-select-initial-background',
+			variable: 'theme-form-select-background-initial-color',
 			type: 'color:default',
 		},
 
 		{
 			selector: ':root',
-			variable: 'form-field-select-active-background',
+			variable: 'theme-form-select-background-active-color',
 			type: 'color:active',
 		},
 	],
@@ -166,20 +166,20 @@ export const getFormsVariablesFor = () => ({
 	radioCheckboxColor: [
 		{
 			selector: ':root',
-			variable: 'form-selection-control-initial-color',
+			variable: 'theme-form-selection-field-initial-color',
 			type: 'color:default',
 		},
 
 		{
 			selector: ':root',
-			variable: 'form-selection-control-accent-color',
+			variable: 'theme-form-selection-field-active-color',
 			type: 'color:accent',
 		},
 	],
 
 	checkboxBorderRadius: {
 		selector: ':root',
-		variable: 'form-checkbox-border-radius',
+		variable: 'theme-form-checkbox-border-radius',
 		unit: 'px',
 	},
 })

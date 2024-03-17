@@ -7,14 +7,17 @@ div.woocommerce-product-gallery {
 		margin-bottom: 3em;
 	}
 
+	.ct-product-gallery-container {
+		position: relative;
+	}
+
 	ol {
 		margin: var(--thumbs-container-margin, 0 calc(var(--thumbs-spacing, 15px) / -2));
 	}
 
 	li {
 		padding-top: var(--thumbs-top-spacing, var(--thumbs-spacing, 15px));
-		padding-left: var(--thumbs-left-spacing, calc(var(--thumbs-spacing, 15px) / 2));
-		padding-right: var(--thumbs-right-spacing, calc(var(--thumbs-spacing, 15px) / 2));
+		padding-inline: var(--thumbs-left-spacing, calc(var(--thumbs-spacing, 15px) / 2));
 		margin-bottom: 0;
 		transition: opacity 0.25s cubic-bezier(.215,.61,.355,1);
 
@@ -33,22 +36,25 @@ div.woocommerce-product-gallery {
 		&.active {
 			opacity: 1;
 			
-			.ct-image-container:after {
+			.ct-media-container:after {
 				border-color: rgba(0,0,0,0.2);
 			}
 		}
 
-		.ct-image-container:after {
+		.ct-media-container:after {
 			position: absolute;
 			content: '';
 			z-index: 2;
-			top: 0;
-			left: 0;
-			right: 0;
-			bottom: 0;
+			inset: 0;
 			pointer-events: none;
 			border: 2px solid rgba(0,0,0,0);
 			transition: border-color 0.25s cubic-bezier(.215,.61,.355,1);
+		}
+
+		.ct-video-indicator svg {
+			width: 30%;
+			height: 30%;
+			transform: none;
 		}
 	}
 }
@@ -57,15 +63,16 @@ div.woocommerce-product-gallery {
 // thumbs on the left
 @include media-breakpoint-up (md) {
 	.thumbs-left {
+		--thumbs-width: 100px;
+
 		.flexy {
-			margin-left: calc(var(--thumbs-width) + var(--thumbs-spacing, 15px));
+			margin-inline-start: calc(var(--thumbs-width) + var(--thumbs-spacing, 15px));
 		}
 
 		.flexy-pills {
 			position: absolute;
-			top: 0;
-			left: 0;
-			bottom: 0;
+			inset-inline-start: 0;
+			inset-block: 0;
 			height: 100%;
 			--pills-direction: column;
 			--pills-wrap: nowrap;

@@ -22,21 +22,24 @@ const SubmitSupport = () => {
 					'blocksy'
 				)}
 			</p>
-			<a
-				href={ctDashboardLocalizations.support_url}
-				className="ct-button"
-				data-hover="blue"
-				target="_blank">
-				{__('Submit a Support Ticket', 'blocksy')}
-			</a>
 
-			<a
-				href="https://www.facebook.com/groups/blocksy.community"
-				className="ct-button"
-				data-hover="blue"
-				target="_blank">
-				{__('Join Facebook Community', 'blocksy')}
-			</a>
+			<div className="ct-support-buttons">
+				<a
+					href={ctDashboardLocalizations.support_url}
+					className="ct-button"
+					data-hover="blue"
+					target="_blank">
+					{__('Submit a Support Ticket', 'blocksy')}
+				</a>
+
+				<a
+					href="https://www.facebook.com/groups/blocksy.community"
+					className="ct-button"
+					data-hover="blue"
+					target="_blank">
+					{__('Join Facebook Community', 'blocksy')}
+				</a>
+			</div>
 		</div>
 	)
 }

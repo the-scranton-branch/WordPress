@@ -1,23 +1,10 @@
-// page options toggle
-button {
-	.ct-page-options-trigger {
-		display: flex;
-		align-items: center;
-		height: 34px;
-		margin: -6px;
-		padding: 0 7px;
-		border-radius: 4px;
-		// background: rgba(226, 228, 231, 0.7);
-		// border: 1px solid #d5d7da;
-	}
-
-	&.is-pressed {
-		.ct-page-options-trigger {
-			background: #555d66;
-			border-color: #555d66;
-		}
+.blocksy-sidebar-active {
+	
+	.edit-post-sidebar {
+		height: 100%;
 	}
 }
+
 
 // sidebar & editor new width
 @media (min-width: 782px) {

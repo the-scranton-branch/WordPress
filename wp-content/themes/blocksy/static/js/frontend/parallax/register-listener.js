@@ -23,13 +23,13 @@ export const mount = (elWithParallax) => {
 	// section.rellaxInstance would leak memory
 	if (
 		elWithParallax.ctHasParallax &&
-		elWithParallax.querySelector('figure .ct-image-container > img')
+		elWithParallax.querySelector('figure .ct-media-container > img')
 	) {
 		return
 		/*
 		rel.removeEl({
 			el: elWithParallax.querySelector(
-				'figure .ct-image-container > img'
+				'figure .ct-media-container > img'
 			),
 		})
         */
@@ -45,11 +45,11 @@ export const mount = (elWithParallax) => {
 
 	elWithParallax.ctHasParallax = true
 
-	if (elWithParallax.querySelector('figure .ct-image-container > img')) {
+	if (elWithParallax.querySelector('figure .ct-media-container > img')) {
 		setTimeout(() => {
 			rel.addEl({
 				el: elWithParallax.querySelector(
-					'figure .ct-image-container > img'
+					'figure .ct-media-container > img'
 				),
 				// +elWithParallax.dataset.parallaxSpeed,
 				speed: -5,

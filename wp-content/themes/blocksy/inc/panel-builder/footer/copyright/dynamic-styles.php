@@ -31,17 +31,17 @@ blocksy_output_colors([
 	'variables' => [
 		'default' => [
 			'selector' => blocksy_assemble_selector($root_selector),
-			'variable' => 'color'
+			'variable' => 'theme-text-color'
 		],
 
 		'link_initial' => [
 			'selector' => blocksy_assemble_selector($root_selector),
-			'variable' => 'linkInitialColor'
+			'variable' => 'theme-link-initial-color'
 		],
 
 		'link_hover' => [
 			'selector' => blocksy_assemble_selector($root_selector),
-			'variable' => 'linkHoverColor'
+			'variable' => 'theme-link-hover-color'
 		],
 	],
 ]);
@@ -83,9 +83,9 @@ blocksy_output_spacing([
 	'mobile_css' => $mobile_css,
 	'selector' => blocksy_assemble_selector($root_selector),
 	'important' => true,
-	'value' => blocksy_default_akg( 'copyrightMargin', $atts,
-		blocksy_spacing_value([
-			'linked' => true,
-		])
+	'value' => blocksy_default_akg(
+		'copyrightMargin',
+		$atts,
+		blocksy_spacing_value()
 	)
 ]);

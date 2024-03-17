@@ -6,10 +6,24 @@ import {
 	getRootSelectorFor,
 	assembleSelector,
 	mutateSelector,
+	setRatioFor,
 } from '../../../../static/js/customizer/sync/helpers'
 import { typographyOption } from '../../../../static/js/customizer/sync/variables/typography'
 
 import $ from 'jquery'
+
+const formatPriceLabelValue = (el, optionValue) => {
+	if (typeof optionValue !== 'string') {
+		optionValue = optionValue['desktop']
+	}
+
+	const parts = optionValue.split('{price}')
+	const price = el.querySelector('.amount')
+
+	el.dataset.price = optionValue.includes('{price}') ? 'yes' : 'no'
+
+	return `${parts?.[0] || ''}${price.outerHTML}${parts?.[1] || ''}`
+}
 
 ctEvents.on(
 	'ct:header:sync:collect-variable-descriptors',
@@ -17,22 +31,34 @@ ctEvents.on(
 		variableDescriptors['cart'] = ({ itemId }) => ({
 			cartIconSize: {
 				selector: assembleSelector(getRootSelectorFor({ itemId })),
-				variable: 'icon-size',
+				variable: 'theme-icon-size',
 				responsive: true,
 				unit: 'px',
 			},
 
 			cartHeaderIconColor: [
 				{
-					selector: assembleSelector(getRootSelectorFor({ itemId })),
-					variable: 'icon-color',
+					selector: assembleSelector(
+						mutateSelector({
+							selector: getRootSelectorFor({ itemId }),
+							operation: 'suffix',
+							to_add: '.ct-cart-item',
+						})
+					),
+					variable: 'theme-icon-color',
 					type: 'color:default',
 					responsive: true,
 				},
 
 				{
-					selector: assembleSelector(getRootSelectorFor({ itemId })),
-					variable: 'icon-hover-color',
+					selector: assembleSelector(
+						mutateSelector({
+							selector: getRootSelectorFor({ itemId }),
+							operation: 'suffix',
+							to_add: '.ct-cart-item',
+						})
+					),
+					variable: 'theme-icon-hover-color',
 					type: 'color:hover',
 					responsive: true,
 				},
@@ -40,15 +66,27 @@ ctEvents.on(
 
 			cartBadgeColor: [
 				{
-					selector: assembleSelector(getRootSelectorFor({ itemId })),
-					variable: 'cartBadgeBackground',
+					selector: assembleSelector(
+						mutateSelector({
+							selector: getRootSelectorFor({ itemId }),
+							operation: 'suffix',
+							to_add: '.ct-cart-item',
+						})
+					),
+					variable: 'theme-cart-badge-background',
 					type: 'color:background',
 					responsive: true,
 				},
 
 				{
-					selector: assembleSelector(getRootSelectorFor({ itemId })),
-					variable: 'cartBadgeText',
+					selector: assembleSelector(
+						mutateSelector({
+							selector: getRootSelectorFor({ itemId }),
+							operation: 'suffix',
+							to_add: '.ct-cart-item',
+						})
+					),
+					variable: 'theme-cart-badge-text',
 					type: 'color:text',
 					responsive: true,
 				},
@@ -76,7 +114,7 @@ ctEvents.on(
 							to_add: '.ct-cart-item',
 						})
 					),
-					variable: 'linkInitialColor',
+					variable: 'theme-link-initial-color',
 					type: 'color:default',
 					responsive: true,
 				},
@@ -89,7 +127,7 @@ ctEvents.on(
 							to_add: '.ct-cart-item',
 						})
 					),
-					variable: 'linkHoverColor',
+					variable: 'theme-link-hover-color',
 					type: 'color:hover',
 					responsive: true,
 				},
@@ -109,7 +147,7 @@ ctEvents.on(
 							to_add: '[data-transparent-row="yes"]',
 						})
 					),
-					variable: 'linkInitialColor',
+					variable: 'theme-link-initial-color',
 					type: 'color:default',
 					responsive: true,
 				},
@@ -126,7 +164,7 @@ ctEvents.on(
 							to_add: '[data-transparent-row="yes"]',
 						})
 					),
-					variable: 'linkHoverColor',
+					variable: 'theme-link-hover-color',
 					type: 'color:hover',
 					responsive: true,
 				},
@@ -136,12 +174,16 @@ ctEvents.on(
 				{
 					selector: assembleSelector(
 						mutateSelector({
-							selector: getRootSelectorFor({ itemId }),
+							selector: mutateSelector({
+								selector: getRootSelectorFor({ itemId }),
+								operation: 'suffix',
+								to_add: '.ct-cart-item',
+							}),
 							operation: 'between',
 							to_add: '[data-transparent-row="yes"]',
 						})
 					),
-					variable: 'icon-color',
+					variable: 'theme-icon-color',
 					type: 'color:default',
 					responsive: true,
 				},
@@ -149,13 +191,16 @@ ctEvents.on(
 				{
 					selector: assembleSelector(
 						mutateSelector({
-							selector: getRootSelectorFor({ itemId }),
+							selector: mutateSelector({
+								selector: getRootSelectorFor({ itemId }),
+								operation: 'suffix',
+								to_add: '.ct-cart-item',
+							}),
 							operation: 'between',
 							to_add: '[data-transparent-row="yes"]',
 						})
 					),
-
-					variable: 'icon-hover-color',
+					variable: 'theme-icon-hover-color',
 					type: 'color:hover',
 					responsive: true,
 				},
@@ -165,13 +210,16 @@ ctEvents.on(
 				{
 					selector: assembleSelector(
 						mutateSelector({
-							selector: getRootSelectorFor({ itemId }),
+							selector: mutateSelector({
+								selector: getRootSelectorFor({ itemId }),
+								operation: 'suffix',
+								to_add: '.ct-cart-item',
+							}),
 							operation: 'between',
 							to_add: '[data-transparent-row="yes"]',
 						})
 					),
-
-					variable: 'cartBadgeBackground',
+					variable: 'theme-cart-badge-background',
 					type: 'color:background',
 					responsive: true,
 				},
@@ -179,13 +227,16 @@ ctEvents.on(
 				{
 					selector: assembleSelector(
 						mutateSelector({
-							selector: getRootSelectorFor({ itemId }),
+							selector: mutateSelector({
+								selector: getRootSelectorFor({ itemId }),
+								operation: 'suffix',
+								to_add: '.ct-cart-item',
+							}),
 							operation: 'between',
 							to_add: '[data-transparent-row="yes"]',
 						})
 					),
-
-					variable: 'cartBadgeText',
+					variable: 'theme-cart-badge-text',
 					type: 'color:text',
 					responsive: true,
 				},
@@ -205,7 +256,7 @@ ctEvents.on(
 							to_add: '[data-sticky*="yes"]',
 						})
 					),
-					variable: 'linkInitialColor',
+					variable: 'theme-link-initial-color',
 					type: 'color:default',
 					responsive: true,
 				},
@@ -222,7 +273,7 @@ ctEvents.on(
 							to_add: '[data-sticky*="yes"]',
 						})
 					),
-					variable: 'linkHoverColor',
+					variable: 'theme-link-hover-color',
 					type: 'color:hover',
 					responsive: true,
 				},
@@ -232,12 +283,16 @@ ctEvents.on(
 				{
 					selector: assembleSelector(
 						mutateSelector({
-							selector: getRootSelectorFor({ itemId }),
+							selector: mutateSelector({
+								selector: getRootSelectorFor({ itemId }),
+								operation: 'suffix',
+								to_add: '.ct-cart-item',
+							}),
 							operation: 'between',
 							to_add: '[data-sticky*="yes"]',
 						})
 					),
-					variable: 'icon-color',
+					variable: 'theme-icon-color',
 					type: 'color:default',
 					responsive: true,
 				},
@@ -245,12 +300,16 @@ ctEvents.on(
 				{
 					selector: assembleSelector(
 						mutateSelector({
-							selector: getRootSelectorFor({ itemId }),
+							selector: mutateSelector({
+								selector: getRootSelectorFor({ itemId }),
+								operation: 'suffix',
+								to_add: '.ct-cart-item',
+							}),
 							operation: 'between',
 							to_add: '[data-sticky*="yes"]',
 						})
 					),
-					variable: 'icon-hover-color',
+					variable: 'theme-icon-hover-color',
 					type: 'color:hover',
 					responsive: true,
 				},
@@ -260,12 +319,16 @@ ctEvents.on(
 				{
 					selector: assembleSelector(
 						mutateSelector({
-							selector: getRootSelectorFor({ itemId }),
+							selector: mutateSelector({
+								selector: getRootSelectorFor({ itemId }),
+								operation: 'suffix',
+								to_add: '.ct-cart-item',
+							}),
 							operation: 'between',
 							to_add: '[data-sticky*="yes"]',
 						})
 					),
-					variable: 'cartBadgeBackground',
+					variable: 'theme-cart-badge-background',
 					type: 'color:background',
 					responsive: true,
 				},
@@ -273,12 +336,16 @@ ctEvents.on(
 				{
 					selector: assembleSelector(
 						mutateSelector({
-							selector: getRootSelectorFor({ itemId }),
+							selector: mutateSelector({
+								selector: getRootSelectorFor({ itemId }),
+								operation: 'suffix',
+								to_add: '.ct-cart-item',
+							}),
 							operation: 'between',
 							to_add: '[data-sticky*="yes"]',
 						})
 					),
-					variable: 'cartBadgeText',
+					variable: 'theme-cart-badge-text',
 					type: 'color:text',
 					responsive: true,
 				},
@@ -293,7 +360,7 @@ ctEvents.on(
 							to_add: '.ct-cart-content',
 						})
 					),
-					variable: 'color',
+					variable: 'theme-text-color',
 					type: 'color:default',
 				},
 
@@ -305,7 +372,7 @@ ctEvents.on(
 							to_add: '.ct-cart-content',
 						})
 					),
-					variable: 'linkInitialColor',
+					variable: 'theme-link-initial-color',
 					type: 'color:link_initial',
 				},
 
@@ -317,7 +384,7 @@ ctEvents.on(
 							to_add: '.ct-cart-content',
 						})
 					),
-					variable: 'linkHoverColor',
+					variable: 'theme-link-hover-color',
 					type: 'color:link_hover',
 				},
 			],
@@ -330,7 +397,7 @@ ctEvents.on(
 						to_add: '.ct-cart-content .total',
 					})
 				),
-				variable: 'color',
+				variable: 'theme-text-color',
 				type: 'color:default',
 			},
 
@@ -343,7 +410,7 @@ ctEvents.on(
 						to_add: '.ct-cart-content',
 					})
 				),
-				variable: 'backgroundColor',
+				variable: 'mini-cart-background-color',
 				type: 'color:default',
 			},
 
@@ -369,44 +436,30 @@ ctEvents.on(
 
 			cart_panel_heading_font_color: {
 				selector: '#woo-cart-panel .ct-panel-actions',
-				variable: 'color',
+				variable: 'theme-text-color',
 				type: 'color:default',
 				responsive: true,
 			},
-
-			// minicart_quantity_color: [
-			// 	{
-			// 		selector: '#woo-cart-panel .quantity',
-			// 		variable: 'quantity-initial-color',
-			// 		type: 'color:default',
-			// 	},
-
-			// 	{
-			// 		selector: '#woo-cart-panel .quantity',
-			// 		variable: 'quantity-hover-color',
-			// 		type: 'color:hover',
-			// 	},
-			// ],
 
 			cart_panel_font_color: [
 				{
 					selector:
 						'#woo-cart-panel .cart_list, #woo-cart-panel [class*="empty-message"]',
-					variable: 'color',
+					variable: 'theme-text-color',
 					type: 'color:default',
 					responsive: true,
 				},
 
 				{
 					selector: '#woo-cart-panel .cart_list',
-					variable: 'linkInitialColor',
+					variable: 'theme-link-initial-color',
 					type: 'color:link_initial',
 					responsive: true,
 				},
 
 				{
 					selector: '#woo-cart-panel .cart_list',
-					variable: 'linkHoverColor',
+					variable: 'theme-link-hover-color',
 					type: 'color:link_hover',
 					responsive: true,
 				},
@@ -414,7 +467,7 @@ ctEvents.on(
 
 			cart_panel_total_font_color: {
 				selector: '#woo-cart-panel .total',
-				variable: 'color',
+				variable: 'theme-text-color',
 				type: 'color:default',
 				responsive: true,
 			},
@@ -422,7 +475,7 @@ ctEvents.on(
 			cart_panel_shadow: {
 				selector: '#woo-cart-panel',
 				type: 'box-shadow',
-				variable: 'box-shadow',
+				variable: 'theme-box-shadow',
 				responsive: true,
 			},
 
@@ -441,14 +494,14 @@ ctEvents.on(
 			cart_panel_close_button_color: [
 				{
 					selector: '#woo-cart-panel .ct-toggle-close',
-					variable: 'icon-color',
+					variable: 'theme-icon-color',
 					type: 'color:default',
 					responsive: true,
 				},
 
 				{
 					selector: '#woo-cart-panel .ct-toggle-close:hover',
-					variable: 'icon-color',
+					variable: 'theme-icon-color',
 					type: 'color:hover',
 					responsive: true,
 				},
@@ -456,14 +509,16 @@ ctEvents.on(
 
 			cart_panel_close_button_border_color: [
 				{
-					selector: '#woo-cart-panel .ct-toggle-close[data-type="type-2"]',
+					selector:
+						'#woo-cart-panel .ct-toggle-close[data-type="type-2"]',
 					variable: 'toggle-button-border-color',
 					type: 'color:default',
 					responsive: true,
 				},
 
 				{
-					selector: '#woo-cart-panel .ct-toggle-close[data-type="type-2"]:hover',
+					selector:
+						'#woo-cart-panel .ct-toggle-close[data-type="type-2"]:hover',
 					variable: 'toggle-button-border-color',
 					type: 'color:hover',
 					responsive: true,
@@ -472,14 +527,16 @@ ctEvents.on(
 
 			cart_panel_close_button_shape_color: [
 				{
-					selector: '#woo-cart-panel .ct-toggle-close[data-type="type-3"]',
+					selector:
+						'#woo-cart-panel .ct-toggle-close[data-type="type-3"]',
 					variable: 'toggle-button-background',
 					type: 'color:default',
 					responsive: true,
 				},
 
 				{
-					selector: '#woo-cart-panel .ct-toggle-close[data-type="type-3"]:hover',
+					selector:
+						'#woo-cart-panel .ct-toggle-close[data-type="type-3"]:hover',
 					variable: 'toggle-button-background',
 					type: 'color:hover',
 					responsive: true,
@@ -488,7 +545,7 @@ ctEvents.on(
 
 			cart_panel_close_button_icon_size: {
 				selector: '#woo-cart-panel .ct-toggle-close',
-				variable: 'icon-size',
+				variable: 'theme-icon-size',
 				unit: 'px',
 			},
 
@@ -512,12 +569,68 @@ ctEvents.on(
 ctEvents.on('ct:header:sync:item:cart', ({ optionId, optionValue, values }) => {
 	const selector = '[data-id="cart"]'
 
+	if (optionId === 'thumb_ratio') {
+		updateAndSaveEl(selector, (el) => {
+			;[...el.querySelectorAll('.ct-media-container')].map((el) => {
+				setRatioFor(optionValue, el)
+			})
+		})
+	}
+
 	if (optionId === 'cart_subtotal_visibility') {
 		updateAndSaveEl(selector, (el) => {
 			;[...el.querySelectorAll('.ct-label')].map((el) => {
 				responsiveClassesFor(optionValue, el)
 			})
 		})
+	}
+
+	if (optionId === 'cart_total_label') {
+		updateAndSaveEl(selector, (el) => {
+			;[...el.querySelectorAll('.ct-label')].map((label) => {
+				label.innerHTML = formatPriceLabelValue(label, optionValue)
+			})
+		})
+
+		updateAndSaveEl(
+			selector,
+			(el) => {
+				if (!optionValue.desktop) {
+					optionValue = {
+						desktop: optionValue,
+						mobile: optionValue,
+					}
+				}
+
+				;[...el.querySelectorAll('.ct-label')].map((label) => {
+					label.innerHTML = formatPriceLabelValue(
+						label,
+						optionValue.desktop
+					)
+				})
+			},
+			{ onlyView: 'desktop' }
+		)
+
+		updateAndSaveEl(
+			selector,
+			(el) => {
+				if (!optionValue.desktop) {
+					optionValue = {
+						desktop: optionValue,
+						mobile: optionValue,
+					}
+				}
+
+				;[...el.querySelectorAll('.ct-label')].map((label) => {
+					label.innerHTML = formatPriceLabelValue(
+						label,
+						optionValue.mobile
+					)
+				})
+			},
+			{ onlyView: 'mobile' }
+		)
 	}
 
 	if (optionId === 'cart_total_position') {
@@ -560,7 +673,9 @@ ctEvents.on('ct:header:sync:item:cart', ({ optionId, optionValue, values }) => {
 
 	if (optionId === 'has_cart_badge') {
 		updateAndSaveEl(selector, (el) => {
-			const targetCounter = el.getElementsByClassName('ct-dynamic-count-cart')[0]
+			const targetCounter = el.getElementsByClassName(
+				'ct-dynamic-count-cart'
+			)[0]
 			targetCounter.dataset.count = targetCounter.innerText
 
 			if (optionValue === 'yes') return

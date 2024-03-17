@@ -1,16 +1,20 @@
 $pill-size: 26px;
 
+.ct-single-palette {
+	container-type: inline-size;
+}
 
 .ct-color-picker-container {
 	display: flex;
 	justify-content: flex-end;
+	gap: 8px;
+
+	@container (max-width: 260px) {
+		gap: 6px;
+	}
 }
 
 .ct-color-picker-single {
-
-	&:not(:last-child) {
-		margin-inline-end: 6px;
-	}
 
 	> span {
 		display: flex;
@@ -19,12 +23,8 @@ $pill-size: 26px;
 		border-radius: 100%;
 		background-color: rgba(255, 255, 255, 0.8);
 		background-size: 10px 10px;
-		background-position: 0 0, 0 5px, 5px -5px, -5px 0;
-		background-image: linear-gradient(45deg, #ddd 25%, transparent 25%),
-						  linear-gradient(-45deg, #ddd 25%, transparent 25%),
-						  linear-gradient(45deg, transparent 75%, #ddd 75%),
-						  linear-gradient(-45deg, transparent 75%, #ddd 75%);
-
+		background-image: url('data:image/webp;base64,UklGRjIAAABXRUJQVlA4TCUAAAAvE8AEAA9w7/97/9/7f/7jAYraNmI6AJQ/1xvvMojof2BSvVEBAA==');
+		
 		span {
 			display: flex;
 			align-items: center;
@@ -39,14 +39,6 @@ $pill-size: 26px;
 
 			&:focus {
 				outline: none;
-			}
-
-			&:hover {
-				.ct-tooltip-top {
-					opacity: 1;
-					visibility: visible;
-					transform: translate3d(0px, -40px, 0px);
-				}
 			}
 		}
 	}

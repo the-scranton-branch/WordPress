@@ -127,24 +127,25 @@ $options = [
 							'design' => 'block',
 							'disableRevertButton' => true,
 							'attr' => [ 'data-type' => 'content-spacing' ],
+							'choice_attr' => [ 'data-tooltip' => 'top' ],
 							'setting' => [ 'transport' => 'postMessage' ],
 							'choices' => [
 								'both'   => '<span></span>
-								<i class="ct-tooltip-top">' . __( 'Top & Bottom', 'blocksy' ) . '</i>',
+								<i class="ct-tooltip">' . __( 'Top & Bottom', 'blocksy' ) . '</i>',
 
 								'top'    => '<span></span>
-								<i class="ct-tooltip-top">' . __( 'Only Top', 'blocksy' ) . '</i>',
+								<i class="ct-tooltip">' . __( 'Only Top', 'blocksy' ) . '</i>',
 
 								'bottom' => '<span></span>
-								<i class="ct-tooltip-top">' . __( 'Only Bottom', 'blocksy' ) . '</i>',
+								<i class="ct-tooltip">' . __( 'Only Bottom', 'blocksy' ) . '</i>',
 
 								'none'   => '<span></span>
-								<i class="ct-tooltip-top">' . __( 'Disabled', 'blocksy' ) . '</i>',
+								<i class="ct-tooltip">' . __( 'Disabled', 'blocksy' ) . '</i>',
 							],
-							'desc' => sprintf(
+							'desc' => blocksy_safe_sprintf(
 								// translators: placeholder here means the actual URL.
 								__( 'You can customize the global spacing value in General ➝ Layout ➝ %sContent Area Spacing%s.', 'blocksy' ),
-								sprintf(
+								blocksy_safe_sprintf(
 									'<a data-trigger-section="general" href="%s">',
 									admin_url('/customize.php?autofocus[section]=general&ct_autofocus=general:layout_panel')
 								),
@@ -161,7 +162,11 @@ $options = [
 			'title' => __('Design', 'blocksy'),
 			'type' => 'tab',
 			'options' => [
-				blocksy_get_options('single-elements/structure-design')
+				blocksy_get_options('single-elements/structure-design', [
+					'options_conditions' => [
+						'content_style_source' => 'custom'
+					]
+				])
 			],
 		],
 
@@ -179,7 +184,7 @@ $options = [
 
 	$maybe_taxonomy ? [
 		'disable_post_tags' => [
-			'label' => sprintf(
+			'label' => blocksy_safe_sprintf(
 				__('Disable %s %s', 'blocksy'),
 				$post_type->labels->singular_name,
 				get_taxonomy($maybe_taxonomy)->label

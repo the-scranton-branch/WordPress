@@ -15,7 +15,8 @@
 		flex: 0 0 16px;
 		width: 16px;
 		height: 16px;
-		margin: 0 8px 0 0;
+		margin: 0;
+		margin-inline-end: 8px;
 		border-radius: 2px;
 		border: 2px solid #d5dbde;
 		box-sizing: border-box;
@@ -25,8 +26,8 @@
 		appearance: none;
 
 		&:checked {
-			border-color: var(--accentColor);
-			background: var(--accentColor);
+			border-color: var(--ui-accent-color);
+			background: var(--ui-accent-color);
 
 			&:before {
 				display: flex;
@@ -38,8 +39,8 @@
 				color: #fff !important;
 				width: 16px;
 				height: 16px;
-				// left: -0.6px;
-				margin: -2px 0 0 -2px;
+				margin-top: -2px;
+				margin-inline-start: -2px;
 			}
 		}
 	}
@@ -47,8 +48,11 @@
 	// columns
 	&[data-columns] {
 		display: grid;
-		grid-template-columns: repeat(2, 1fr);
 		grid-row-gap: 15px;
+
+		&[data-columns="2"] {
+			grid-template-columns: repeat(2, 1fr);
+		}
 
 		&:not([data-columns*="no-gap"]) {
 			grid-column-gap: 10px;

@@ -6,18 +6,22 @@ $checkbox:
 	'.wc-block-checkbox-list .wc-block-components-checkbox .wc-block-components-checkbox__input[type=checkbox]',
 	'.woocommerce-form__input[type="checkbox"]',
 	'.woocommerce-form__label-for-checkbox input[type="checkbox"]',
+	'.woocommerce-input-wrapper input[type="checkbox"]',
 	'#wc-stripe-new-payment-method[type="checkbox"]',
 	'.ppcp-credit-card-vault[type="checkbox"]',
 	'.forminator-ui[data-design="none"] .forminator-checkbox input[type="checkbox"]',
-	'.wpforms-container:not(.wpforms-container-full) input[type="checkbox"]'
+	'.wpforms-container:not(.wpforms-container-full) input[type="checkbox"]',
+	'.ff-inherit-theme-style input[type=checkbox]'
 ;
 
 $radiobox:
 	'.wc_payment_method > input[type="radio"]',
 	'.woocommerce-shipping-methods input[type="radio"]',
+	'.payment_box input[type="radio"]',
 	'.mp-ticket-payments input[type="radio"]',
 	'.forminator-ui[data-design="none"] .forminator-radio input[type="radio"]',
-	'.wpforms-container:not(.wpforms-container-full) input[type="radio"]'
+	'.wpforms-container:not(.wpforms-container-full) input[type="radio"]',
+	'.ff-inherit-theme-style input[type=radio]'
 ;
 
 
@@ -32,45 +36,43 @@ $radiobox:
 	height: 16px;
 	min-height: initial;
 	padding: 0 !important;
-	margin: var(--form-selection-control-margin, 0 0.7em 0 0);
-	border-width: var(--form-selection-control-border-width, var(--form-field-border-width, 1px));
+	margin: 0;
+	margin-inline-end: 0.7em;
+	border-width: var(--form-selection-control-border-width, var(--theme-form-field-border-width, 1px));
 	border-style: solid;
 	cursor: pointer;
 	-webkit-appearance: none;
 	background: transparent;
-	border-color: var(--form-selection-control-initial-color);
+	border-color: var(--theme-form-selection-field-initial-color);
 
 	&:before {
 		position: absolute;
 		content: '';
 		z-index: 2;
-		top: 0;
-		left: 0;
-		right: 0;
-		bottom: 0;
+		inset: 0;
 		opacity: 0;
 		margin: auto;
 	}
 
 	&:checked {
-		border-color: var(--form-selection-control-accent-color);
-		background: var(--form-selection-control-accent-color);
+		border-color: var(--theme-form-selection-field-active-color);
+		background: var(--theme-form-selection-field-active-color);
 
 		&:before {
 			opacity: 1;
 		}
 	}
 
-	&:focus {
+	&:focus-visible {
 		outline: none;
-		border-color: var(--form-selection-control-accent-color);
+		border-color: var(--theme-form-selection-field-active-color);
 	}
 }
 
 
 // checkbox only
 #{$checkbox} {
-	border-radius: var(--form-checkbox-border-radius, 3px);
+	border-radius: var(--theme-form-checkbox-border-radius, 3px);
 
 	&:before {
 		top: -2px;

@@ -1,14 +1,11 @@
 import { createElement, Component, useContext } from '@wordpress/element'
 import { sprintf, __ } from 'ct-i18n'
-import DashboardContext from './context'
 import { Link } from '@reach/router'
 import ctEvents from 'ct-events'
 
 const Navigation = () => {
 	const userNavigationLinks = []
 	const endUserNavigationLinks = []
-
-	const { theme_version } = useContext(DashboardContext)
 
 	ctEvents.trigger('ct:dashboard:navigation-links', userNavigationLinks)
 	ctEvents.trigger(
@@ -40,17 +37,7 @@ const Navigation = () => {
 
 			{!ctDashboardLocalizations.plugin_data.hide_changelogs_tab && (
 				<li>
-					<Link to="/changelog">
-						{__('Changelog', 'blocksy')}
-						<span className="ct-version">{theme_version}</span>
-					</Link>
-				</li>
-			)}
-
-			{(!ctDashboardLocalizations.plugin_data ||
-				!ctDashboardLocalizations.plugin_data.is_pro) && (
-				<li className="ct-pro-tab">
-					<Link to="/pro">{__('Free vs Pro', 'blocksy')}</Link>
+					<Link to="/changelog">{__('Changelog', 'blocksy')}</Link>
 				</li>
 			)}
 

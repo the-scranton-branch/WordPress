@@ -1,9 +1,3 @@
-.widget_product_categories li {
-	.count {
-		float: right;
-	}
-}
-
 .wc-block-checkbox-list li label,
 .wc-block-components-checkbox__label,
 .woocommerce-widget-layered-nav-list li {
@@ -11,9 +5,8 @@
 	align-items: center;
 	width: 100%;
 	
-
-	.wc-filter-element-label-list-count,
-	.count {
+	.count,
+	.wc-filter-element-label-list-count {
 		opacity: 1;
 		font-size: 80%;
 		margin-inline-start: auto;
@@ -22,12 +15,18 @@
 
 .wc-block-checkbox-list__checkbox {
 	width: 100%;
+
+	.wc-block-components-checkbox__mark {
+		display: none;
+	}
 }
 
+.wc-block-checkbox-list li:not([hidden]),
+.woocommerce-widget-layered-nav-list li:not([hidden]) a {
+	display: flex;
+	align-items: center;
 
-.widget_rating_filter a,
-.widget_product_categories .count,
-.widget_layered_nav_filters a:before,
-.woocommerce-widget-layered-nav-list .count {
-	font-size: 15px;
+	input[type="checkbox"] {
+		--top: 0;
+	}
 }

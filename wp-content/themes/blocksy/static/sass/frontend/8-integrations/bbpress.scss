@@ -2,26 +2,28 @@
 #bbpress-forums div.bbp-search-form {
 	margin-bottom: 20px;
 
-	input[type="text"] {
-		--form-field-height: 30px;
-		--form-field-padding: 0 7px;
-	}
+	form > div {
+		display: flex;
+		gap: 5px;
 
-	.button {
-		--buttonMinHeight: 30px;
-		--padding: 5px 15px;
-		--buttonShadow: none;
-		--buttonTransform: none;
+		input[type="text"] {
+			--theme-form-field-height: 35px;
+		}
+
+		.button {
+			--theme-button-min-height: 35px;
+			--theme-button-shadow: none;
+			--theme-button-transform: none;
+		}
 	}
 }
 
 .bbp-the-content-wrapper {
 	input[type="button"] {
-		--buttonShadow: none;
-		--buttonTransform: none;
+		--theme-button-shadow: none;
+		--theme-button-transform: none;
 	}
 }
-
 
 #bbpress-forums fieldset {
 

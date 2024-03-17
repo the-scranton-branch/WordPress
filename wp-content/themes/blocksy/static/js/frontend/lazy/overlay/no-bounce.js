@@ -4,16 +4,10 @@ import {
 	disableBodyScroll,
 } from 'body-scroll-lock'
 
-const isIosDevice =
-	typeof window !== 'undefined' &&
-	window.navigator &&
-	window.navigator.platform &&
-	(/iP(ad|hone|od)/.test(window.navigator.platform) ||
-		(window.navigator.platform === 'MacIntel' &&
-			window.navigator.maxTouchPoints > 1))
+import { isIosDevice } from '../../helpers/is-ios-device'
 
-export var enable = function (el) {
-	if (!isIosDevice) {
+export var enable = function () {
+	if (!isIosDevice()) {
 		document.body.style.overflow = ''
 		document.body.style.removeProperty('--scrollbar-width')
 	} else {
@@ -22,7 +16,7 @@ export var enable = function (el) {
 }
 
 export var disable = function (el) {
-	if (!isIosDevice) {
+	if (!isIosDevice()) {
 		let scrollbarWidth =
 			window.innerWidth - document.documentElement.clientWidth
 
@@ -41,6 +35,10 @@ export var disable = function (el) {
 
 				allowTouchMove: (el) => {
 					if (el.closest('.select2-container')) {
+						return true
+					}
+
+					if (el.closest('.flexy')) {
 						return true
 					}
 

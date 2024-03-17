@@ -3,4 +3,4 @@
  *
  * @type {string}
  */
-export const STORE_NAME = 'core/interface'
+export const STORE_NAME = 'blocksy/core/interface'

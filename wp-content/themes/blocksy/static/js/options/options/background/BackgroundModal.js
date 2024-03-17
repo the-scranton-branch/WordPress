@@ -74,8 +74,7 @@ const BackgroundModal = ({
 						'ct-image-tab ct-options-container':
 							value.background_type === 'image' ||
 							value.background_type === 'pattern',
-						'ct-color-picker-modal':
-							value.background_type === 'gradient',
+						// 'ct-color-picker-modal': value.background_type === 'gradient',
 						'ct-gradient-tab': value.background_type === 'gradient',
 						'ct-color-tab': value.background_type === 'color',
 					},

@@ -27,84 +27,22 @@ const getAllVariables = () => {
 
 	let allVariables = {
 		result: {
-			colorPalette: [
-				{
-					variable: 'paletteColor1',
-					type: 'color:color1',
-				},
-
-				{
-					variable: 'paletteColor2',
-					type: 'color:color2',
-				},
-
-				{
-					variable: 'paletteColor3',
-					type: 'color:color3',
-				},
-
-				{
-					variable: 'paletteColor4',
-					type: 'color:color4',
-				},
-
-				{
-					variable: 'paletteColor5',
-					type: 'color:color5',
-				},
-
-				{
-					variable: 'paletteColor6',
-					type: 'color:color6',
-				},
-
-				{
-					variable: 'paletteColor7',
-					type: 'color:color7',
-				},
-
-				{
-					variable: 'paletteColor8',
-					type: 'color:color8',
-				},
-			],
-
-			// darkColorPalette: [
-			// 	{
-			// 		variable: 'darkPaletteColor1',
-			// 		type: 'color:color1',
-			// 	},
-
-			// 	{
-			// 		variable: 'darkPaletteColor2',
-			// 		type: 'color:color2',
-			// 	},
-
-			// 	{
-			// 		variable: 'darkPaletteColor3',
-			// 		type: 'color:color3',
-			// 	},
-
-			// 	{
-			// 		variable: 'darkPaletteColor4',
-			// 		type: 'color:color4',
-			// 	},
-
-			// 	{
-			// 		variable: 'darkPaletteColor5',
-			// 		type: 'color:color5',
-			// 	},
-
-			// 	{
-			// 		variable: 'darkPaletteColor6',
-			// 		type: 'color:color6',
-			// 	},
-
-			// 	{
-			// 		variable: 'darkPaletteColor7',
-			// 		type: 'color:color7',
-			// 	},
-			// ],
+			colorPalette: (value) =>
+				Object.keys(value).reduce(
+					(acc, key) => [
+						...acc,
+						{
+							variable: value[key].variable
+								? value[key].variable
+								: `theme-palette-color-${key.replace(
+										'color',
+										''
+								  )}`,
+							type: `color:${key}`,
+						},
+					],
+					[]
+				),
 
 			background_pattern: [
 				{
@@ -132,20 +70,20 @@ const getAllVariables = () => {
 			// Colors
 			fontColor: {
 				selector: ':root',
-				variable: 'color',
+				variable: 'theme-text-color',
 				type: 'color',
 			},
 
 			linkColor: [
 				{
 					selector: ':root',
-					variable: 'linkInitialColor',
+					variable: 'theme-link-initial-color',
 					type: 'color:default',
 				},
 
 				{
 					selector: ':root',
-					variable: 'linkHoverColor',
+					variable: 'theme-link-hover-color',
 					type: 'color:hover',
 				},
 			],
@@ -153,62 +91,62 @@ const getAllVariables = () => {
 			selectionColor: [
 				{
 					selector: ':root',
-					variable: 'selectionTextColor',
+					variable: 'theme-selection-text-color',
 					type: 'color:default',
 				},
 
 				{
 					selector: ':root',
-					variable: 'selectionBackgroundColor',
+					variable: 'theme-selection-background-color',
 					type: 'color:hover',
 				},
 			],
 
 			border_color: {
-				variable: 'border-color',
+				variable: 'theme-border-color',
 				type: 'color',
 				selector: ':root',
 			},
 
 			// Headings
 			headingColor: {
-				variable: 'headings-color',
+				variable: 'theme-headings-color',
 				type: 'color',
 				selector: ':root',
 			},
 
 			heading_1_color: {
-				variable: 'heading-1-color',
+				variable: 'theme-heading-1-color',
 				type: 'color',
 				selector: ':root',
 			},
 
 			heading_2_color: {
-				variable: 'heading-2-color',
+				variable: 'theme-heading-2-color',
 				type: 'color',
 				selector: ':root',
 			},
 
 			heading_3_color: {
-				variable: 'heading-3-color',
+				variable: 'theme-heading-3-color',
 				type: 'color',
 				selector: ':root',
 			},
 
 			heading_4_color: {
-				variable: 'heading-4-color',
+				variable: 'theme-heading-4-color',
 				type: 'color',
 				selector: ':root',
 			},
 
 			heading_5_color: {
-				variable: 'heading-5-color',
+				variable: 'theme-heading-5-color',
 				type: 'color',
 				selector: ':root',
 			},
 
 			heading_6_color: {
-				variable: 'heading-6-color',
+				variable: 'theme-heading-6-color',
 				type: 'color',
 				selector: ':root',
 			},
@@ -217,10 +155,10 @@ const getAllVariables = () => {
 			contentSpacing: [
 				{
 					selector: ':root',
-					variable: 'content-spacing',
+					variable: 'theme-content-spacing',
 					extractValue: (value) =>
 						({
-							none: '0',
+							none: '0px',
 							compact: '0.8em',
 							comfortable: '1.5em',
 							spacious: '2em',
@@ -229,7 +167,7 @@ const getAllVariables = () => {
 
 				{
 					selector: ':root',
-					variable: 'has-content-spacing',
+					variable: 'has-theme-content-spacing',
 					extractValue: (value) => {
 						return value === 'none' ? '0' : '1'
 					},
@@ -239,7 +177,7 @@ const getAllVariables = () => {
 			// Buttons
 			buttonMinHeight: {
 				selector: ':root',
-				variable: 'buttonMinHeight',
+				variable: 'theme-button-min-height',
 				responsive: true,
 				unit: 'px',
 			},
@@ -247,14 +185,14 @@ const getAllVariables = () => {
 			buttonHoverEffect: [
 				{
 					selector: ':root',
-					variable: 'buttonShadow',
+					variable: 'theme-button-shadow',
 					extractValue: (value) =>
 						value === 'yes' ? 'CT_CSS_SKIP_RULE' : 'none',
 				},
 
 				{
 					selector: ':root',
-					variable: 'buttonTransform',
+					variable: 'theme-button-transform',
 					extractValue: (value) =>
 						value === 'yes' ? 'CT_CSS_SKIP_RULE' : 'none',
 				},
@@ -263,13 +201,13 @@ const getAllVariables = () => {
 			buttonTextColor: [
 				{
 					selector: ':root',
-					variable: 'buttonTextInitialColor',
+					variable: 'theme-button-text-initial-color',
 					type: 'color:default',
 				},
 
 				{
 					selector: ':root',
-					variable: 'buttonTextHoverColor',
+					variable: 'theme-button-text-hover-color',
 					type: 'color:hover',
 				},
 			],
@@ -277,13 +215,13 @@ const getAllVariables = () => {
 			buttonColor: [
 				{
 					selector: ':root',
-					variable: 'buttonInitialColor',
+					variable: 'theme-button-background-initial-color',
 					type: 'color:default',
 				},
 
 				{
 					selector: ':root',
-					variable: 'buttonHoverColor',
+					variable: 'theme-button-background-hover-color',
 					type: 'color:hover',
 				},
 			],
@@ -291,13 +229,13 @@ const getAllVariables = () => {
 			buttonBorder: [
 				{
 					selector: ':root',
-					variable: 'button-border',
+					variable: 'theme-button-border',
 					type: 'border',
 				},
 
 				{
 					selector: ':root',
-					variable: 'button-border-hover-color',
+					variable: 'theme-button-border-hover-color',
 					type: 'color:default',
 					extractValue: ({ style, secondColor }) => ({
 						default: {
@@ -315,45 +253,54 @@ const getAllVariables = () => {
 			buttonRadius: {
 				selector: ':root',
 				type: 'spacing',
-				variable: 'buttonBorderRadius',
+				variable: 'theme-button-border-radius',
 				responsive: true,
 			},
 
 			buttonPadding: {
 				selector: ':root',
 				type: 'spacing',
-				variable: 'button-padding',
+				variable: 'theme-button-padding',
 				responsive: true,
-			},
-
-			siteBackground: {
-				variable: 'siteBackground',
-				type: 'color',
 			},
 
 			// Layout
 			maxSiteWidth: {
 				selector: ':root',
-				variable: 'normal-container-max-width',
+				variable: 'theme-normal-container-max-width',
 				unit: 'px',
 			},
 
 			contentAreaSpacing: {
 				selector: ':root',
-				variable: 'content-vertical-spacing',
+				variable: 'theme-content-vertical-spacing',
 				responsive: true,
 				unit: '',
 			},
 
+			contentEdgeSpacing: {
+				selector: ':root',
+				variable: 'theme-container-edge-spacing',
+				responsive: true,
+				unit: 'vw',
+				extractValue: (value) => {
+					return {
+						desktop: 100 - parseFloat(value.desktop) * 2,
+						tablet: 100 - parseFloat(value.tablet) * 2,
+						mobile: 100 - parseFloat(value.mobile) * 2,
+					}
+				},
+			},
+
 			narrowContainerWidth: {
 				selector: ':root',
-				variable: 'narrow-container-max-width',
+				variable: 'theme-narrow-container-max-width',
 				unit: 'px',
 			},
 
 			wideOffset: {
 				selector: ':root',
-				variable: 'wide-offset',
+				variable: 'theme-wide-offset',
 				unit: 'px',
 			},
 
@@ -383,13 +330,6 @@ const getAllVariables = () => {
 				unit: 'px',
 			},
 
-			sidebarWidgetsTitleColor: {
-				selector: '.ct-sidebar .widget-title',
-				variable: 'heading-color',
-				type: 'color',
-				responsive: true,
-			},
-
 			mobile_sidebar_position: [
 				{
 					selector: ':root',
@@ -403,24 +343,31 @@ const getAllVariables = () => {
 				},
 			],
 
+			sidebarWidgetsTitleColor: {
+				selector: '.ct-sidebar .widget-title',
+				variable: 'theme-heading-color',
+				type: 'color',
+				responsive: true,
+			},
+
 			sidebarWidgetsFontColor: [
 				{
 					selector: '.ct-sidebar > *',
-					variable: 'color',
+					variable: 'theme-text-color',
 					type: 'color:default',
 					responsive: true,
 				},
 
 				{
 					selector: '.ct-sidebar',
-					variable: 'linkInitialColor',
+					variable: 'theme-link-initial-color',
 					type: 'color:link_initial',
 					responsive: true,
 				},
 
 				{
 					selector: '.ct-sidebar',
-					variable: 'linkHoverColor',
+					variable: 'theme-link-hover-color',
 					type: 'color:link_hover',
 					responsive: true,
 				},
@@ -435,14 +382,14 @@ const getAllVariables = () => {
 
 			sidebarBorder: {
 				selector: 'aside[data-type="type-2"]',
-				variable: 'border',
+				variable: 'theme-border',
 				type: 'border',
 				responsive: true,
 			},
 
 			sidebarDivider: {
 				selector: 'aside[data-type="type-3"]',
-				variable: 'border',
+				variable: 'theme-border',
 				type: 'border',
 				responsive: true,
 			},
@@ -464,21 +411,21 @@ const getAllVariables = () => {
 			sidebarRadius: {
 				selector: 'aside[data-type="type-2"]',
 				type: 'spacing',
-				variable: 'borderRadius',
+				variable: 'theme-border-radius',
 				responsive: true,
 			},
 
 			sidebarShadow: {
 				selector: 'aside[data-type="type-2"]',
 				type: 'box-shadow',
-				variable: 'box-shadow',
+				variable: 'theme-box-shadow',
 				responsive: true,
 			},
 
 			// To top button
 			topButtonSize: {
 				selector: '.ct-back-to-top .ct-icon',
-				variable: 'icon-size',
+				variable: 'theme-icon-size',
 				responsive: true,
 				unit: 'px',
 			},
@@ -500,13 +447,13 @@ const getAllVariables = () => {
 			topButtonIconColor: [
 				{
 					selector: '.ct-back-to-top',
-					variable: 'icon-color',
+					variable: 'theme-icon-color',
 					type: 'color:default',
 				},
 
 				{
 					selector: '.ct-back-to-top',
-					variable: 'icon-hover-color',
+					variable: 'theme-icon-hover-color',
 					type: 'color:hover',
 				},
 			],
@@ -528,14 +475,14 @@ const getAllVariables = () => {
 			topButtonRadius: {
 				selector: '.ct-back-to-top',
 				type: 'spacing',
-				variable: 'border-radius',
+				variable: 'theme-border-radius',
 				// responsive: true,
 			},
 
 			topButtonShadow: {
 				selector: '.ct-back-to-top',
 				type: 'box-shadow',
-				variable: 'box-shadow',
+				variable: 'theme-box-shadow',
 				responsive: true,
 			},
 
@@ -543,14 +490,14 @@ const getAllVariables = () => {
 			...makeVariablesWithCondition('has_passepartout', {
 				passepartoutSize: {
 					selector: ':root',
-					variable: 'frame-size',
+					variable: 'theme-frame-size',
 					responsive: true,
 					unit: 'px',
 				},
 
 				passepartoutColor: {
 					selector: ':root',
-					variable: 'frame-color',
+					variable: 'theme-frame-color',
 					type: 'color',
 				},
 			}),
@@ -559,19 +506,19 @@ const getAllVariables = () => {
 			breadcrumbsFontColor: [
 				{
 					selector: '.ct-breadcrumbs',
-					variable: 'color',
+					variable: 'theme-text-color',
 					type: 'color:default',
 				},
 
 				{
 					selector: '.ct-breadcrumbs',
-					variable: 'linkInitialColor',
+					variable: 'theme-link-initial-color',
 					type: 'color:initial',
 				},
 
 				{
 					selector: '.ct-breadcrumbs',
-					variable: 'linkHoverColor',
+					variable: 'theme-link-hover-color',
 					type: 'color:hover',
 				},
 			],

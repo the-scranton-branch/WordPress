@@ -7,16 +7,14 @@
  * @package Blocksy
  */
 
-if (! function_exists('blocksy_assert_args')) {
-	function blocksy_assert_args($args, $fields = []) {
-		foreach ($fields as $single_field) {
-			if (
-				! isset($args[$single_field])
-				||
-				!$args[$single_field]
-			) {
-				throw new Error($single_field . ' missing in args!');
-			}
+function blocksy_assert_args($args, $fields = []) {
+	foreach ($fields as $single_field) {
+		if (
+			! isset($args[$single_field])
+			||
+			!$args[$single_field]
+		) {
+			throw new Error($single_field . ' missing in args!');
 		}
 	}
 }
@@ -43,16 +41,14 @@ function blocksy_sync_whole_page($args = []) {
 	);
 }
 
-if (! function_exists('blocksy_get_with_percentage')) {
-	function blocksy_get_with_percentage( $id, $value ) {
-		$val = get_theme_mod($id, $value);
+function blocksy_get_with_percentage( $id, $value ) {
+	$val = blocksy_get_theme_mod($id, $value);
 
-		if (strpos($value, '%') !== false && is_numeric($val)) {
-			$val .= '%';
-		}
-
-		return str_replace('%%', '%', $val);
+	if (strpos($value, '%') !== false && is_numeric($val)) {
+		$val .= '%';
 	}
+
+	return str_replace('%%', '%', $val);
 }
 
 /**
@@ -92,28 +88,26 @@ if (! function_exists('blocksy_link_to_menu_editor')) {
  * @param array  $_extract_variables variables to return.
  * @param array  $_set_variables variables to pass into the file.
  */
-if (! function_exists('blocksy_get_variables_from_file')) {
-	function blocksy_get_variables_from_file(
-		$file_path,
-		array $_extract_variables,
-		array $_set_variables = array()
-	) {
-		// phpcs:ignore WordPress.PHP.DontExtract.extract_extract
-		extract($_set_variables, EXTR_REFS);
-		unset($_set_variables);
+function blocksy_get_variables_from_file(
+	$file_path,
+	array $_extract_variables,
+	array $_set_variables = array()
+) {
+	// phpcs:ignore WordPress.PHP.DontExtract.extract_extract
+	extract($_set_variables, EXTR_REFS);
+	unset($_set_variables);
 
-		if (is_file($file_path)) {
-			require $file_path;
-		}
-
-		foreach ($_extract_variables as $variable_name => $default_value) {
-			if (isset($$variable_name) ) {
-				$_extract_variables[$variable_name] = $$variable_name;
-			}
-		}
-
-		return $_extract_variables;
+	if (is_file($file_path)) {
+		require $file_path;
 	}
+
+	foreach ($_extract_variables as $variable_name => $default_value) {
+		if (isset($$variable_name) ) {
+			$_extract_variables[$variable_name] = $$variable_name;
+		}
+	}
+
+	return $_extract_variables;
 }
 
 /**
@@ -122,6 +116,9 @@ if (! function_exists('blocksy_get_variables_from_file')) {
  * @param string       $keys 'a/b/c' path.
  * @param array|object $array_or_object array to extract from.
  * @param null|mixed   $default_value defualt value.
+ *
+ * Keep function_exists() check for some time because Blocksy Companion 1.9
+ * framework/helpers/blocksy-integration.php declares it again.
  */
 if (! function_exists('blocksy_default_akg')) {
 	function blocksy_default_akg($keys, $array_or_object, $default_value) {
@@ -179,38 +176,39 @@ if (! function_exists('blocksy_akg')) {
 	}
 }
 
-if (! function_exists('blocksy_akg_or_customizer')) {
-	function blocksy_akg_or_customizer($key, $source, $default = null) {
-		$source = wp_parse_args(
-			$source,
-			[
-				'prefix' => '',
+function blocksy_akg_or_customizer($key, $source, $default = null) {
+	$source = wp_parse_args(
+		$source,
+		[
+			'prefix' => '',
 
-				// customizer | array
-				'strategy' => 'customizer',
-			]
+			// customizer | array
+			'strategy' => 'customizer',
+		]
+	);
+
+	if ($source['strategy'] !== 'customizer' && !is_array($source['strategy'])) {
+		throw new Error(
+			'strategy wrong value provided. Array or customizer is required.'
 		);
-
-		if ($source['strategy'] !== 'customizer' && !is_array($source['strategy'])) {
-			throw new Error(
-				'strategy wrong value provided. Array or customizer is required.'
-			);
-		}
-
-		if (! empty($source['prefix'])) {
-			$source['prefix'] .= '_';
-		}
-
-		if ($source['strategy'] === 'customizer') {
-			return get_theme_mod($source['prefix'] . $key, $default);
-		}
-
-		return blocksy_akg($source['prefix'] . $key, $source['strategy'], $default);
 	}
+
+	if (! empty($source['prefix'])) {
+		$source['prefix'] .= '_';
+	}
+
+	if ($source['strategy'] === 'customizer') {
+		return blocksy_get_theme_mod($source['prefix'] . $key, $default);
+	}
+
+	return blocksy_akg($source['prefix'] . $key, $source['strategy'], $default);
 }
 
 /**
  * Generate a random ID.
+ *
+ * Keep function_exists() check for some time because Blocksy Companion 1.9
+ * framework/helpers/blocksy-integration.php declares it again.
  */
 if (! function_exists('blocksy_rand_md5')) {
 	function blocksy_rand_md5() {
@@ -249,10 +247,8 @@ if (! function_exists('blocksy_render_view')) {
 	}
 }
 
-if (! function_exists('blocksy_get_wp_theme')) {
-	function blocksy_get_wp_theme() {
-		return apply_filters('blocksy_get_wp_theme', wp_get_theme());
-	}
+function blocksy_get_wp_theme() {
+	return apply_filters('blocksy_get_wp_theme', wp_get_theme());
 }
 
 if (! function_exists('blocksy_get_wp_parent_theme')) {
@@ -297,6 +293,16 @@ if (! function_exists('blocksy_get_all_image_sizes')) {
 			'medium_large' => __('Medium Large', 'blocksy'),
 			'large' => __('Large', 'blocksy'),
 			'full' => __('Full Size', 'blocksy'),
+			'woocommerce_thumbnail' => __('WooCommerce Thumbnail', 'blocksy'),
+			'woocommerce_single' => __('WooCommerce Single', 'blocksy'),
+			'woocommerce_gallery_thumbnail' => __(
+				'WooCommerce Gallery Thumbnail',
+				'blocksy'
+			),
+			'woocommerce_archive_thumbnail' => __(
+				'WooCommerce Archive Thumbnail',
+				'blocksy'
+			)
 		];
 
 		$all_sizes = get_intermediate_image_sizes();
@@ -315,5 +321,81 @@ if (! function_exists('blocksy_get_all_image_sizes')) {
 
 		return $result;
 	}
+}
+
+if (! function_exists('blocksy_debug')) {
+	function blocksy_debug_log($message, $object = null) {
+		if (
+			! defined('WP_DEBUG')
+			||
+			! WP_DEBUG
+		) {
+			return;
+		}
+
+		if (is_null($object)) {
+			error_log($message);
+		} else {
+			error_log($message . ': ' . print_r($object, true));
+		}
+	}
+}
+
+// Deprecated.
+//
+// This function is no longer needed. Use StringHelpers class instead.
+// Keeping it for few more releases to avoid updates crashes.
+//
+// Ref: https://php.watch/versions/8.2/utf8_encode-utf8_decode-deprecated
+//
+// To be removed in March 2024.
+function blocksy_utf8_decode($s) {
+	$len = \strlen($s);
+
+	for ($i = 0, $j = 0; $i < $len; ++$i, ++$j) {
+		switch ($s[$i] & "\xF0") {
+		case "\xC0":
+		case "\xD0":
+			$c = (\ord($s[$i] & "\x1F") << 6) | \ord($s[++$i] & "\x3F");
+			$s[$j] = $c < 256 ? \chr($c) : '?';
+			break;
+
+		case "\xF0":
+			++$i;
+			// no break
+
+		case "\xE0":
+			$s[$j] = '?';
+			$i += 2;
+			break;
+
+		default:
+			$s[$j] = $s[$i];
+		}
+	}
+
+	return substr($s, 0, $j);
+}
+
+function blocksy_output_html_safely($html) {
+	$html = do_shortcode($html);
+
+	if (current_user_can('unfiltered_html')) {
+		return $html;
+	}
+
+	// Just drop scripts from the html content, if user doesnt have
+	// unfiltered_html capability.
+	return preg_replace('#<script(.*?)>(.*?)</script>#is', '', $html);
+
+	// Dont use wp_filter_post_kses() as it is very unstable as far as slashes go.
+	// Just call wp_kses() directly.
+	//
+	// Context:
+	//
+	// https://github.com/WP-API/WP-API/issues/2848
+	// https://github.com/WP-API/WP-API/issues/2788
+	// https://core.trac.wordpress.org/ticket/38609
+	// return wp_kses($html, 'post');
 }
 

@@ -8,8 +8,8 @@
 			padding-right: 0;
 
 			> .wp-block-getwid-section__inner-wrapper {
-				width: var(--block-width);
-				max-width: var(--block-max-width, var(--normal-container-max-width));
+				width: var(--theme-block-width);
+				max-width: var(--theme-block-max-width, var(--theme-normal-container-max-width));
 			}
 		}
 	}
@@ -29,10 +29,10 @@
 	}
 
 	.wp-block-button__link {
-		--padding: 5px 55px;
-		--buttonMinHeight: 55px;
-		--buttonShadow: none;
-		--buttonTransform: none;
+		--theme-button-padding: 5px 55px;
+		--theme-button-min-height: 55px;
+		--theme-button-shadow: none;
+		--theme-button-transform: none;
 	}
 }
 

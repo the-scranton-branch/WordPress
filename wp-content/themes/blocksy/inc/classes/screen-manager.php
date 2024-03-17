@@ -82,6 +82,8 @@ class Blocksy_Screen_Manager {
 			$prefix === 'brizy_template_single'
 			||
 			$prefix === 'ct_content_block_single'
+			||
+			$prefix === 'ct_product_tab_archive'
 		) {
 			return ':preview-mode';
 		}
@@ -122,14 +124,26 @@ class Blocksy_Screen_Manager {
 			$args,
 			[
 				'has_bbpress' => false,
-				'has_buddy_press' => false
+				'has_buddy_press' => false,
+				'has_woocommerce' => false
 			]
 		);
 
-		$custom_post_types = blocksy_manager()->post_types->get_supported_post_types();
+		$custom_post_types = blocksy_manager()
+			->post_types
+			->get_supported_post_types();
 
 		foreach ($custom_post_types as $cpt) {
 			$result[] = $cpt . '_single';
+		}
+
+		if ($args['has_woocommerce']) {
+			$result[] = 'product';
+		}
+
+		if (class_exists('Tribe__Events__Main')) {
+			$result[] = 'tribe_events_single';
+			$result[] = 'tribe_events_archive';
 		}
 
 		return $result;
@@ -185,15 +199,85 @@ class Blocksy_Screen_Manager {
 		return $result;
 	}
 
+	public function get_archive_prefixes_with_human_labels($args = []) {
+		$prefixes = $this->get_archive_prefixes($args);
+
+		$result = [];
+
+		$labels = [
+			'blog' => __('Blog', 'blocksy'),
+			'categories' => __('Categories', 'blocksy'),
+			'author' => __('Author', 'blocksy'),
+			'search' => __('Search', 'blocksy'),
+			'woo_categories' => __('WooCommerce Categories', 'blocksy'),
+		];
+
+		foreach ($prefixes as $prefix) {
+			if (isset($labels[$prefix])) {
+				$result[] = [
+					'key' => $prefix,
+					'label' => $labels[$prefix],
+					'group' => __('Archives', 'blocksy')
+				];
+			} else {
+				$maybe_cpt = str_replace('_archive', '', $prefix);
+
+				$post_type_object = get_post_type_object($maybe_cpt);
+
+				if ($post_type_object) {
+					$result[] = [
+						'key' => $prefix,
+						'label' => $post_type_object->labels->name,
+						'group' => __('Archives', 'blocksy')
+					];
+				}
+			}
+		}
+
+		return $result;
+	}
+
+	public function get_single_prefixes_with_human_labels($args = []) {
+		$prefixes = $this->get_single_prefixes($args);
+
+		$result = [];
+
+		$labels = [
+			'single_blog_post' => __('Posts', 'blocksy'),
+			'single_page' => __('Pages', 'blocksy'),
+			'product' => __('Products', 'blocksy')
+		];
+
+		foreach ($prefixes as $prefix) {
+			if (isset($labels[$prefix])) {
+				$result[] = [
+					'key' => $prefix,
+					'label' => $labels[$prefix],
+					'group' => __('Singulars', 'blocksy')
+				];
+			} else {
+				$maybe_cpt = str_replace('_single', '', $prefix);
+
+				$post_type_object = get_post_type_object($maybe_cpt);
+
+				if ($post_type_object) {
+					$result[] = [
+						'key' => $prefix,
+						'label' => $post_type_object->labels->name,
+						'group' => __('Singulars', 'blocksy')
+					];
+				}
+			}
+		}
+
+		return $result;
+	}
+
 	private function compute_prefix($args = []) {
 		$args = wp_parse_args($args, [
 			'allowed_prefixes' => null,
 			'default_prefix' => null
 		]);
-
-		if (isset($_GET['blocksy_prefix'])) {
-			return $_GET['blocksy_prefix'];
-		}
 
 		if (function_exists('is_lifterlms') && is_lifterlms()) {
 			return 'lms';
@@ -201,21 +285,23 @@ class Blocksy_Screen_Manager {
 
 		$actual_prefix = null;
 
-		if (function_exists('is_bbpress') && (
-			get_post_type() === 'forum'
-			||
-			get_post_type() === 'topic'
-			||
-			get_post_type() === 'reply'
-			||
-			get_query_var('post_type') === 'forum'
-			||
-			bbp_is_single_user_profile()
-			||
-			bbp_is_topic_tag()
-			||
-			bbp_is_topic_tag_edit()
-		)) {
+		if (
+			function_exists('is_bbpress') && (
+				get_post_type() === 'forum'
+				||
+				get_post_type() === 'topic'
+				||
+				get_post_type() === 'reply'
+				||
+				get_query_var('post_type') === 'forum'
+				||
+				bbp_is_topic_tag()
+				||
+				bbp_is_topic_tag_edit()
+				||
+				is_bbpress()
+			)
+		) {
 			$actual_prefix = 'bbpress_single';
 		}
 
@@ -256,6 +342,14 @@ class Blocksy_Screen_Manager {
 
 		if (get_post_type() === 'ct_content_block') {
 			$actual_prefix = 'ct_content_block_single';
+		}
+
+		if (get_post_type() === 'ct_product_tab') {
+			$actual_prefix = 'ct_product_tab_single';
+		}
+
+		if (get_post_type() === 'ct_size_guide') {
+			$actual_prefix = 'ct_size_guide_single';
 		}
 
 		if (function_exists('is_product_category') && ! is_author()) {
@@ -320,6 +414,46 @@ class Blocksy_Screen_Manager {
 			}
 		}
 
+		if (
+			class_exists('Tribe__Events__Main')
+			&&
+			tribe_is_event()
+		) {
+			$actual_prefix = 'tribe_events_single';
+		}
+
+		if (
+			class_exists('Tribe__Events__Main')
+			&&
+			(
+				tribe_is_event()
+				||
+				is_singular('tribe_event_series')
+				||
+				is_singular('tribe_organizer')
+				||
+				tribe_is_venue()
+			)
+		) {
+			$actual_prefix = 'tribe_events_single';
+		}
+
+		if (
+			class_exists('Tribe__Events__Main')
+			&&
+			(
+				tribe_is_events_home()
+				||
+				tribe_is_showing_all()
+				||
+				is_tax('tec_venue_category')
+				||
+				is_post_type_archive('tribe_events')
+			)
+		) {
+			$actual_prefix = 'tribe_events_archive';
+		}
+
 		$actual_post_type = get_query_var('post_type');
 
 		if (empty($actual_post_type) && isset($_GET['ct_post_type'])) {
@@ -350,6 +484,10 @@ class Blocksy_Screen_Manager {
 
 		if (is_author()) {
 			$actual_prefix = 'author';
+		}
+
+		if (isset($_GET['blocksy_prefix'])) {
+			$actual_prefix = $_GET['blocksy_prefix'];
 		}
 
 		return $this->process_allowed_prefixes($actual_prefix, $args);

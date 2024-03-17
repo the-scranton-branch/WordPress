@@ -5,6 +5,7 @@ $config = [
 	'devices' => ['mobile'],
 	'allowed_in' => ['offcanvas'],
 	'selective_refresh' => [
-		'custom_logo'
+		'custom_logo',
+		'inline_svg_logos'
 	],
 ];

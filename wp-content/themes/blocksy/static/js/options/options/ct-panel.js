@@ -14,12 +14,8 @@ import { PanelContext } from '../components/PanelLevel'
 import { Transition, animated } from '@react-spring/web'
 
 export const PanelMetaWrapper = ({ id, option, getActualOption, value }) => {
-	const {
-		panelsState,
-		panelsHelpers,
-		panelsDispatch,
-		containerRef,
-	} = useContext(PanelContext)
+	const { panelsState, panelsHelpers, panelsDispatch, containerRef } =
+		useContext(PanelContext)
 
 	const selfPanelId = id
 
@@ -98,9 +94,9 @@ export const PanelMetaWrapper = ({ id, option, getActualOption, value }) => {
 
 	useEffect(() => {
 		return () => {
-			;[
-				...document.querySelectorAll('.ct-panel-open:not(.open)'),
-			].map((el) => el.classList.remove('ct-panel-open'))
+			;[...document.querySelectorAll('.ct-panel-open:not(.open)')].map(
+				(el) => el.classList.remove('ct-panel-open')
+			)
 		}
 	}, [])
 

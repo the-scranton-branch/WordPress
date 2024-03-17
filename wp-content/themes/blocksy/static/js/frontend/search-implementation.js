@@ -3,6 +3,8 @@ import { h } from 'dom-chef'
 import classnames from 'classnames'
 
 import { loadStyle } from '../helpers'
+import { isIosDevice } from './helpers/is-ios-device'
+import { whenTransitionEnds } from './helpers/when-transition-ends'
 
 let alreadyRunning = false
 
@@ -13,14 +15,18 @@ const decodeHTMLEntities = (string) => {
 
 const store = {}
 
-const cachedFetch = (url) =>
+const cachedFetch = (url, nonce = '') =>
 	store[url]
 		? new Promise((resolve) => {
 				resolve(store[url])
 				store[url] = store[url].clone()
 		  })
 		: new Promise((resolve) =>
-				fetch(url).then((response) => {
+				fetch(url, {
+					headers: {
+						'X-WP-Nonce': nonce,
+					},
+				}).then((response) => {
 					resolve(response)
 					store[url] = response.clone()
 				})
@@ -33,67 +39,81 @@ const getPreviewElFor = ({
 		link: href,
 		_embedded = {},
 		product_price = 0,
+		product_status = '',
+		placeholder_image = null,
 	},
 }) => {
 	const decodedTitle = decodeHTMLEntities(rendered)
 
+	const defaultMediaDetails = {
+		sizes: {
+			thumbnail: {
+				source_url: placeholder_image,
+			},
+		},
+	}
+
+	const sizes =
+		(
+			_embedded['wp:featuredmedia']?.[0]?.media_details ||
+			defaultMediaDetails
+		).sizes || {}
+
 	return (
 		<a className="ct-search-item" role="option" key={href} {...{ href }}>
-			{_embedded['wp:featuredmedia'] && hasThumbs && (
-				<span
-					{...{
-						class: classnames({
-							['ct-image-container']: true,
-						}),
-					}}>
-					<img
+			{(_embedded['wp:featuredmedia'] || placeholder_image) &&
+				hasThumbs && (
+					<span
 						{...{
-							src: (
-								(
-									_embedded['wp:featuredmedia'][0]
-										.media_details || {
-										sizes: {},
-									}
-								).sizes || {}
-							).thumbnail
-								? (
-										_embedded['wp:featuredmedia'][0]
-											.media_details || {
-											sizes: [],
-										}
-								  ).sizes.thumbnail.source_url
-								: values(
-										(
-											_embedded['wp:featuredmedia'][0]
-												.media_details || {
-												sizes: [],
+							class: classnames({
+								['ct-media-container']: true,
+							}),
+						}}>
+						<img
+							{...{
+								src: sizes.thumbnail
+									? sizes?.thumbnail.source_url
+									: values(sizes).reduce(
+											(currentSmallest, current) =>
+												current.width <
+												currentSmallest.width
+													? current
+													: currentSmallest,
+											{
+												width: 9999999999,
 											}
-										).sizes || {}
-								  ).reduce(
-										(currentSmallest, current) =>
-											current.width <
-											currentSmallest.width
-												? current
-												: currentSmallest,
-										{
-											width: 9999999999,
-										}
-								  ).source_url ||
-								  _embedded['wp:featuredmedia'][0].source_url,
-						}}
-					/>
-				</span>
-			)}
+									  ).source_url ||
+									  _embedded['wp:featuredmedia'][0]
+											.source_url,
+							}}
+							style={{ aspectRatio: '1/1' }}
+						/>
+					</span>
+				)}
 			<span>
 				{decodedTitle}
-				{product_price ? (
-					<span
-						className="price"
-						dangerouslySetInnerHTML={{
-							__html: product_price,
-						}}
-						key="price"
-					/>
+
+				{product_price || product_status ? (
+					<span className="product-search-meta">
+						{product_price ? (
+							<small
+								className="price"
+								dangerouslySetInnerHTML={{
+									__html: product_price,
+								}}
+								key="price"
+							/>
+						) : null}
+						{product_status ? (
+							<small
+								className="stock-status"
+								dangerouslySetInnerHTML={{
+									__html: product_status,
+								}}
+								key="product-status"
+							/>
+						) : null}
+					</span>
 				) : null}
 			</span>
 		</a>
@@ -116,6 +136,7 @@ export const mount = (formEl, args = {}) => {
 	}
 
 	const maybeEl = formEl.querySelector('input[type="search"]')
+
 	const options = {
 		postType: 'ct_forced_any',
 
@@ -137,9 +158,17 @@ export const mount = (formEl, args = {}) => {
 		? `ct_forced_${formEl.querySelector('[name="ct_post_type"]').value}`
 		: 'ct_forced_any'
 
-	options.productPrice = formEl.querySelector('[name="ct_product_price"]')
-		? !!formEl.querySelector('[name="ct_product_price"]').value
-		: false
+	if (options.postType.includes(':')) {
+		options.postType.replace('ct_forced_', '')
+	}
+
+	options.productPrice = !!formEl.closest(
+		'[data-live-results*="product_price"]'
+	)
+
+	options.productStatus = !!formEl.closest(
+		'[data-live-results*="product_status"]'
+	)
 
 	if (!window.fetch) return
 
@@ -159,20 +188,46 @@ export const mount = (formEl, args = {}) => {
 			return
 		}
 
+		options.queryCategory = formEl.querySelector('[name="ct_tax_query"]')
+			? formEl.querySelector('[name="ct_tax_query"]').value
+			: ''
+
 		formEl.classList.add('ct-searching')
+
+		const params = new URLSearchParams()
+		params.append('_embed', '1')
+		params.append('post_type', options.postType)
+		params.append('per_page', options.perPage)
+
+		if (options.productPrice === 'true' || options.productPrice === true) {
+			params.append('product_price', options.productPrice)
+		}
+
+		if (
+			options.productStatus === 'true' ||
+			options.productStatus === true
+		) {
+			params.append('product_status', options.productStatus)
+		}
+
+		if (options.queryCategory) {
+			params.append('ct_tax_query', options.queryCategory)
+		}
+
+		if (ct_localizations.lang) {
+			params.append('lang', ct_localizations.lang)
+		}
+
+		params.append('search', e.target.value)
 
 		cachedFetch(
 			`${ct_localizations.rest_url}wp/v2/posts${
 				ct_localizations.rest_url.indexOf('?') > -1 ? '&' : '?'
-			}_embed=1&post_type=${options.postType}&per_page=${
-				options.perPage
-			}&${
-				options.productPrice === 'true' || options.productPrice === true
-					? `product_price=${options.productPrice}&`
-					: ``
-			}search=${e.target.value}${
-				ct_localizations.lang ? `&lang=${ct_localizations.lang}` : ''
-			}`
+			}${params.toString()}`,
+
+			formEl.querySelector('.ct-live-results-nonce')
+				? formEl.querySelector('.ct-live-results-nonce').value
+				: ''
 		).then((response) => {
 			let totalAmountOfPosts = parseInt(
 				response.headers.get('X-WP-Total'),
@@ -245,15 +300,18 @@ export const mount = (formEl, args = {}) => {
 								aria-label={
 									ct_localizations.search_live_results
 								}>
-								{posts.map((post) =>
-									getPreviewElFor({
-										post,
-										hasThumbs:
-											(
-												formEl.dataset.liveResults || ''
-											).indexOf('thumbs') > -1,
-									})
-								)}
+								{posts
+									.filter((post) => post?.id)
+									.map((post) =>
+										getPreviewElFor({
+											post,
+											hasThumbs:
+												(
+													formEl.dataset
+														.liveResults || ''
+												).indexOf('thumbs') > -1,
+										})
+									)}
 
 								{totalAmountOfPosts > options.perPage ? (
 									<a
@@ -310,7 +368,9 @@ export const mount = (formEl, args = {}) => {
 								})
 						}
 
-						window.scrollTo(0, 0)
+						if (isIosDevice()) {
+							window.scrollTo(0, 0)
+						}
 					}
 
 					alreadyRunning = false
@@ -320,8 +380,8 @@ export const mount = (formEl, args = {}) => {
 	}, 200)
 
 	maybeEl.addEventListener('input', listener)
-	;({ mode: 'inline', ...args }.mode === 'modal' &&
-		maybeEl.addEventListener('blur', (e) => setTimeout(() => listener(e))))
+	;({ mode: 'inline', ...args }).mode === 'modal' &&
+		maybeEl.addEventListener('blur', (e) => setTimeout(() => listener(e)))
 
 	maybeEl.addEventListener('focus', (e) => {
 		listener(e)
@@ -352,21 +412,6 @@ function fadeOutAndRemove(el) {
 			() => el.parentNode && el.parentNode.removeChild(el)
 		)
 	})
-}
-
-function whenTransitionEnds(el, cb) {
-	const end = () => {
-		el.removeEventListener('transitionend', onEnd)
-		cb()
-	}
-
-	const onEnd = (e) => {
-		if (e.target === el) {
-			end()
-		}
-	}
-
-	el.addEventListener('transitionend', onEnd)
 }
 
 function fadeIn(el) {

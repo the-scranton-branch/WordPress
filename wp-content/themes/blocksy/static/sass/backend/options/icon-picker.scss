@@ -13,16 +13,16 @@
 		letter-spacing: 1px;
 		min-width: 75px;
 		height: 30px;
-		margin-left: 15px;
+		margin-inline-start: 15px;
 		cursor: pointer;
 		border-radius: 3px;
 		box-sizing: border-box;
 		background: #fff;
-		border: 1px solid var(--borderColor, #ddd);
+		border: 1px solid var(--optionBorderColor, #ddd);
 		transition: border-color 0.1s linear;
 
 		&:hover {
-			border-color: var(--accentColor);
+			border-color: var(--ui-accent-color);
 		}
 
 		.ct-edit,
@@ -43,12 +43,6 @@
 				-webkit-font-smoothing: antialiased;
 				-moz-osx-font-smoothing: grayscale;
 			}
-
-			&:hover .ct-tooltip-top {
-				opacity: 1;
-				visibility: visible;
-				transform: translate3d(0px, -40px, 0px);
-			}
 		}
 
 		.ct-edit {
@@ -57,14 +51,13 @@
 			}
 
 			&:hover {
-				color: var(--accentColor);
+				color: var(--ui-accent-color);
 			}
 		}
 
 		.ct-remove {
 			&:before {
 				content: '\f335';
-				margin-left: 1px;
 			}
 
 			&:hover {
@@ -74,7 +67,7 @@
 
 		.divider {
 			height: 50%;
-			border-left: 1px solid var(--borderColor, #ccc);
+			border-inline-start: 1px solid var(--optionBorderColor, #ddd);
 		}
 	}
 
@@ -90,7 +83,7 @@
 		}
 
 		&:hover {
-			color: var(--accentColor);
+			color: var(--ui-accent-color);
 		}
 	}
 }
@@ -102,9 +95,9 @@
 }
 
 .ct-icons-list {
+	flex: 1;
 	overflow-y: scroll;
-    overflow-x: hidden;
-    max-height: calc(100% - 59px);
+	overflow-x: hidden;
 	padding: 0 14px;
 	box-sizing: border-box;
 
@@ -127,14 +120,14 @@
 			justify-content: center;
 			height: 49px;
 			margin: 0;
-			padding: 5px 5px;
+			padding: 5px;
 			border-radius: 3px;
 			box-sizing: border-box;
 			cursor: pointer;
 
 			&.active {
 				color: #fff;
-				background: var(--accentColor);
+				background: var(--ui-accent-color);
 			}
 
 			&:not(.active):hover {
@@ -150,7 +143,9 @@
 }
 
 .ct-predefined-icons-container {
-	max-height: calc(100% - 43px);
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
 
 	.ct-option-input {
 		padding: 14px;

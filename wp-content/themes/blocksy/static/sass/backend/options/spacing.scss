@@ -3,11 +3,13 @@
 	grid-template-columns: 1fr 1fr 1fr 1fr 75px;
 	grid-column-gap: 4px;
 
+	&.custom {
+		grid-template-columns: 1fr 75px;
+	}
+
 	> span {
 
 		input {
-			text-align: center;
-			position: relative;
 
 			&.inactive {
 				color: rgba(50, 55, 60, 0.5);
@@ -16,10 +18,15 @@
 			}
 
 			&:focus {
+				
 				+ small {
-					color: rgba(85, 93, 102, 0.8);
+					opacity: 0.7;
 				}
 			}
+		}
+
+		&:not(:only-of-type) input {
+			text-align: center;
 		}
 
 		small {
@@ -30,28 +37,37 @@
 			line-height: normal;
 			text-align: center;
 			text-transform: uppercase;
-			color: rgba(85, 93, 102, 0.5);
+			opacity: 0.45;
 			overflow-wrap: anywhere;
 		}
 	}
 
-	.ct-spacing-controls {
+	.ct-link-unlink-toggle {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		height: 100%;
+		cursor: pointer;
+		color: inherit;
+		transition: color 0.1s ease;
 
-		a {
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			height: 100%;
-			cursor: pointer;
-			color: #555d66;
+		&:hover {
+			color: var(--ui-accent-color);
+		}
+	}
+}
 
-			&:hover {
-				color: var(--accentColor);
-			}
+// align option heading when spacing option is inline
+.ct-option-spacing-wrapper[data-design="inline"] {
+	padding-bottom: 16px; // small -> height 11px + margin-top 5px
 
-			svg {
-				fill: currentColor;
-			}
+	.ct-option-spacing > span {
+		position: relative;
+
+		small {
+			position: absolute;
+			inset-inline: 0;
+			top: var(--input-height, 30px);
 		}
 	}
 }

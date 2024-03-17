@@ -10,6 +10,7 @@ import {
 
 import classnames from 'classnames'
 
+// TODO: review gradients prop for new version of GradientPicker in @wordpress/components
 import { GradientPicker as StableGradientPicker } from '@wordpress/components'
 
 const GradientPicker = ({ value, onChange }) => {
@@ -19,7 +20,9 @@ const GradientPicker = ({ value, onChange }) => {
 	return (
 		<Fragment>
 			<StableGradientPicker
-				value={value.gradient || ''}
+				__nextHasNoMargin
+				value={value.gradient || null}
+				gradients={[]}
 				onChange={(val) => {
 					onChange({
 						...value,

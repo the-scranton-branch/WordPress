@@ -11,7 +11,7 @@ blocksy_output_responsive([
 	'tablet_css' => $tablet_css,
 	'mobile_css' => $mobile_css,
 	'selector' => blocksy_assemble_selector($root_selector),
-	'variableName' => 'icon-size',
+	'variableName' => 'theme-icon-size',
 	'value' => $icon_size
 ]);
 
@@ -28,12 +28,12 @@ blocksy_output_colors([
 	'variables' => [
 		'default' => [
 			'selector' => blocksy_assemble_selector($root_selector),
-			'variable' => 'icon-color'
+			'variable' => 'theme-icon-color'
 		],
 
 		'hover' => [
 			'selector' => blocksy_assemble_selector($root_selector),
-			'variable' => 'icon-hover-color'
+			'variable' => 'theme-icon-hover-color'
 		],
 	],
 	'responsive' => true
@@ -69,22 +69,38 @@ blocksy_output_spacing([
 	'mobile_css' => $mobile_css,
 	'selector' => blocksy_assemble_selector($root_selector),
 	'important' => true,
-	'value' => blocksy_default_akg( 'triggerMargin', $atts,
-		blocksy_spacing_value([
-			'linked' => true,
-		])
+	'value' => blocksy_default_akg('triggerMargin', $atts,
+		blocksy_spacing_value()
 	)
 ]);
 
 $trigger_design = blocksy_akg( 'trigger_design', $atts, 'simple' );
 
-if ($trigger_design !== 'simple') {
+if ($trigger_design !== 'simple' || is_customize_preview()) {
+
 	$trigger_border_radius = blocksy_akg( 'trigger_border_radius', $atts, 3 );
 
-	$css->put( 
+	$css->put(
 		blocksy_assemble_selector($root_selector),
-		'--toggle-button-radius: ' . $trigger_border_radius . 'px' 
+		'--toggle-button-radius: ' . $trigger_border_radius . 'px'
 	);
+
+	$container_spacing = blocksy_akg('trigger_icon_container_spacing', $atts, 10);
+
+	blocksy_output_responsive([
+		'css' => $css,
+		'tablet_css' => $tablet_css,
+		'mobile_css' => $mobile_css,
+		'selector' => blocksy_assemble_selector(
+			blocksy_mutate_selector([	
+				'selector' => $root_selector,
+				'operation' => 'el-suffix',
+				'to_add' => ':not([data-design="simple"])'
+			])
+		),
+		'variableName' => 'toggle-button-padding',
+		'value' => $container_spacing
+	]);
 }
 
 
@@ -135,12 +151,12 @@ if ($has_label) {
 		'variables' => [
 			'default' => [
 				'selector' => blocksy_assemble_selector($root_selector),
-				'variable' => 'linkInitialColor'
+				'variable' => 'theme-link-initial-color'
 			],
 
 			'hover' => [
 				'selector' => blocksy_assemble_selector($root_selector),
-				'variable' => 'linkHoverColor'
+				'variable' => 'theme-link-hover-color'
 			],
 		],
 		'responsive' => true
@@ -168,7 +184,7 @@ if (isset($has_transparent_header) && $has_transparent_header) {
 						'operation' => 'between',
 						'to_add' => '[data-transparent-row="yes"]'
 					])),
-					'variable' => 'linkInitialColor'
+					'variable' => 'theme-link-initial-color'
 				],
 
 				'hover' => [
@@ -177,7 +193,7 @@ if (isset($has_transparent_header) && $has_transparent_header) {
 						'operation' => 'between',
 						'to_add' => '[data-transparent-row="yes"]'
 					])),
-					'variable' => 'linkHoverColor'
+					'variable' => 'theme-link-hover-color'
 				],
 			],
 			'responsive' => true
@@ -200,7 +216,7 @@ if (isset($has_transparent_header) && $has_transparent_header) {
 					'operation' => 'between',
 					'to_add' => '[data-transparent-row="yes"]'
 				])),
-				'variable' => 'icon-color'
+				'variable' => 'theme-icon-color'
 			],
 
 			'hover' => [
@@ -209,7 +225,7 @@ if (isset($has_transparent_header) && $has_transparent_header) {
 					'operation' => 'between',
 					'to_add' => '[data-transparent-row="yes"]'
 				])),
-				'variable' => 'icon-hover-color'
+				'variable' => 'theme-icon-hover-color'
 			],
 		],
 		'responsive' => true
@@ -269,7 +285,7 @@ if (isset($has_sticky_header) && $has_sticky_header) {
 						'operation' => 'between',
 						'to_add' => '[data-sticky*="yes"]'
 					])),
-					'variable' => 'linkInitialColor'
+					'variable' => 'theme-link-initial-color'
 				],
 
 				'hover' => [
@@ -278,7 +294,7 @@ if (isset($has_sticky_header) && $has_sticky_header) {
 						'operation' => 'between',
 						'to_add' => '[data-sticky*="yes"]'
 					])),
-					'variable' => 'linkHoverColor'
+					'variable' => 'theme-link-hover-color'
 				],
 			],
 			'responsive' => true
@@ -301,7 +317,7 @@ if (isset($has_sticky_header) && $has_sticky_header) {
 					'operation' => 'between',
 					'to_add' => '[data-sticky*="yes"]'
 				])),
-				'variable' => 'icon-color'
+				'variable' => 'theme-icon-color'
 			],
 
 			'hover' => [
@@ -310,7 +326,7 @@ if (isset($has_sticky_header) && $has_sticky_header) {
 					'operation' => 'between',
 					'to_add' => '[data-sticky*="yes"]'
 				])),
-				'variable' => 'icon-hover-color'
+				'variable' => 'theme-icon-hover-color'
 			],
 		],
 		'responsive' => true

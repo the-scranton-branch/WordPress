@@ -5,7 +5,9 @@ import {
 	useState,
 	useRef,
 	useEffect,
+	RawHTML,
 } from '@wordpress/element'
+import { BaseControl } from '@wordpress/components'
 import classnames from 'classnames'
 import ResponsiveControls, {
 	maybePromoteScalarValueIntoResponsive,
@@ -18,6 +20,8 @@ import { normalizeCondition, matchValuesWithCondition } from 'match-conditions'
 import { __ } from 'ct-i18n'
 import { getOptionLabelFor } from './helpers/get-label'
 import ctEvents from 'ct-events'
+
+import { mutateResponsiveValueWithScalar } from './helpers/mutate-responsive-value'
 
 const CORE_OPTIONS_CONTEXT = require.context('./options/', false, /\.js$/)
 CORE_OPTIONS_CONTEXT.keys().forEach(CORE_OPTIONS_CONTEXT)
@@ -67,6 +71,8 @@ const GenericOptionType = ({
 	id,
 	purpose,
 }) => {
+	const [liftedOptionState, setLiftedOptionState] = useState(null)
+
 	let maybeGutenbergDevice = null
 
 	const childComponentRef = useRef(null)
@@ -208,6 +214,7 @@ const GenericOptionType = ({
 			wp.customize.previewer.send('ct:sync:refresh_partial', {
 				id: option.sync.id || option.id,
 				option,
+				shouldSkip: !!option.sync.shouldSkip,
 			})
 		}
 
@@ -220,94 +227,27 @@ const GenericOptionType = ({
 			isOptionResponsiveFor(option)
 		)
 
-		onChangeWithMobileBridge(
-			isOptionResponsiveFor(option, { ignoreHidden: true })
-				? {
-						...responsiveValue,
-						[device === 'tablet' &&
-						isOptionEnabledFor('tablet', option.responsive) ===
-							'skip'
-							? 'mobile'
-							: device]: scalarValue,
-						...(device === 'desktop'
-							? Object.keys(responsiveValue).reduce(
-									(currentValue, key) => ({
-										...currentValue,
-										...(key !== 'desktop' &&
-										key !== '__changed' &&
-										Object.keys(
-											maybePromoteScalarValueIntoResponsive(
-												option.value
-											)
-										).reduce(
-											(result, key) =>
-												result
-													? maybePromoteScalarValueIntoResponsive(
-															option.value
-													  )[key] ===
-													  maybePromoteScalarValueIntoResponsive(
-															option.value
-													  ).desktop
-													: false,
-											true
-										) &&
-										(
-											responsiveValue.__changed || []
-										).indexOf('tablet') === -1
-											? {
-													[key]: scalarValue,
-											  }
-											: {}),
-									}),
-									{}
-							  )
-							: {}),
-						...(device === 'tablet' &&
-						isOptionEnabledFor('tablet', option.responsive) !==
-							'skip'
-							? Object.keys(responsiveValue).reduce(
-									(currentValue, key) => ({
-										...currentValue,
-										...(key !== 'desktop' &&
-										key !== 'tablet' &&
-										key !== '__changed' &&
-										Object.keys(
-											maybePromoteScalarValueIntoResponsive(
-												option.value
-											)
-										).reduce(
-											(result, key) =>
-												result
-													? maybePromoteScalarValueIntoResponsive(
-															option.value
-													  )[key] ===
-													  maybePromoteScalarValueIntoResponsive(
-															option.value
-													  ).desktop
-													: false,
-											true
-										) &&
-										(
-											responsiveValue.__changed || []
-										).indexOf(key) === -1
-											? {
-													[key]: scalarValue,
-											  }
-											: {}),
-									}),
-									{}
-							  )
-							: {}),
-						__changed: [
-							...(responsiveValue.__changed || []),
-							...(device !== 'desktop' ? [device] : []),
-						].filter(
-							(value, index, self) =>
-								self.indexOf(value) === index
-						),
-				  }
-				: scalarValue
-		)
+		let newValue = scalarValue
+
+		if (isOptionResponsiveFor(option, { ignoreHidden: true })) {
+			const isTabletSkipping =
+				device === 'tablet' &&
+				isOptionEnabledFor('tablet', option.responsive) === 'skip'
+
+			newValue = mutateResponsiveValueWithScalar({
+				scalarValue,
+				responsiveValue,
+				device,
+
+				...(isTabletSkipping
+					? {
+							devices: ['desktop', 'mobile'],
+					  }
+					: {}),
+			})
+		}
+
+		onChangeWithMobileBridge(newValue)
 	}
 
 	/**
@@ -355,17 +295,44 @@ const GenericOptionType = ({
 		sectionClassName = OptionComponent.sectionClassName
 	}
 
+	let supportedPurposes = ['default']
+
+	if (OptionComponent.supportedPurposes) {
+		supportedPurposes = OptionComponent.supportedPurposes
+	}
+
+	let actualPurpose = purpose
+
+	if (option.purpose && supportedPurposes.indexOf(option.purpose) !== -1) {
+		actualPurpose = option.purpose
+	}
+
+	let maybeLabel = getOptionLabelFor({
+		id,
+		option,
+		values,
+		renderingConfig,
+	})
+
 	let OptionComponentWithoutDesign = (
 		<Fragment>
 			{BeforeOptionContent && BeforeOptionContent.content}
 			<OptionComponent
 				key={id}
-				ref={(c) => {
-					if (c) {
-						childComponentRef.current = c
-					}
-				}}
 				{...{
+					...(option.type === 'ct-slider'
+						? {
+								ref: (c) => {
+									if (c) {
+										childComponentRef.current = c
+									}
+								},
+						  }
+						: {}),
+					liftedOptionStateDescriptor: {
+						liftedOptionState,
+						setLiftedOptionState,
+					},
 					option: {
 						...option,
 						value: isOptionResponsiveFor(option, {
@@ -389,6 +356,8 @@ const GenericOptionType = ({
 					onChangeFor,
 					device,
 					onChange: onChangeWithResponsiveBridge,
+					purpose: actualPurpose,
+					maybeLabel,
 				}}
 			/>
 		</Fragment>
@@ -398,12 +367,60 @@ const GenericOptionType = ({
 		return OptionComponentWithoutDesign
 	}
 
-	let maybeLabel = getOptionLabelFor({
-		id,
-		option,
-		values,
-		renderingConfig,
-	})
+	const RevertButton = () => {
+		let computeOptionValue = renderingConfig.computeOptionValue
+
+		if (!computeOptionValue) {
+			computeOptionValue = (o) => o
+		}
+
+		return (
+			((option.type !== 'ct-image-picker' &&
+				option.type !== 'ct-layers' &&
+				option.type !== 'ct-panel' &&
+				hasRevertButton &&
+				!option.disableRevertButton) ||
+				option.forcedRevertButton) && (
+				<button
+					type="button"
+					disabled={deepEqual(
+						computeOptionValue(option.value),
+						renderingConfig.getValueForRevert
+							? renderingConfig.getValueForRevert({
+									value,
+									option,
+									values,
+									device,
+							  })
+							: optionWithDefault({
+									value,
+									option,
+							  })
+					)}
+					className="ct-revert"
+					onClick={() => {
+						if (childComponentRef && childComponentRef.current) {
+							childComponentRef.current.handleOptionRevert()
+						}
+
+						setLiftedOptionState(null)
+
+						if (renderingConfig.performRevert) {
+							renderingConfig.performRevert({
+								onChangeFor,
+							})
+						}
+
+						onChangeWithMobileBridge(option.value)
+					}}>
+					<svg fill="currentColor" viewBox="0 0 35 35">
+						<path d="M17.5,26L17.5,26C12.8,26,9,22.2,9,17.5v0C9,12.8,12.8,9,17.5,9h0c4.7,0,8.5,3.8,8.5,8.5v0C26,22.2,22.2,26,17.5,26z" />
+						<polygon points="34.5,30.2 21.7,17.5 34.5,4.8 30.2,0.5 17.5,13.3 4.8,0.5 0.5,4.8 13.3,17.5 0.5,30.2 4.8,34.5 17.5,21.7 30.2,34.5 " />
+					</svg>
+				</button>
+			)
+		)
+	}
 
 	let maybeDesc =
 		Object.keys(option).indexOf('desc') === -1 ? false : option.desc
@@ -415,6 +432,52 @@ const GenericOptionType = ({
 		typeof renderingConfig.design === 'boolean'
 			? 'block'
 			: renderingConfig.design
+
+	if (purpose === 'taxonomy') {
+		return (
+			<tr className="form-field ct-term-screen-edit">
+				<th scope="row">
+					{maybeLabel && (
+						<label>
+							{maybeLabel} <RevertButton />
+						</label>
+					)}
+				</th>
+				<td>
+					{OptionComponentWithoutDesign}
+					{maybeDesc && <p className="description">{maybeDesc}</p>}
+				</td>
+			</tr>
+		)
+	}
+
+	if (purpose === 'gutenberg') {
+		if (
+			!supportedPurposes.includes('gutenberg') ||
+			actualPurpose !== 'gutenberg'
+		) {
+			return (
+				<BaseControl
+					label={maybeLabel}
+					className={classnames('ct-control-gutenberg', {
+						[`ct-divider-${option.divider}`]: !!option.divider,
+					})}
+					help={maybeDesc ? <RawHTML>{maybeDesc}</RawHTML> : ''}>
+					{OptionComponentWithoutDesign}
+				</BaseControl>
+			)
+		}
+
+		return (
+			<BaseControl
+				__nextHasNoMarginBottom
+				className={classnames('ct-control-gutenberg', {
+					[`ct-divider-${option.divider}`]: !!option.divider,
+				})}>
+				{OptionComponentWithoutDesign}
+			</BaseControl>
+		)
+	}
 
 	if (renderingConfig.design === 'compact') {
 		return (
@@ -444,12 +507,6 @@ const GenericOptionType = ({
 		const { className: optionClassName, ...optionAdditionalWrapperAttr } =
 			option.wrapperAttr || {}
 
-		let computeOptionValue = renderingConfig.computeOptionValue
-
-		if (!computeOptionValue) {
-			computeOptionValue = (o) => o
-		}
-
 		return (
 			<Fragment>
 				<div
@@ -476,50 +533,7 @@ const GenericOptionType = ({
 					}}>
 					<header>
 						{maybeLabel && <label>{maybeLabel}</label>}
-
-						{option.type !== 'ct-image-picker' &&
-							option.type !== 'ct-layers' &&
-							option.type !== 'ct-image-uploader' &&
-							option.type !== 'ct-panel' &&
-							hasRevertButton &&
-							!option.disableRevertButton && (
-								<button
-									type="button"
-									disabled={deepEqual(
-										computeOptionValue(option.value),
-										renderingConfig.getValueForRevert
-											? renderingConfig.getValueForRevert(
-													{
-														value,
-														option,
-														values,
-														device,
-													}
-											  )
-											: optionWithDefault({
-													value,
-													option,
-											  })
-									)}
-									className="ct-revert"
-									onClick={() => {
-										if (
-											childComponentRef &&
-											childComponentRef.current
-										) {
-											childComponentRef.current.handleOptionRevert()
-										}
-
-										if (renderingConfig.performRevert) {
-											renderingConfig.performRevert({
-												onChangeFor,
-											})
-										}
-
-										onChangeWithMobileBridge(option.value)
-									}}
-								/>
-							)}
+						<RevertButton />
 
 						<LabelToolbar
 							{...{

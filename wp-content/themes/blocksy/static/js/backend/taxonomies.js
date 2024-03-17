@@ -5,6 +5,7 @@ import {
 	Fragment,
 	createElement,
 	createPortal,
+	useEffect,
 	render,
 } from '@wordpress/element'
 
@@ -14,11 +15,21 @@ import OptionsPanel from '../options/OptionsPanel'
 
 import { getValueFromInput } from '../options/helpers/get-value-from-input'
 
-import deepEqual from 'deep-equal'
-
-const TaxonomyRoot = ({ options, input_name, value }) => {
+const TaxonomyRoot = ({ options, input_name, value, tbody, purpose }) => {
 	const [internalValue, setInternalValue] = useState(value)
 	const input = useRef()
+
+	useEffect(() => {
+		const cb = () => {
+			setInternalValue(value)
+		}
+
+		$(document).on('ajaxComplete', cb)
+
+		return () => {
+			$(document).off('ajaxComplete', cb)
+		}
+	}, [])
 
 	return (
 		<Fragment>
@@ -35,9 +46,7 @@ const TaxonomyRoot = ({ options, input_name, value }) => {
 			{createPortal(
 				<OptionsPanel
 					value={internalValue}
-					options={{
-						accent_color: options.accent_color,
-					}}
+					options={options}
 					onChange={(key, newValue) => {
 						setInternalValue((internalValue) => ({
 							...internalValue,
@@ -45,49 +54,9 @@ const TaxonomyRoot = ({ options, input_name, value }) => {
 						}))
 						$(input.current).change()
 					}}
+					purpose={purpose}
 				/>,
-
-				document.querySelector('.term-blocksy-accent-color-wrap td')
-			)}
-
-			{createPortal(
-				<button
-					type="button"
-					disabled={deepEqual(
-						options.accent_color.value,
-						internalValue.accent_color
-					)}
-					className="ct-revert"
-					onClick={() => {
-						setInternalValue((internalValue) => ({
-							...internalValue,
-							accent_color: options.accent_color.value,
-						}))
-						$(input.current).change()
-					}}
-				/>,
-
-				document.querySelector(
-					'.term-blocksy-accent-color-wrap th label'
-				)
-			)}
-
-			{createPortal(
-				<OptionsPanel
-					value={internalValue}
-					options={{
-						image: options.image,
-					}}
-					onChange={(key, newValue) => {
-						setInternalValue((internalValue) => ({
-							...internalValue,
-							[key]: newValue,
-						}))
-						$(input.current).change()
-					}}
-				/>,
-
-				document.querySelector('.term-blocksy-image-wrap td')
+				tbody
 			)}
 		</Fragment>
 	)
@@ -101,75 +70,42 @@ export const initTaxonomies = () => {
 	if (!maybeTaxonomyField) {
 		return
 	}
+	if (!maybeTaxonomyField.dataset.options) {
+		return
+	}
 
-	let options = {
-		image: {
-			label: __('Transparent State Logo', 'blocksy'),
-			type: 'ct-image-uploader',
-			value: '',
-			attr: { 'data-type': 'large' },
-			design: 'none',
-			emptyLabel: __('Select Image', 'blocksy'),
-		},
+	let options = JSON.parse(maybeTaxonomyField.dataset.options)
 
-		accent_color: {
-			label: __('Site Title Color', 'blocksy'),
-			type: 'ct-color-picker',
+	const maybeTable = document.querySelector('.form-table')
 
-			design: 'none',
+	let tbody = null
+	let purpose = 'taxonomy'
 
-			value: {
-				default: {
-					color: 'CT_CSS_SKIP_RULE',
-				},
+	if (!maybeTable) {
+		const rootEl = document.querySelector('#addtag')
 
-				hover: {
-					color: 'CT_CSS_SKIP_RULE',
-				},
+		tbody = document.createElement('div')
+		tbody.classList.add('form-field', 'ct-term-screen-create')
+		tbody.textContent = ''
 
-				background_initial: {
-					color: 'CT_CSS_SKIP_RULE',
-				},
-
-				background_hover: {
-					color: 'CT_CSS_SKIP_RULE',
-				},
-			},
-
-			pickers: [
-				{
-					title: __('Text Initial', 'blocksy'),
-					id: 'default',
-				},
-
-				{
-					title: __('Text Hover', 'blocksy'),
-					id: 'hover',
-				},
-
-				{
-					title: __('Background Initial', 'blocksy'),
-					id: 'background_initial',
-				},
-
-				{
-					title: __('Background Hover', 'blocksy'),
-					id: 'background_hover',
-				},
-			],
-		},
+		rootEl.insertBefore(tbody, rootEl.querySelector('.submit'))
+		purpose = 'default'
+	} else {
+		tbody = maybeTable.querySelector('tbody')
 	}
 
 	render(
 		<TaxonomyRoot
 			input_name={maybeTaxonomyField.name}
 			options={options}
+			tbody={tbody}
 			value={getValueFromInput(
 				options,
 				JSON.parse(maybeTaxonomyField.value),
 				null,
 				false
 			)}
+			purpose={purpose}
 		/>,
 		maybeTaxonomyField.parentNode
 	)

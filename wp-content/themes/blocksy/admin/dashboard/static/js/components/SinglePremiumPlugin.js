@@ -9,6 +9,7 @@ const SinglePremiumPlugin = ({ status, plugin, onPluginsSync }) => {
 
 		body.append('plugin', plugin)
 		body.append('action', actionName)
+		body.append('nonce', ctDashboardLocalizations.dashboard_actions_nonce)
 
 		setIsLoading(true)
 
@@ -26,7 +27,7 @@ const SinglePremiumPlugin = ({ status, plugin, onPluginsSync }) => {
 
 	return (
 		<li>
-			<h4 className="ct-extension-title">
+			<h4 className="ct-plugin-title">
 				{plugin.title}
 
 				{isLoading && (
@@ -58,12 +59,12 @@ const SinglePremiumPlugin = ({ status, plugin, onPluginsSync }) => {
 			</h4>
 
 			{plugin.description && (
-				<div className="ct-extension-description">
+				<div className="ct-plugin-description">
 					{plugin.description}
 				</div>
 			)}
 
-			<div className="ct-extension-actions">
+			<div className="ct-plugin-actions">
 				{status === 'activated' && (
 					<a
 						onClick={() =>

@@ -58,45 +58,17 @@ const BuilderRoot = ({
 	}
 
 	useEffect(() => {
-		let {
-			__forced_dynamic_header__,
-			__forced_static_header__,
-			__should_refresh__,
-			...old
-		} = wp.customize('header_placements')()
-
-		Object.keys(old).map((key) => {
-			if (parseFloat(key)) {
-				delete old[key]
-			}
-		})
-
-		try {
-			wp.customize('header_placements')({
-				...old,
-				__forced_static_header__: (
-					allBuilderSections.sections.find(
-						({ id }) => id.indexOf(fetchCurrentHeader()) > -1
-					) || allBuilderSections.sections[0]
-				).id,
-			})
-		} catch (e) {
-			console.error(e)
-		}
-
 		return () => {
-			const {
-				__forced_dynamic_header__,
-				__forced_static_header__,
-				__should_refresh__,
-				...old
-			} = wp.customize('header_placements')()
+			const { __forced_static_header__, __should_refresh__, ...old } =
+				wp.customize('header_placements')()
 
-			wp.customize('header_placements')({
-				__should_refresh__: true,
-				[Math.random()]: 'update',
-				...old,
-			})
+			if (__forced_static_header__) {
+				wp.customize('header_placements')({
+					__should_refresh__: true,
+					[Math.random()]: 'update',
+					...old,
+				})
+			}
 		}
 	}, [])
 

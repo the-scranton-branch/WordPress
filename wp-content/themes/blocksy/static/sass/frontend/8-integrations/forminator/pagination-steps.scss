@@ -38,12 +38,12 @@
 		&.forminator-current ~ .forminator-step {
 
 			.forminator-step-label {
-				color: var(--color);
+				color: var(--theme-text-color);
 			}
 
 			.forminator-step-dot {
-				color: var(--color);
-				background: var(--form-field-border-initial-color);
+				color: var(--theme-text-color);
+				background: var(--theme-form-field-border-initial-color);
 			}
 		}
 	}
@@ -53,7 +53,7 @@
 		display: block;
 		font-size: 13px;
 		font-weight: 500;
-		color: var(--paletteColor1);
+		color: var(--theme-palette-color-1);
 	}
 
 	.forminator-step-dot {
@@ -64,7 +64,7 @@
 		font-size: 12px;
 		font-weight: 500;
 		color: #fff;
-		background: var(--paletteColor1);
+		background: var(--theme-palette-color-1);
 
 		&:before {
 			display: block;
@@ -76,7 +76,7 @@
 	}
 
 	.forminator-break {
-		background: var(--form-field-border-initial-color);
+		background: var(--theme-form-field-border-initial-color);
 
 		&:first-child,
 		&:last-child {

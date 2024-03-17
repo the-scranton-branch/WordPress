@@ -90,6 +90,7 @@ const Background = ({ option, value, onChange }) => {
 					'ct-color-inherit': isInherit,
 					'ct-no-color': isNoColor,
 				})}
+				data-tooltip="top"
 				onClick={(e) => {
 					e.preventDefault()
 					setIsOpen(!isOpen)
@@ -153,7 +154,7 @@ const Background = ({ option, value, onChange }) => {
 							: 'none',
 					'--pattern-color': value.patternColor.default.color,
 				}}>
-				<i className="ct-tooltip-top">
+				<i className="ct-tooltip">
 					{
 						{
 							inherit: __('Inherited', 'blocksy'),
@@ -186,7 +187,11 @@ const Background = ({ option, value, onChange }) => {
 						useCapture={false}
 						display="block"
 						disabled={!isOpen || outsideClickFreezed}
-						onOutsideClick={() => {
+						onOutsideClick={(e) => {
+							if (e.target.closest('.components-popover')) {
+								return
+							}
+
 							setTimeout(() => setIsOpen(false))
 						}}
 						wrapperProps={{

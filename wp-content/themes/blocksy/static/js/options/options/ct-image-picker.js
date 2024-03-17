@@ -57,6 +57,7 @@ const ImagePicker = ({
 					className={classnames({
 						active: choice.key === normalizedValue,
 					})}
+					data-tooltip="top"
 					onClick={() => onChange(choice.key)}
 					key={choice.key}>
 					{choice.src.indexOf('<svg') === -1 ? (
@@ -72,7 +73,7 @@ const ImagePicker = ({
 					{option.title && null && <span>{choice.title}</span>}
 
 					{choice.title && (
-						<span className="ct-tooltip-top">{choice.title}</span>
+						<span className="ct-tooltip">{choice.title}</span>
 					)}
 				</li>
 			))}

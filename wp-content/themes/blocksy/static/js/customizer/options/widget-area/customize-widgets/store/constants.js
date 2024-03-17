@@ -1,4 +1,4 @@
 /**
  * Module Constants
  */
-export const STORE_NAME = 'core/customize-widgets'
+export const STORE_NAME = 'blocksy/core/customize-widgets'

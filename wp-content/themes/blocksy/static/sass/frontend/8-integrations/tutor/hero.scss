@@ -2,7 +2,7 @@
 
 	.tutor-course-details-title {
 		max-width: initial;
-		color: var(--heading-color, var(--heading-1-color, var(--headings-color)));
+		color: var(--theme-heading-color, var(--theme-heading-1-color, var(--theme-headings-color)));
 	}
 
 	.tutor-ratings {
@@ -24,19 +24,19 @@
 	.tutor-meta > * a,
 	.tutor-course-details-actions > a {
 		&:hover {
-			color: var(--linkHoverColor);
+			color: var(--theme-link-hover-color);
 		}
 	}
 
 	.tutor-meta > * a,
 	.tutor-ratings-average {
-		font-weight: var(--fontWeight);
+		font-weight: var(--theme-font-weight);
 	}
 
 	.tutor-meta > *,
 	.tutor-ratings-count,
 	.tutor-ratings-average,
 	.tutor-course-details-actions > a {
-		color: var(--color);
+		color: var(--theme-text-color);
 	}
 }

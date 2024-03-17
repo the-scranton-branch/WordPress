@@ -1,10 +1,38 @@
-import { createElement, Component, useState } from '@wordpress/element'
+import { createElement, useState } from '@wordpress/element'
 import { __ } from 'ct-i18n'
-import InputWithOnlyNumbers from '../components/InputWithOnlyNumbers'
 import cls from 'classnames'
 import OutsideClickHandler from './react-outside-click-handler'
 
-const Spacing = ({ value, option, onChange }) => {
+import SpacingInput from './ct-spacing/input'
+
+export const SPACING_STATE_LINKED = 1
+export const SPACING_STATE_INDEPENDENT = 2
+export const SPACING_STATE_CUSTOM = 3
+
+const backportLegacySpacing = (legacy) => {
+	if (legacy === 'auto' || legacy === '') {
+		return {
+			value: legacy,
+			unit: '',
+		}
+	}
+
+	const maybeNumber = parseFloat(legacy)
+
+	if (isNaN(maybeNumber)) {
+		return {
+			value: '',
+			unit: '',
+		}
+	}
+
+	return {
+		value: maybeNumber,
+		unit: legacy.toString().replace(maybeNumber.toString(), ''),
+	}
+}
+
+const Spacing = ({ value: maybeLegacyValue, option, onChange }) => {
 	const [isOpen, setIsOpen] = useState(false)
 
 	const units = [
@@ -15,140 +43,112 @@ const Spacing = ({ value, option, onChange }) => {
 		{ unit: 'pt' },
 	]
 
-	const withDefault = (currentUnit, defaultUnit) =>
-		units.find(({ unit }) => unit === currentUnit)
-			? currentUnit
-			: currentUnit || units[0].unit
+	let value = maybeLegacyValue.values
+		? maybeLegacyValue
+		: {
+				values: [
+					backportLegacySpacing(maybeLegacyValue.top),
+					backportLegacySpacing(maybeLegacyValue.right),
+					backportLegacySpacing(maybeLegacyValue.bottom),
+					backportLegacySpacing(maybeLegacyValue.left),
+				],
+				custom: '',
+				state: maybeLegacyValue.linked
+					? SPACING_STATE_LINKED
+					: SPACING_STATE_INDEPENDENT,
+		  }
 
-	const getLinkedLeader = () =>
-		['top', 'right', 'bottom', 'left'].find((v) => value[v] !== 'auto')
-
-	const getCurrentUnit = () =>
-		withDefault(
-			value[getLinkedLeader()]
-				.toString()
-				.replace(/[0-9]/g, '')
-				.replace('-', '')
-				.replace(/\./g, '')
-		)
-
-	const getNumericValue = (value, unit = '') => {
-		if (value === 'auto') {
-			return value
-		}
-
-		return `${parseFloat(value) === 0 ? 0 : parseFloat(value) || ''}${unit}`
-	}
-
-	const handleChange = (futureValue, position) => {
-		if (value.linked) {
-			onChange({
-				...value,
-				top:
-					value.top === 'auto'
-						? value.top
-						: getNumericValue(futureValue, getCurrentUnit()),
-				left:
-					value.left === 'auto'
-						? value.left
-						: getNumericValue(futureValue, getCurrentUnit()),
-				right:
-					value.right === 'auto'
-						? value.right
-						: getNumericValue(futureValue, getCurrentUnit()),
-				bottom:
-					value.bottom === 'auto'
-						? value.bottom
-						: getNumericValue(futureValue, getCurrentUnit()),
-			})
-
-			return
-		}
-
-		onChange({
-			...value,
-			[position]: getNumericValue(futureValue, getCurrentUnit()),
-		})
-	}
+	const currentUnit =
+		value.values.find((v) => v.value !== 'auto').unit || units[0].unit
 
 	return (
 		<div
 			className={cls('ct-option-spacing', {
-				linked: value.linked,
+				linked: value.state === SPACING_STATE_LINKED,
+				custom: value.state === SPACING_STATE_CUSTOM,
 			})}>
-			{['top', 'right', 'bottom', 'left'].map((side) => (
-				<span key={side}>
-					<InputWithOnlyNumbers
-						placeholder=""
-						value={getNumericValue(value[side])}
-						onChange={(v) => handleChange(v, side)}
-						{...{ placeholder: '', ...option.inputAttr }}
-					/>
-
-					<small>
-						{
-							{
-								top: __('Top', 'blocksy'),
-								bottom: __('Bottom', 'blocksy'),
-								left: __('Left', 'blocksy'),
-								right: __('Right', 'blocksy'),
-							}[side]
-						}
-					</small>
-				</span>
-			))}
+			<SpacingInput
+				currentUnit={currentUnit}
+				value={value}
+				option={option}
+				onChange={onChange}
+			/>
 
 			<div
 				className={cls('ct-spacing-controls ct-value-changer', {
 					active: isOpen,
 				})}>
-				<a
-					onClick={(e) => {
-						e.preventDefault()
+				{value.state !== SPACING_STATE_CUSTOM && (
+					<span
+						className="ct-link-unlink-toggle"
+						onClick={(e) => {
+							e.preventDefault()
 
-						if (value.linked) {
+							if (value.state === SPACING_STATE_LINKED) {
+								onChange({
+									...value,
+									state: SPACING_STATE_INDEPENDENT,
+								})
+
+								return
+							}
+
+							const futureValue = value.values.find((v) => {
+								return v.value !== 'auto' && v.value !== ''
+							}) || {
+								value: '',
+								unit: '',
+							}
+
 							onChange({
 								...value,
-								linked: false,
+
+								values: [
+									value.values[0].value === 'auto'
+										? value.values[0]
+										: futureValue,
+
+									value.values[1].value === 'auto'
+										? value.values[1]
+										: futureValue,
+
+									value.values[2].value === 'auto'
+										? value.values[2]
+										: futureValue,
+
+									value.values[3].value === 'auto'
+										? value.values[3]
+										: futureValue,
+								],
+
+								state: SPACING_STATE_LINKED,
 							})
-
-							return
-						}
-
-						const futureValue = value[getLinkedLeader()]
-
-						onChange({
-							...value,
-							top: value.top !== 'auto' ? futureValue : value.top,
-							left:
-								value.left !== 'auto'
-									? futureValue
-									: value.left,
-							bottom:
-								value.bottom !== 'auto'
-									? futureValue
-									: value.bottom,
-							right:
-								value.right !== 'auto'
-									? futureValue
-									: value.right,
-
-							linked: true,
-						})
-					}}>
-					<svg width="10" height="10" viewBox="0 0 15 15">
-						{value.linked ? (
-							<path d="M12.2,5.5V4.7c0-2.6-2.1-4.7-4.7-4.7S2.8,2.1,2.8,4.7v0.8c-0.9,0-1.6,0.7-1.6,1.6v6.3c0,0.9,0.7,1.6,1.6,1.6h9.5c0.9,0,1.6-0.7,1.6-1.6V7.1C13.8,6.2,13.1,5.5,12.2,5.5z M10.7,5.5H4.3V4.7c0-1.8,1.4-3.2,3.2-3.2s3.2,1.4,3.2,3.2V5.5z" />
-						) : (
-							<path d="M12.2,5.5h-1.6H9.9h-5H4.7l0-0.2C4.4,3.5,5.5,1.9,7.3,1.5c1.1-0.2,2.2,0.1,2.8,0.9l1.3-0.9c-1-1.1-2.6-1.8-4.3-1.5C4.5,0.5,2.8,2.9,3.2,5.5H2.8c-0.9,0-1.6,0.7-1.6,1.6v6.3c0,0.9,0.7,1.6,1.6,1.6h9.5c0.9,0,1.6-0.7,1.6-1.6V7.1C13.8,6.2,13.1,5.5,12.2,5.5z" />
-						)}
-					</svg>
-				</a>
+						}}>
+						<svg
+							width="14"
+							height="14"
+							viewBox="0 0 24 24"
+							fill="currentColor">
+							{value.state === SPACING_STATE_LINKED ? (
+								<path d="M24,12c0,3.9-3.2,7.1-7.1,7.1h-2.2v-2.1h2.2c2.8,0,5.1-2.3,5.1-5.1s-2.3-5.1-5.1-5.1h-2.2V4.9h2.2 C20.8,4.9,24,8.1,24,12z M2.1,12c0-2.8,2.3-5.1,5.1-5.1h2.2V4.9H7.1C3.2,4.9,0,8.1,0,12s3.2,7.1,7.1,7.1h2.2v-2.1H7.1 C4.3,17.1,2.1,14.8,2.1,12z M8.3,13h7.3V11H8.3V13z"></path>
+							) : (
+								<path d="M24,12c0,3.9-3.2,7.1-7.1,7.1h-2.2v-2.1h2.2c2.8,0,5.1-2.3,5.1-5.1s-2.3-5.1-5.1-5.1h-1.8L7.5,23.4l-1.2-0.6L8,19.1H7.1 C3.2,19.1,0,15.9,0,12s3.2-7.1,7.1-7.1h2.2v2.1H7.1C4.3,6.9,2,9.2,2,12s2.3,5.1,5.1,5.1h1.8l1.8-4H7.9V11h3.8l4.7-10.3l1.2,0.6 L16,4.9h0.9C20.8,4.9,24,8.1,24,12z"></path>
+							)}
+						</svg>
+					</span>
+				)}
 
 				<div
 					onClick={() => setIsOpen(!isOpen)}
-					className="ct-current-value">
-					{getCurrentUnit() || '―'}
+					className="ct-current-value"
+					data-unit={
+						value.state === SPACING_STATE_CUSTOM
+							? 'custom'
+							: currentUnit
+					}>
+					{value.state === SPACING_STATE_CUSTOM
+						? __('Custom', 'blocksy')
+						: currentUnit || '―'}
 				</div>
 
 				<OutsideClickHandler
@@ -160,30 +160,54 @@ const Spacing = ({ value, option, onChange }) => {
 
 						setIsOpen(false)
 					}}>
-					{units
-						.filter(({ unit }) => unit !== getCurrentUnit())
-
+					{[
+						...units,
+						...(value.state === SPACING_STATE_CUSTOM
+							? []
+							: [{ unit: 'custom' }]),
+					]
+						.filter(({ unit }) => unit !== currentUnit)
 						.map(({ unit }) => (
 							<span
 								key={unit}
 								data-unit={unit}
 								onClick={() => {
+									if (unit === 'custom') {
+										onChange({
+											...value,
+											state: SPACING_STATE_CUSTOM,
+										})
+
+										setIsOpen(false)
+
+										return
+									}
+
+									let nonAutoValues = value.values
+										.filter((v) => v.value !== 'auto')
+										.map((v) => v.value + v.unit)
+
+									const futureState =
+										[...new Set(nonAutoValues)].length === 1
+											? SPACING_STATE_LINKED
+											: SPACING_STATE_INDEPENDENT
+
 									onChange({
 										...value,
-										top: getNumericValue(value.top, unit),
-										left: getNumericValue(value.left, unit),
-										right: getNumericValue(
-											value.right,
-											unit
-										),
-										bottom: getNumericValue(
-											value.bottom,
-											unit
-										),
+
+										values: value.values.map((v) => ({
+											...v,
+											unit,
+										})),
+
+										state: futureState,
 									})
+
 									setIsOpen(false)
 								}}>
-								{unit || '―'}
+								{unit === 'custom'
+									? __('Custom', 'blocksy')
+									: unit}
 							</span>
 						))}
 				</OutsideClickHandler>

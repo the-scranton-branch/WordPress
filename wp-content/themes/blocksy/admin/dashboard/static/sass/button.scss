@@ -2,9 +2,10 @@
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	height: var(--buttonHeight, 35px);
-	padding: 0 var(--buttonPadding, 15px);
-	font-size: var(--buttonFontSize, 13px);
+	gap: 7px;
+	height: var(--ui-button-height, 35px);
+	padding: 0 var(--ui-button-padding, 15px);
+	font-size: var(--ui-button-font-size, 13px);
 	font-weight: 500;
 	outline: none;
 	cursor: pointer;
@@ -15,8 +16,11 @@
 	border-width: 1px;
 	border-style: solid;
 	box-sizing: border-box;
-	transition: color 0.2s ease, background 0.2s ease, transform 0.2s ease,
-		border-color 0.2s ease, box-shadow 0.2s ease;
+	transition: color 0.15s ease, 
+				background 0.15s ease, 
+				transform 0.15s ease,
+				border-color 0.15s ease, 
+				box-shadow 0.15s ease;
 
 	&[disabled] {
 		pointer-events: none;
@@ -39,8 +43,8 @@
 
 .ct-button-primary {
 	color: #fff;
-	background: var(--accentColor);
-	border-color: rgba(1, 118, 165, 0.6);
+	background: var(--ui-accent-color);
+	border-color: var(--ui-accent-color);
 	box-shadow: 0 1px 4px rgba(1, 96, 134, 0.2);
 }
 
@@ -49,8 +53,8 @@
 	&:hover,
 	&:focus {
 		color: #fff;
-		background: #135e96;
-		border-color: #0f5488;
+		background: var(--ui-accent-hover-color, #135e96);
+		border-color: rgba(0, 0, 0, 0.1);
 		box-shadow: 0 1px 4px rgba(1, 96, 134, 0.3);
 	}
 }

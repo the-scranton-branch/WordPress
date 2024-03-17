@@ -19,7 +19,7 @@ blocksy_get_variables_from_file(
 		'default_background' => blocksy_background_default_value([
 			'backgroundColor' => [
 				'default' => [
-					'color' => 'var(--paletteColor8)',
+					'color' => 'var(--theme-palette-color-8)',
 				],
 			],
 		]),

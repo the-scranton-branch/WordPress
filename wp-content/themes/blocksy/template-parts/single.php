@@ -30,23 +30,6 @@ if (
 	return;
 }
 
-ob_start();
-the_content(
-	sprintf(
-		wp_kses(
-			/* translators: %s: Name of current post. Only visible to screen readers */
-			__( 'Continue reading<span class="screen-reader-text"> "%s"</span>', 'blocksy' ),
-			array(
-				'span' => array(
-					'class' => array(),
-				),
-			)
-		),
-		get_the_title()
-	)
-);
-$post_content = ob_get_clean();
-
 /**
  * Note to code reviewers: This line doesn't need to be escaped.
  * Function blocksy_output_hero_section() used here escapes the value properly.
@@ -88,7 +71,7 @@ if ($page_structure === 'none' || blocksy_post_uses_vc()) {
 			 * Note to code reviewers: This line doesn't need to be escaped.
 			 * Function blocksy_single_content() used here escapes the value properly.
 			 */
-			echo blocksy_single_content($post_content);
+			echo blocksy_single_content();
 		?>
 
 		<?php get_sidebar(); ?>

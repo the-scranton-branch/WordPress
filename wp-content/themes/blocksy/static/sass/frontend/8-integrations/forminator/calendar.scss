@@ -19,7 +19,7 @@
 			height: 40px;
 			cursor: pointer;
 			color: #fff;
-			background-color: var(--paletteColor1);
+			background-color: var(--theme-palette-color-1);
 
 			&.ui-datepicker-prev {
 				&:before {
@@ -64,7 +64,7 @@
 
 	.ui-datepicker-today,
 	.ui-datepicker-current-day {
-		background-color: var(--paletteColor1);
+		background-color: var(--theme-palette-color-1);
 
 		a {
 			color: #fff;

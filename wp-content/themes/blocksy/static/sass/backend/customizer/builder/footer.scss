@@ -39,7 +39,7 @@
 				height: calc(100% + 2px);
 				opacity: 0;
 				visibility: hidden;
-				background: var(--accentColor);
+				background: var(--ui-accent-color);
 				transition: opacity 0.1s ease, visibility 0.1s ease;
 			}
 		}
@@ -55,7 +55,7 @@
 	}
 
 	.row-inner {
-		--display: grid;
+		display: grid;
 		grid-template-columns: var(--gridTemplateColummns);
 	}
 }

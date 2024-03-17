@@ -2,6 +2,9 @@
 
 $config = [
 	'name' => __('Top Row', 'blocksy'),
-	'typography_keys' => ['footerWidgetsTitleFont', 'footerWidgetsFont'],
+	'typography_keys' => [
+		'footerWidgetsTitleFont',
+		'footerWidgetsFont'
+	],
 ];
 

@@ -2,11 +2,11 @@ export const liveSearchEntryPoints = [
 	{
 		els: () => [
 			[
-				...document.querySelectorAll('.search-form[data-live-results]'),
+				...document.querySelectorAll('.ct-search-form[data-live-results]'),
 			].filter(
 				(el) =>
 					!el.matches(
-						'[id="search-modal"] .search-form[data-live-results]'
+						'[id="search-modal"] .ct-search-form[data-live-results]'
 					) &&
 					!el.matches(
 						'.ct-sidebar .ct-widget .woocommerce-product-search'
@@ -20,7 +20,7 @@ export const liveSearchEntryPoints = [
 
 	{
 		els:
-			'.ct-sidebar .ct-widget .search-form:not(.woocommerce-product-search)[data-live-results]',
+			'.ct-sidebar .ct-widget .ct-search-form:not(.woocommerce-product-search)[data-live-results]',
 		load: () => import('../search-implementation'),
 		trigger: ['input'],
 	},
@@ -33,7 +33,7 @@ export const liveSearchEntryPoints = [
 	},
 
 	{
-		els: '[id="search-modal"] .search-form[data-live-results]',
+		els: '[id="search-modal"] .ct-search-form[data-live-results]',
 		load: () => import('../search-implementation'),
 		mount: ({ mount, el }) =>
 			mount(el, {

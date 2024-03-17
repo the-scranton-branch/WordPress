@@ -12,14 +12,11 @@ $options = [
 			),
 
 			[
-				blocksy_rand_md5() => [
-					'type' => 'ct-divider',
-				],
-
 				'enable_schema_org_markup' => [
 					'label' => __( 'Schema.org Markup', 'blocksy' ),
 					'type' => 'ct-switch',
 					'value' => 'yes',
+					'divider' => 'top:full',
 					'desc' => __( 'Enable Schema.org markup features for your website. You can disable this option if you use a SEO plugin and let it do the work.', 'blocksy' ),
 				],
 			],

@@ -43,7 +43,7 @@ if (! function_exists('blocksy_get_colors')) {
  */
 if (! function_exists('blocksy_get_color')) {
 	function blocksy_get_color($color_descriptor) {
-		if ( ! isset( $color_descriptor['color'] ) ) {
+		if (! isset($color_descriptor['color'])) {
 			return null;
 		}
 
@@ -121,6 +121,10 @@ if (! function_exists('blocksy_output_colors')) {
 				'responsive' => $args['responsive']
 			];
 
+			if (isset($descriptor['variableType'])) {
+				$local_args['variableType'] = $descriptor['variableType'];
+			}
+
 			if ($args['important']) {
 				$local_args['value_suffix'] = ' !important';
 			}
@@ -128,4 +132,35 @@ if (! function_exists('blocksy_output_colors')) {
 			blocksy_output_css_vars($local_args);
 		}
 	}
+}
+
+function blocksy_adjust_color_lightness($hexcolor, $percent) {
+	if (strlen($hexcolor) < 6) {
+		$hexcolor = $hexcolor[0] . $hexcolor[0] . $hexcolor[1] . $hexcolor[1] . $hexcolor[2] . $hexcolor[2];
+	}
+
+	$hexcolor = array_map(
+		'hexdec',
+		str_split(
+			str_pad(
+				str_replace(
+					'#',
+					'',
+					$hexcolor
+				),
+				6,
+				'0'
+			),
+			2
+		)
+	);
+
+	foreach ($hexcolor as $i => $color) {
+		$from = $percent < 0 ? 0 : $color;
+		$to = $percent < 0 ? $color : 255;
+		$pvalue = ceil(($to - $from) * $percent);
+		$hexcolor[$i] = str_pad(dechex($color + $pvalue), 2, '0', STR_PAD_LEFT);
+	}
+
+	return '#' . implode($hexcolor);
 }

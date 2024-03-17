@@ -94,7 +94,6 @@ const FontOptions = ({ option, value, sizeRef, onChange, props }) => {
 								unit: '',
 								min: 0,
 								max: 10,
-								decimals: 1,
 							},
 
 							{
@@ -149,21 +148,18 @@ const FontOptions = ({ option, value, sizeRef, onChange, props }) => {
 								unit: 'em',
 								min: -5,
 								max: 5,
-								decimals: 1,
 							},
 
 							{
 								unit: 'px',
 								min: -20,
 								max: 20,
-								decimals: 1,
 							},
 
 							{
 								unit: 'rem',
 								min: -5,
 								max: 5,
-								decimals: 1,
 							},
 						],
 					}}
@@ -194,8 +190,9 @@ const FontOptions = ({ option, value, sizeRef, onChange, props }) => {
 							className={classnames({
 								active: variant === value['text-transform'],
 							})}
-							data-variant={variant}>
-							<i className="ct-tooltip-top">
+							data-variant={variant}
+							data-tooltip="top">
+							<i className="ct-tooltip">
 								{
 									{
 										capitalize: __('Capitalize', 'blocksy'),
@@ -223,8 +220,9 @@ const FontOptions = ({ option, value, sizeRef, onChange, props }) => {
 							className={classnames({
 								active: variant === value['text-decoration'],
 							})}
-							data-variant={variant}>
-							<i className="ct-tooltip-top">
+							data-variant={variant}
+							data-tooltip="top">
+							<i className="ct-tooltip">
 								{
 									{
 										'line-through': __(

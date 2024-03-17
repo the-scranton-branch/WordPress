@@ -1,6 +1,6 @@
 <?php
 
-$forms_type = get_theme_mod('forms_type', 'classic-forms');
+$forms_type = blocksy_get_theme_mod('forms_type', 'classic-forms');
 
 if ($forms_type === 'classic-forms') {
 	$css->put(
@@ -26,7 +26,7 @@ if ($forms_type === 'classic-forms') {
 
 // general
 blocksy_output_colors([
-	'value' => get_theme_mod('formTextColor'),
+	'value' => blocksy_get_theme_mod('formTextColor'),
 	'default' => [
 		'default' => [ 'color' => Blocksy_Css_Injector::get_skip_rule_keyword('DEFAULT') ],
 		'focus' => [ 'color' => Blocksy_Css_Injector::get_skip_rule_keyword('DEFAULT') ],
@@ -35,24 +35,24 @@ blocksy_output_colors([
 	'variables' => [
 		'default' => [
 			'selector' => ':root',
-			'variable' => 'form-text-initial-color'
+			'variable' => 'theme-form-text-initial-color'
 		],
 
 		'focus' => [
 			'selector' => ':root',
-			'variable' => 'form-text-focus-color'
+			'variable' => 'theme-form-text-focus-color'
 		],
 	],
 ]);
 
-$formFontSize = get_theme_mod('formFontSize', 16);
+$formFontSize = blocksy_get_theme_mod('formFontSize', 16);
 
 if ($formFontSize !== 16) {
-	$css->put(':root', '--form-font-size: ' . $formFontSize . 'px');
+	$css->put(':root', '--theme-form-font-size: ' . $formFontSize . 'px');
 }
 
 blocksy_output_colors([
-	'value' => get_theme_mod('formBackgroundColor'),
+	'value' => blocksy_get_theme_mod('formBackgroundColor'),
 	'default' => [
 		'default' => [ 'color' => Blocksy_Css_Injector::get_skip_rule_keyword() ],
 		'focus' => [ 'color' => Blocksy_Css_Injector::get_skip_rule_keyword() ],
@@ -61,68 +61,68 @@ blocksy_output_colors([
 	'variables' => [
 		'default' => [
 			'selector' => ':root',
-			'variable' => 'form-field-initial-background'
+			'variable' => 'theme-form-field-background-initial-color'
 		],
 
 		'focus' => [
 			'selector' => ':root',
-			'variable' => 'form-field-focus-background'
+			'variable' => 'theme-form-field-background-focus-color'
 		],
 	],
 ]);
 
-$formInputHeight = get_theme_mod( 'formInputHeight', 40 );
+$formInputHeight = blocksy_get_theme_mod( 'formInputHeight', 40 );
 
 if ($formInputHeight !== 40) {
-	$css->put( ':root', '--form-field-height: ' . $formInputHeight . 'px' );
+	$css->put( ':root', '--theme-form-field-height: ' . $formInputHeight . 'px' );
 }
 
 
-$formTextAreaHeight = get_theme_mod( 'formTextAreaHeight', 170 );
-$css->put( 'form textarea', '--form-field-height: ' . $formTextAreaHeight . 'px' );
+$formTextAreaHeight = blocksy_get_theme_mod( 'formTextAreaHeight', 170 );
+$css->put( 'form textarea', '--theme-form-field-height: ' . $formTextAreaHeight . 'px' );
 
 
-$formFieldBorderRadius = get_theme_mod( 'formFieldBorderRadius', 3 );
+$formFieldBorderRadius = blocksy_get_theme_mod( 'formFieldBorderRadius', 3 );
 
 if ($formFieldBorderRadius !== 3) {
-	$css->put( ':root', '--form-field-border-radius: ' . $formFieldBorderRadius . 'px' );
+	$css->put( ':root', '--theme-form-field-border-radius: ' . $formFieldBorderRadius . 'px' );
 }
 
 
 blocksy_output_colors([
-	'value' => get_theme_mod('formBorderColor'),
+	'value' => blocksy_get_theme_mod('formBorderColor'),
 	'default' => [
-		'default' => [ 'color' => 'var(--border-color)' ],
-		'focus' => [ 'color' => 'var(--paletteColor1)' ],
+		'default' => [ 'color' => 'var(--theme-border-color)' ],
+		'focus' => [ 'color' => 'var(--theme-palette-color-1)' ],
 	],
 	'css' => $css,
 	'variables' => [
 		'default' => [
 			'selector' => ':root',
-			'variable' => 'form-field-border-initial-color'
+			'variable' => 'theme-form-field-border-initial-color'
 		],
 
 		'focus' => [
 			'selector' => ':root',
-			'variable' => 'form-field-border-focus-color'
+			'variable' => 'theme-form-field-border-focus-color'
 		],
 	],
 ]);
 
-$formBorderSize = get_theme_mod( 'formBorderSize', 1 );
+$formBorderSize = blocksy_get_theme_mod( 'formBorderSize', 1 );
 
 
 if ($forms_type === 'classic-forms') {
 	if($formBorderSize !== 1) {
 		$css->put(
 			':root',
-			'--form-field-border-width: ' . $formBorderSize . 'px'
+			'--theme-form-field-border-width: ' . $formBorderSize . 'px'
 		);
 	}
 } else {
 	$css->put(
 		':root',
-		'--form-field-border-width: 0 0 ' . $formBorderSize . 'px 0'
+		'--theme-form-field-border-width: 0 0 ' . $formBorderSize . 'px 0'
 	);
 
 	$css->put(
@@ -133,7 +133,7 @@ if ($forms_type === 'classic-forms') {
 
 // dropdown select
 blocksy_output_colors([
-	'value' => get_theme_mod('formSelectFontColor'),
+	'value' => blocksy_get_theme_mod('formSelectFontColor'),
 	'default' => [
 		'default' => [ 'color' => Blocksy_Css_Injector::get_skip_rule_keyword('DEFAULT') ],
 		'active' => [ 'color' => Blocksy_Css_Injector::get_skip_rule_keyword('DEFAULT') ],
@@ -153,7 +153,7 @@ blocksy_output_colors([
 ]);
 
 blocksy_output_colors([
-	'value' => get_theme_mod('formSelectBackgroundColor'),
+	'value' => blocksy_get_theme_mod('formSelectBackgroundColor'),
 	'default' => [
 		'default' => [ 'color' => Blocksy_Css_Injector::get_skip_rule_keyword() ],
 		'active' => [ 'color' => Blocksy_Css_Injector::get_skip_rule_keyword() ],
@@ -162,39 +162,39 @@ blocksy_output_colors([
 	'variables' => [
 		'default' => [
 			'selector' => ':root',
-			'variable' => 'form-field-select-initial-background'
+			'variable' => 'theme-form-select-background-initial-color'
 		],
 
 		'active' => [
 			'selector' => ':root',
-			'variable' => 'form-field-select-active-background'
+			'variable' => 'theme-form-select-background-active-color'
 		],
 	],
 ]);
 
 // radio & checkbox
 blocksy_output_colors([
-	'value' => get_theme_mod('radioCheckboxColor'),
+	'value' => blocksy_get_theme_mod('radioCheckboxColor'),
 	'default' => [
-		'default' => [ 'color' => 'var(--border-color)' ],
-		'accent' => [ 'color' => 'var(--paletteColor1)' ],
+		'default' => [ 'color' => 'var(--theme-border-color)' ],
+		'accent' => [ 'color' => 'var(--theme-palette-color-1)' ],
 	],
 	'css' => $css,
 	'variables' => [
 		'default' => [
 			'selector' => ':root',
-			'variable' => 'form-selection-control-initial-color'
+			'variable' => 'theme-form-selection-field-initial-color'
 		],
 
 		'accent' => [
 			'selector' => ':root',
-			'variable' => 'form-selection-control-accent-color'
+			'variable' => 'theme-form-selection-field-active-color'
 		],
 	],
 ]);
 
-$checkboxBorderRadius = get_theme_mod( 'checkboxBorderRadius', 3 );
+$checkboxBorderRadius = blocksy_get_theme_mod('checkboxBorderRadius', 3);
 
 if ($checkboxBorderRadius !== 3) {
-	$css->put( ':root', '--form-checkbox-border-radius: ' . $checkboxBorderRadius . 'px' );
+	$css->put( ':root', '--theme-form-checkbox-border-radius: ' . $checkboxBorderRadius . 'px' );
 }

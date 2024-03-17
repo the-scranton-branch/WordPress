@@ -2,11 +2,11 @@
 [data-type="stackable/button"] {
 
 	.stk-button {
-		border-radius: var(--buttonBorderRadius, 3px);
+		border-radius: var(--theme-button-border-radius, 3px);
 	}
 	
-	--stk-button-text-color: var(--buttonTextInitialColor);
-	--stk-button-background-color: var(--buttonInitialColor);
+	--stk-button-text-color: var(--theme-button-text-initial-color);
+	--stk-button-background-color: var(--theme-button-background-initial-color);
 }
 
 
@@ -14,7 +14,7 @@
 div.wp-block-getwid-section {
 	.wp-block-getwid-section__wrapper {
 		.wp-block-getwid-section__inner-wrapper {
-			max-width: var(--block-max-width);
+			max-width: var(--theme-block-max-width);
 		}
 	}
 }
@@ -22,7 +22,7 @@ div.wp-block-getwid-section {
 
 // qubely
 .qubely-section .qubely-container {
-	max-width: var(--block-max-width) !important;
+	max-width: var(--theme-block-max-width) !important;
 	padding-left: 0 !important;
 	padding-right: 0 !important;
 }

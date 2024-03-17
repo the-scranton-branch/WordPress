@@ -15,14 +15,14 @@ ctEvents.on(
 		variableDescriptors['socials'] = ({ itemId }) => ({
 			socialsIconSize: {
 				selector: assembleSelector(getRootSelectorFor({ itemId })),
-				variable: 'icon-size',
+				variable: 'theme-icon-size',
 				responsive: true,
 				unit: 'px',
 			},
 
 			socialsIconSpacing: {
 				selector: assembleSelector(getRootSelectorFor({ itemId })),
-				variable: 'spacing',
+				variable: 'items-spacing',
 				responsive: true,
 				unit: 'px',
 			},
@@ -34,16 +34,6 @@ ctEvents.on(
 				responsive: true,
 				important: true,
 			},
-
-			socialsLabelVisibility: handleResponsiveSwitch({
-				selector: assembleSelector(
-					mutateSelector({
-						selector: getRootSelectorFor({ itemId }),
-						operation: 'suffix',
-						to_add: '.ct-label',
-					})
-				),
-			}),
 
 			...typographyOption({
 				id: 'socials_label_font',
@@ -67,7 +57,7 @@ ctEvents.on(
 							to_add: 'a',
 						})
 					),
-					variable: 'linkInitialColor',
+					variable: 'theme-link-initial-color',
 					type: 'color:default',
 					responsive: true,
 				},
@@ -80,7 +70,7 @@ ctEvents.on(
 							to_add: 'a',
 						})
 					),
-					variable: 'linkHoverColor',
+					variable: 'theme-link-hover-color',
 					type: 'color:hover',
 					responsive: true,
 				},
@@ -95,7 +85,7 @@ ctEvents.on(
 							to_add: '[data-color="custom"]',
 						})
 					),
-					variable: 'icon-color',
+					variable: 'theme-icon-color',
 					type: 'color:default',
 					responsive: true,
 				},
@@ -108,7 +98,7 @@ ctEvents.on(
 							to_add: '[data-color="custom"]',
 						})
 					),
-					variable: 'icon-hover-color',
+					variable: 'theme-icon-hover-color',
 					type: 'color:hover',
 					responsive: true,
 				},
@@ -157,7 +147,7 @@ ctEvents.on(
 							to_add: '[data-transparent-row="yes"]',
 						})
 					),
-					variable: 'linkInitialColor',
+					variable: 'theme-link-initial-color',
 					type: 'color:default',
 					responsive: true,
 				},
@@ -175,7 +165,7 @@ ctEvents.on(
 							to_add: '[data-transparent-row="yes"]',
 						})
 					),
-					variable: 'linkHoverColor',
+					variable: 'theme-link-hover-color',
 					type: 'color:hover',
 					responsive: true,
 				},
@@ -196,7 +186,7 @@ ctEvents.on(
 						})
 					),
 
-					variable: 'icon-color',
+					variable: 'theme-icon-color',
 					type: 'color:default',
 					responsive: true,
 				},
@@ -215,7 +205,7 @@ ctEvents.on(
 						})
 					),
 
-					variable: 'icon-hover-color',
+					variable: 'theme-icon-hover-color',
 					type: 'color:hover',
 					responsive: true,
 				},
@@ -276,7 +266,7 @@ ctEvents.on(
 							to_add: '[data-sticky*="yes"]',
 						})
 					),
-					variable: 'linkInitialColor',
+					variable: 'theme-link-initial-color',
 					type: 'color:default',
 					responsive: true,
 				},
@@ -294,7 +284,7 @@ ctEvents.on(
 							to_add: '[data-sticky*="yes"]',
 						})
 					),
-					variable: 'linkHoverColor',
+					variable: 'theme-link-hover-color',
 					type: 'color:hover',
 					responsive: true,
 				},
@@ -314,7 +304,7 @@ ctEvents.on(
 							to_add: '[data-sticky*="yes"]',
 						})
 					),
-					variable: 'icon-color',
+					variable: 'theme-icon-color',
 					type: 'color:default',
 					responsive: true,
 				},
@@ -332,7 +322,7 @@ ctEvents.on(
 							to_add: '[data-sticky*="yes"]',
 						})
 					),
-					variable: 'icon-hover-color',
+					variable: 'theme-icon-hover-color',
 					type: 'color:hover',
 					responsive: true,
 				},
@@ -405,34 +395,18 @@ ctEvents.on(
 			)
 		}
 
+		if (optionId === 'socialsLabelVisibility') {
+			updateAndSaveEl(selector, (el) => {
+				;[...el.querySelectorAll('.ct-label')].map((label) => {
+					responsiveClassesFor(optionValue, label)
+				})
+			})
+		}
+
 		if (optionId === 'visibility') {
 			updateAndSaveEl(selector, (el) =>
 				responsiveClassesFor({ ...optionValue, desktop: true }, el)
 			)
-		}
-
-		if (optionId === 'socialsLabelVisibility') {
-			const socialsLabelVisibility = values.socialsLabelVisibility || {
-				desktop: false,
-				tablet: false,
-				mobile: false,
-			}
-
-			updateAndSaveEl(selector, (el) => {
-				if (
-					socialsLabelVisibility.desktop ||
-					socialsLabelVisibility.tablet ||
-					socialsLabelVisibility.mobile
-				) {
-					;[...el.querySelectorAll('span.ct-label')].map((el) =>
-						el.removeAttribute('hidden')
-					)
-				} else {
-					;[...el.querySelectorAll('span.ct-label')].map((el) =>
-						el.setAttribute('hidden', '')
-					)
-				}
-			})
 		}
 	}
 )

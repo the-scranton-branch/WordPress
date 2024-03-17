@@ -1,8 +1,20 @@
 <?php
 
+blocksy_add_early_inline_style_in_gutenberg(function () {
+	$m = new \Blocksy\FontsManager();
+	$maybe_google_fonts_url = $m->load_editor_fonts();
+
+	if (! empty($maybe_google_fonts_url)) {
+		return "@import url('" . $maybe_google_fonts_url . "');\n";
+	}
+
+	return '';
+});
+
 add_action(
 	'enqueue_block_editor_assets',
 	function () {
+
 		if (get_current_screen()->base === 'widgets') {
 			return;
 		}
@@ -47,6 +59,23 @@ add_action(
 			$theme->get('Version')
 		);
 
+		if (get_current_screen()->base === 'post') {
+			wp_enqueue_style(
+				'ct-main-editor-iframe-styles',
+				get_template_directory_uri() . '/static/bundle/editor-iframe.min.css',
+				[],
+				$theme->get('Version')
+			);
+
+			wp_add_inline_style(
+				'ct-main-editor-styles',
+				blocksy_manager()->dynamic_css->load_backend_dynamic_css([
+					'echo' => false,
+					'filename' => 'admin/editor-top-level'
+				])
+			);
+		}
+
 		if (is_rtl()) {
 			wp_enqueue_style(
 				'ct-main-editor-rtl-styles',
@@ -75,12 +104,12 @@ add_action(
 
 		$prefix = blocksy_manager()->screen->get_admin_prefix($post_type);
 
-		$page_structure = get_theme_mod(
+		$page_structure = blocksy_get_theme_mod(
 			$prefix . '_structure',
 			($prefix === 'single_blog_post') ? 'type-3' : 'type-4'
 		);
 
-		$background_source = get_theme_mod(
+		$background_source = blocksy_get_theme_mod(
 			$prefix . '_background',
 			blocksy_background_default_value([
 				'backgroundColor' => [
@@ -100,7 +129,7 @@ add_action(
 			&&
 			$background_source['backgroundColor']['default']['color'] === Blocksy_Css_Injector::get_skip_rule_keyword()
 		) {
-			$background_source = get_theme_mod(
+			$background_source = blocksy_get_theme_mod(
 				'site_background',
 				blocksy_background_default_value([
 					'backgroundColor' => [
@@ -117,12 +146,12 @@ add_action(
 			'default_page_structure' => $page_structure,
 
 			'default_background' => $background_source,
-			'default_content_style' => get_theme_mod(
+			'default_content_style' => blocksy_get_theme_mod(
 				$prefix . '_content_style',
 				blocksy_get_content_style_default($prefix)
 			),
 
-			'default_content_background' => get_theme_mod(
+			'default_content_background' => blocksy_get_theme_mod(
 				$prefix . '_content_background',
 				blocksy_background_default_value([
 					'backgroundColor' => [
@@ -133,25 +162,22 @@ add_action(
 				])
 			),
 
-			'default_boxed_content_spacing' => get_theme_mod(
+			'default_boxed_content_spacing' => blocksy_get_theme_mod(
 				$prefix . '_boxed_content_spacing',
 				[
 					'desktop' => blocksy_spacing_value([
-						'linked' => true,
 						'top' => '40px',
 						'left' => '40px',
 						'right' => '40px',
 						'bottom' => '40px',
 					]),
 					'tablet' => blocksy_spacing_value([
-						'linked' => true,
 						'top' => '35px',
 						'left' => '35px',
 						'right' => '35px',
 						'bottom' => '35px',
 					]),
 					'mobile'=> blocksy_spacing_value([
-						'linked' => true,
 						'top' => '20px',
 						'left' => '20px',
 						'right' => '20px',
@@ -160,10 +186,9 @@ add_action(
 				]
 			),
 
-			'default_content_boxed_radius' => get_theme_mod(
+			'default_content_boxed_radius' => blocksy_get_theme_mod(
 				$prefix . '_content_boxed_radius',
 				blocksy_spacing_value([
-					'linked' => true,
 					'top' => '3px',
 					'left' => '3px',
 					'right' => '3px',
@@ -171,7 +196,18 @@ add_action(
 				])
 			),
 
-			'default_content_boxed_shadow' => get_theme_mod(
+			'default_content_boxed_border' => blocksy_get_theme_mod(
+				$prefix . '_content_boxed_border',
+				[
+					'width' => 1,
+					'style' => 'none',
+					'color' => [
+						'color' => 'rgba(44,62,80,0.2)',
+					],
+				]
+			),
+
+			'default_content_boxed_shadow' => blocksy_get_theme_mod(
 				$prefix . '_content_boxed_shadow',
 				blocksy_box_shadow_value([
 					'enable' => true,
@@ -188,8 +224,8 @@ add_action(
 
 			'options_panel_svg' => apply_filters(
 				'blocksy:editor:options:icon',
-				'<svg width="20" height="20" viewBox="0 0 60 60">
-					<path d="M30 0c16.569 0 30 13.431 30 30 0 16.569-13.431 30-30 30C13.431 60 0 46.569 0 30 0 13.431 13.431 0 30 0zm8.07 30.552a.381.381 0 00-.507 0L21.08 45.718c-.113.104-.033.282.126.282h15.424c.19 0 .372-.07.506-.193l7.233-6.657c.84-.774.84-2.027 0-2.8zm0-16.5a.381.381 0 00-.507 0L19.21 30.94a.635.635 0 00-.21.467v12.56c0 .148.193.222.306.118l23.784-22c.84-.773.84-2.622 0-3.395zM34.72 13H19.358c-.197 0-.358.148-.358.33v14.138c0 .147.193.22.306.117l15.54-14.303c.114-.104.033-.282-.126-.282z" fill-rule="evenodd" />
+				'<svg width="20" height="20" viewBox="0 0 50 50">
+					<path d="M31.2,30.2c0,0.9-0.7,1.6-1.6,1.6h-5l-1.3-3.1h6.4C30.5,28.7,31.2,29.4,31.2,30.2z M29.7,19h-6.4l1.3,3.1h5c0.8,0,1.6-0.7,1.6-1.6C31.2,19.7,30.5,19,29.7,19z M50,25c0,13.8-11.2,25-25,25C11.2,50,0,38.8,0,25C0,11.2,11.2,0,25,0C38.8,0,50,11.2,50,25z M36.1,25.4c1-1.4,1.6-3,1.6-4.9c0-1.8-0.6-3.4-1.6-4.8c-1.4-2-3.7-3.3-6.4-3.4c-0.1,0-0.1,0-0.2,0v0H14.3c-0.4,0-0.7,0.4-0.5,0.8l3.7,8.9h-3.2c-0.4,0-0.7,0.4-0.5,0.8l6.4,15.5h9.4c4.5,0,8.1-3.7,8.1-8.1C37.7,28.4,37.2,26.8,36.1,25.4C36.2,25.4,36.2,25.4,36.1,25.4z"/>
 				</svg>'
 			)
 		];
@@ -199,87 +235,8 @@ add_action(
 			'ct_editor_localizations',
 			$localize
 		);
-	}
-);
-
-add_filter(
-	'admin_body_class',
-	function ($classes) {
-		global $post;
-
-		$current_screen = get_current_screen();
-
-		if (
-			! $current_screen->is_block_editor()
-			||
-			get_current_screen()->base === 'widgets'
-		) {
-			return $classes;
-		}
-
-		$page_structure = blocksy_default_akg(
-			'page_structure_type',
-			blocksy_get_post_options($post->ID),
-			'default'
-		);
-
-		if ($page_structure === 'default') {
-			$post_type = get_current_screen()->post_type;
-			$maybe_cpt = blocksy_manager()
-				->post_types
-				->is_supported_post_type();
-
-			if ($maybe_cpt) {
-				$post_type = $maybe_cpt;
-			}
-
-			$prefix = blocksy_manager()->screen->get_admin_prefix($post_type);
-
-			$page_structure = get_theme_mod(
-				$prefix . '_structure',
-				($prefix === 'single_blog_post') ? 'type-3' : 'type-4'
-			);
-		}
-
-		$class = 'narrow';
-
-		if ($page_structure === 'type-4') {
-			$class = 'normal';
-		}
-
-		$class = 'ct-structure-' . $class;
-
-		if (get_post_type($post) === 'ct_content_block') {
-			$atts = blocksy_get_post_options($post->ID);
-			$template_type = get_post_meta($post->ID, 'template_type', true);
-
-			if (blocksy_default_akg(
-				'has_content_block_structure',
-				$atts,
-				$template_type === 'hook' ? 'no' : 'yes'
-			)) {
-				$page_structure = blocksy_default_akg(
-					'content_block_structure',
-					$atts,
-					'type-4'
-				);
-
-				$class = 'narrow';
-
-				if ($page_structure === 'type-4') {
-					$class = 'normal';
-				}
-
-				$class = 'ct-structure-' . $class;
-			} else {
-				$class = '';
-			}
-		}
-
-		$classes .= ' ' . $class;
-
-		return $classes;
-	}
+	},
+	5
 );
 
 add_filter('tiny_mce_before_init', function ($mceInit) {
@@ -304,69 +261,18 @@ add_filter('tiny_mce_before_init', function ($mceInit) {
 	return $mceInit;
 });
 
-add_filter(
-	'pre_http_request',
-	function ($response, $parsed_args, $url) {
-		if ('https://blocksy-block-editor-customizer-styles' !== $url) {
-			return $response;
-		}
-
-		$css = new Blocksy_Css_Injector();
-		$tablet_css = new Blocksy_Css_Injector();
-		$mobile_css = new Blocksy_Css_Injector();
-
-		do_action(
-			'blocksy:admin-dynamic-css:enqueue',
-			[
-				'context' => 'inline',
-				'css' => $css,
-				'tablet_css' => $tablet_css,
-				'mobile_css' => $mobile_css
-			]
+add_action(
+	'block_editor_settings_all',
+	function($settings) {
+		$settings['styles'][] = array(
+			'css' => blocksy_manager()->dynamic_css->load_backend_dynamic_css([
+				'echo' => false
+			]),
+			'__unstableType' => 'theme',
+			'source' => 'blocksy'
 		);
 
-		blocksy_theme_get_dynamic_styles([
-			'name' => 'admin-global',
-			'css' => $css,
-			'tablet_css' => $tablet_css,
-			'mobile_css' => $mobile_css,
-			'context' => 'inline',
-			'chunk' => 'admin',
-			'selector' => 'htmlroot'
-		]);
-
-		$all_global_css = trim($css->build_css_structure());
-		$all_tablet_css = trim($tablet_css->build_css_structure());
-		$all_mobile_css = trim($mobile_css->build_css_structure());
-
-		if (empty($all_global_css)) {
-			return;
-		}
-
-		$css = $all_global_css;
-
-		if (! empty($all_tablet_css)) {
-			$css .= "\n@media (max-width: 800px) {\n";
-			$css .= $all_tablet_css;
-			$css .= "}\n";
-		}
-
-		if (! empty($all_mobile_css)) {
-			$css .= "\n@media (max-width: 370px) {\n";
-			$css .= $all_mobile_css;
-			$css .= "}\n";
-		}
-
-		return [
-			'body' => $css,
-			'headers' => new Requests_Utility_CaseInsensitiveDictionary(),
-			'response' => [
-				'code' => 200,
-				'message' => 'OK',
-			],
-			'cookies' => [],
-			'filename' => null,
-		];
-	},
-	10, 3
+		return $settings;
+	}
 );
+

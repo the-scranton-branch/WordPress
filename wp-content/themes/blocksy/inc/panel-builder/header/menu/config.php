@@ -9,6 +9,7 @@ $config = [
 		'menu',
 		'stretch_menu',
 		'dropdown_interaction',
-		'dropdown_click_interaction'
+		'dropdown_click_interaction',
+		'collapse_non_fitting_menu_items',
 	],
 ];

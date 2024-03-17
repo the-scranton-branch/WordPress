@@ -78,7 +78,7 @@ export const humanizeVariations = (variation) => {
 		i2: __('Extra-Light 200 Italic', 'blocksy'),
 		n3: __('Light 300', 'blocksy'),
 		i3: __('Light 300 Italic', 'blocksy'),
-		n4: __('Regular', 'blocksy'),
+		n4: __('Regular 400', 'blocksy'),
 		i4: __('Regular 400 Italic', 'blocksy'),
 		n5: __('Medium 500', 'blocksy'),
 		i5: __('Medium 500 Italic', 'blocksy'),
@@ -100,9 +100,10 @@ export const familyForDisplay = (family) => {
 	if (family.indexOf('ct_font') === 0) {
 		return family
 			.replace('ct_font_', '')
-			.replace(/([-_][a-z])/gi, ($1) =>
-				$1.toUpperCase().replace('-', '').replace('_', '')
-			)
+			.replace('__', '_')
+			.split('_')
+			.map((s) => s.replace(/^[a-z]/, (m) => m.toUpperCase()))
+			.join(' ')
 	}
 
 	if (family.indexOf('ct_typekit') === 0) {

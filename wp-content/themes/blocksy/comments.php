@@ -21,7 +21,7 @@ $commenter = wp_get_current_commenter();
 
 $prefix = blocksy_manager()->screen->get_prefix();
 
-$comments_position = get_theme_mod($prefix . '_comments_position', 'below');
+$comments_position = blocksy_get_theme_mod($prefix . '_comments_position', 'below');
 
 do_action('blocksy:comments:before');
 

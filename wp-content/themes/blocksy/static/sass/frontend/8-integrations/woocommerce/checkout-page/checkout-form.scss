@@ -1,5 +1,5 @@
 form.woocommerce-checkout {
-	display: var(--display, grid);
+	display: grid;
 
 	@include media-breakpoint-down (md) {
 		grid-row-gap: 40px;
@@ -9,20 +9,16 @@ form.woocommerce-checkout {
 		grid-template-columns: repeat(2, 1fr);
 		grid-column-gap: 35px;
 
+		> .woocommerce-error,
 		> .woocommerce-NoticeGroup {
 			grid-column: 1/-1;
 		}
 	}
 
 	h3 {
-		--fontSize: 17px;
-	}
-
-	select {
-		width: 100%;
+		font-size: 17px;
 	}
 }
-
 
 // customer details
 #customer_details {
@@ -37,8 +33,8 @@ form.woocommerce-checkout {
 
 #ship-to-different-address {
 	label {
-		--fontSize: 15px;
-		--fontWeight: 600;
+		font-size: 15px;
+		font-weight: 600;
 	}
 }
 

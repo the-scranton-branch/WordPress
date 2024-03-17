@@ -117,9 +117,7 @@ $options = [
 				'type' => 'ct-spacing',
 				'divider' => 'top',
 				'setting' => [ 'transport' => 'postMessage' ],
-				'value' => blocksy_spacing_value([
-					'linked' => true,
-				]),
+				'value' => blocksy_spacing_value(),
 				'responsive' => true
 			],
 

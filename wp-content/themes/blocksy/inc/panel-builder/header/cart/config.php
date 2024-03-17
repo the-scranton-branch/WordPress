@@ -10,6 +10,7 @@ $config = [
 		'has_cart_dropdown',
 		'mini_cart_type',
 		'icon_source',
-		'icon'
+		'icon',
+		'image_size'
 	]
 ];

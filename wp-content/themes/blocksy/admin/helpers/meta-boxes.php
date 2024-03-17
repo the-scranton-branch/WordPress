@@ -92,24 +92,32 @@ class Blocksy_Meta_Boxes {
 			'blocksy_meta',
 			array(
 				'get_callback' => function ($object) {
-					$post_id = $object['id'];
-					return get_post_meta($post_id, 'blocksy_post_meta_options', true);
+					return blocksy_get_post_options($object['id']);
 				},
 				'update_callback' => function ($value, $object) {
 					$post_id = $object->ID;
 
-					$value['styles_descriptor'] = blocksy_manager()
+					$descriptor = blocksy_manager()
 						->dynamic_css
 						->maybe_set_single_post_styles_descriptor([
 							'post_id' => $post_id,
-							'atts' => $value
+							'atts' => $value,
+							'check_empty' => true
 						]);
 
-					update_post_meta(
-						$post_id,
-						'blocksy_post_meta_options',
-						$value
-					);
+					if ($descriptor) {
+						$value['styles_descriptor'] = $descriptor;
+					} else {
+						unset($value['styles_descriptor']);
+					}
+
+					if (! empty($value)) {
+						update_post_meta(
+							$post_id,
+							'blocksy_post_meta_options',
+							$value
+						);
+					}
 				}
 			)
 		);
@@ -128,7 +136,7 @@ class Blocksy_Meta_Boxes {
 
 			add_meta_box(
 				'blocksy_settings_meta_box',
-				sprintf(
+				blocksy_safe_sprintf(
 					// Translators: %s is the theme name.
 					__( '%s Settings', 'blocksy' ),
 					__( 'Blocksy', 'blocksy' )
@@ -192,12 +200,20 @@ class Blocksy_Meta_Boxes {
 
 		if (isset($_POST['blocksy_post_meta_options'][blocksy_post_name()])) {
 			$values = json_decode(
-				wp_unslash($_POST['blocksy_post_meta_options'][blocksy_post_name()]),
+				wp_unslash(
+					$_POST['blocksy_post_meta_options'][blocksy_post_name()]
+				),
 				true
 			);
 		}
 
-		update_post_meta($post_id, 'blocksy_post_meta_options', $values);
+		if (! empty($values)) {
+			update_post_meta(
+				$post_id,
+				'blocksy_post_meta_options',
+				$values
+			);
+		}
 	}
 }
 

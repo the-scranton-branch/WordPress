@@ -10,7 +10,7 @@
 	height: var(--toggle-button-size);
 	margin-inline-start: var(--toggle-button-margin-start, auto);
 	margin-inline-end: var(--toggle-button-margin-end, initial);
-	transition: all 0.12s cubic-bezier(0.455, 0.03, 0.515, 0.955);
+	transition: border-color 0.12s cubic-bezier(0.455, 0.03, 0.515, 0.955), background 0.12s cubic-bezier(0.455, 0.03, 0.515, 0.955);
 
 	padding: var(--toggle-button-padding, 0px) !important;
 	box-shadow: var(--toggle-button-shadow, none) !important;
@@ -22,17 +22,17 @@
 
 	svg {
 		transform: var(--toggle-icon-transform);
-		--icon-transition: transform 0.15s ease-out, fill 0.12s cubic-bezier(0.455, 0.03, 0.515, 0.955);
+		--theme-icon-transition: transform 0.15s ease-out, fill 0.12s cubic-bezier(0.455, 0.03, 0.515, 0.955);
 	}
 }
 
 
 [class*="ct-toggle-close"] {
 	top: var(--toggle-button-top, initial);
-	right: var(--toggle-button-inset-end, 0);
+	inset-inline-end: var(--toggle-button-inset-end, 0);
 
-	--icon-size: 12px;
-	--icon-color: rgba(255, 255, 255, 0.7);
+	--theme-icon-size: 12px;
+	--theme-icon-color: rgba(255, 255, 255, 0.7);
 
 	&:hover {
 		--toggle-icon-transform: rotate(90deg);

@@ -1,19 +1,26 @@
 article > .entry-content {
 
 	> * {
-		margin-left: var(--default-editor, auto);
-		margin-right: var(--default-editor, auto);
+		margin-inline: var(--theme-default-editor, auto);
 
 		&.alignwide {
-			max-width: var(--default-editor, var(--block-wide-max-width));
+			max-width: var(--theme-default-editor, var(--theme-block-wide-max-width));
 		}
 
-		&:not(.alignfull):not(.alignwide):not(.alignleft):not(.alignright) {
-			max-width: var(--default-editor, var(--block-max-width));
+		&:where(:not(.alignfull):not(.alignwide):not(.alignleft):not(.alignright)) {
+			max-width: var(--theme-default-editor, var(--theme-block-max-width));
 		}
 
-		&:not(.alignfull):not(.alignleft):not(.alignright) {
-			width: var(--default-editor, var(--block-width));
+		&:where(:not(.alignfull):not(.alignleft):not(.alignright)) {
+			width: var(--theme-default-editor, var(--theme-block-width));
 		}
+	}
+}
+
+
+body .is-layout-constrained {
+
+	> :where(:not(.alignleft):not(.alignright):not(.alignfull)) {
+		width: var(--theme-default-editor, var(--theme-block-width));
 	}
 }

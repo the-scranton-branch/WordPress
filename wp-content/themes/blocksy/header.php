@@ -10,7 +10,7 @@
  */
 
 ?><!doctype html>
-<html <?php language_attributes(); ?>>
+<html <?php language_attributes(); ?><?php echo blocksy_html_attr() ?>>
 <head>
 	<?php do_action('blocksy:head:start') ?>
 

@@ -10,10 +10,10 @@ $options = [
 		'setting' => [ 'transport' => 'postMessage' ],
 		'placeholder' => __('Select menu...', 'blocksy'),
 		'choices' => blocksy_ordered_keys(blocksy_get_menus_items()),
-		'desc' => sprintf(
+		'desc' => blocksy_safe_sprintf(
 			// translators: placeholder here means the actual URL.
 			__( 'Manage your menus in the %sMenus screen%s.', 'blocksy' ),
-			sprintf(
+			blocksy_safe_sprintf(
 				'<a href="%s" target="_blank">',
 				admin_url('/nav-menus.php')
 			),
@@ -89,6 +89,14 @@ $options = [
 						],
 					],
 
+					'mobile_menu_submenu_dots' => [
+						'label' => __( 'Submenu Dots', 'blocksy' ),
+						'type' => 'ct-switch',
+						'value' => 'yes',
+						'divider' => 'top',
+						'setting' => [ 'transport' => 'postMessage' ],
+					],
+
 					'mobile_menu_items_spacing' => [
 						'label' => __( 'Items Vertical Spacing', 'blocksy' ),
 						'type' => 'ct-slider',
@@ -96,7 +104,7 @@ $options = [
 						'max' => 50,
 						'value' => 5,
 						'responsive' => true,
-						'divider' => 'top',
+						'divider' => 'top:full',
 						'setting' => [ 'transport' => 'postMessage' ],
 					],
 
@@ -222,7 +230,7 @@ $options = [
 							[
 								'title' => __( 'Hover', 'blocksy' ),
 								'id' => 'hover',
-								'inherit' => 'var(--linkHoverColor)'
+								'inherit' => 'var(--theme-link-hover-color)'
 							],
 
 							[
@@ -269,7 +277,7 @@ $options = [
 							[
 								'title' => __( 'Hover', 'blocksy' ),
 								'id' => 'hover',
-								// 'inherit' => 'var(--linkHoverColor)'
+								// 'inherit' => 'var(--theme-link-hover-color)'
 							],
 
 							[
@@ -279,21 +287,6 @@ $options = [
 							],
 						],
 					],
-
-					// 'mobile_menu_child_size' => [
-					// 	'label' => __( 'Dropdown Font Size', 'blocksy' ),
-					// 	'type' => 'ct-slider',
-					// 	'value' => '20px',
-					// 	'divider' => 'top',
-					// 	'units' => [
-					// 		[ 'unit' => 'px', 'min' => 0, 'max' => 100 ],
-					// 		[ 'unit' => 'pt', 'min' => 0, 'max' => 500 ],
-					// 		[ 'unit' => 'em', 'min' => 0, 'max' => 100 ],
-					// 		[ 'unit' => 'rem', 'min' => 0, 'max' => 100 ],
-					// 		[ 'unit' => 'vw', 'min' => 0, 'max' => 50 ],
-					// 	],
-					// 	'setting' => [ 'transport' => 'postMessage' ],
-					// ],
 
 					'mobile_menu_items_divider' => [
 						'label' => __( 'Items Divider', 'blocksy' ),
@@ -318,7 +311,6 @@ $options = [
 						'value' => blocksy_spacing_value([
 							'left' => 'auto',
 							'right' => 'auto',
-							'linked' => true,
 						]),
 						'responsive' => true
 					],
@@ -389,7 +381,7 @@ $options = [
 
 								'value' => [
 									'default' => [
-										'color' => 'var(--color)',
+										'color' => 'var(--theme-text-color)',
 									],
 
 									'hover' => [
@@ -410,7 +402,7 @@ $options = [
 									[
 										'title' => __( 'Hover', 'blocksy' ),
 										'id' => 'hover',
-										'inherit' => 'var(--linkHoverColor)',
+										'inherit' => 'var(--theme-link-hover-color)',
 									],
 
 									[
@@ -507,9 +499,7 @@ $options = [
 						'type' => 'ct-spacing',
 						'divider' => 'top',
 						'setting' => [ 'transport' => 'postMessage' ],
-						'value' => blocksy_spacing_value([
-							'linked' => true,
-						]),
+						'value' => blocksy_spacing_value()
 					],
 
 				],

@@ -1,7 +1,7 @@
 .ct-header-text {
-	color: var(--color);
+	color: var(--theme-text-color);
 	text-align: var(--horizontal-alignment);
-	--heading-color: var(--color);
+	// --theme-heading-color: var(--theme-text-color);
 
 	&[data-width="stretch"] {
 		width: 100%;

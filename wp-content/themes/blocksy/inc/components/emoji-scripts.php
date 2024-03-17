@@ -1,6 +1,6 @@
 <?php
 
-if (get_theme_mod('emoji_scripts', 'yes') === 'yes') {
+if (blocksy_get_theme_mod('emoji_scripts', 'yes') === 'yes') {
 	call_user_func(
 		'remove_action',
 		'wp_head',

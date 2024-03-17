@@ -27,7 +27,7 @@
 		}
 
 		input {
-			--form-field-height: var(--buttonMinHeight);
+			--theme-form-field-height: var(--theme-button-min-height);
 			
 			@include media-breakpoint-down (sm) {
 				width: 100%;

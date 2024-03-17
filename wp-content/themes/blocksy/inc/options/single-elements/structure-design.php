@@ -31,10 +31,10 @@ $options = [
 						],
 					],
 				]),
-				'desc' => sprintf(
+				'desc' => blocksy_safe_sprintf(
 					// translators: placeholder here means the actual URL.
 					__( 'Please note, by default this option is inherited from Colors ➝ %sSite Background%s.', 'blocksy' ),
-					sprintf(
+					blocksy_safe_sprintf(
 						'<a data-trigger-section="color" href="%s">',
 						admin_url('/customize.php?autofocus[section]=color')
 					),
@@ -59,7 +59,7 @@ $options = [
 				'value' => blocksy_background_default_value([
 					'backgroundColor' => [
 						'default' => [
-							'color' => 'var(--paletteColor8)',
+							'color' => 'var(--theme-palette-color-8)',
 						],
 					],
 				])
@@ -105,7 +105,6 @@ $options = [
 				'type' => 'ct-spacing',
 				'divider' => 'top',
 				'value' => blocksy_spacing_value([
-					'linked' => true,
 					'top' => '3px',
 					'left' => '3px',
 					'right' => '3px',
@@ -121,21 +120,18 @@ $options = [
 				'divider' => 'top',
 				'value' => [
 					'desktop' => blocksy_spacing_value([
-						'linked' => true,
 						'top' => '40px',
 						'left' => '40px',
 						'right' => '40px',
 						'bottom' => '40px',
 					]),
 					'tablet' => blocksy_spacing_value([
-						'linked' => true,
 						'top' => '35px',
 						'left' => '35px',
 						'right' => '35px',
 						'bottom' => '35px',
 					]),
 					'mobile'=> blocksy_spacing_value([
-						'linked' => true,
 						'top' => '20px',
 						'left' => '20px',
 						'right' => '20px',

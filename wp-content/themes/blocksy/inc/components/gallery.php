@@ -94,10 +94,11 @@ function blocksy_flexy($args = []) {
 				'no_image_type' => 'woo',
 				'attachment_id' => $attachment_id,
 				'ratio' => $args['images_ratio'],
-				'tag_name' => 'a',
+				'tag_name' => 'figure',
 				'size' => $args['size'],
 				'html_atts' => array_merge([
-					'href' => $single_item_href
+					'data-src' => $single_item_href
+					// 'href' => $single_item_href
 				], $width ? [
 					'data-width' => $width,
 					'data-height' => $height
@@ -131,7 +132,12 @@ function blocksy_flexy($args = []) {
 			$args['items'] .= blocksy_html_tag(
 				'div',
 				$slide_wrapper_attr,
-				blocksy_image($slide_args)
+				blocksy_media(
+					apply_filters(
+						'blocksy:woocommerce:image_additional_attributes',
+						$slide_args
+					)
+				)
 			);
 
 			if ($has_scale_rotate) {
@@ -187,7 +193,6 @@ function blocksy_flexy($args = []) {
 	<div
 		class="<?php echo $class ?>"
 		<?php echo $container_attr ?>>
-
 		<div class="flexy">
 			<div class="flexy-view" data-flexy-view="<?php echo $slider_view ?>">
 				<div
@@ -199,13 +204,13 @@ function blocksy_flexy($args = []) {
 
 			<?php if ($args['has_arrows']) { ?>
 				<span class="<?php echo trim('flexy-arrow-prev' . ' ' . $args['arrows_class']) ?>">
-					<svg width="16" height="10" viewBox="0 0 16 10">
+					<svg width="16" height="10" fill="currentColor" viewBox="0 0 16 10">
 						<path d="M15.3 4.3h-13l2.8-3c.3-.3.3-.7 0-1-.3-.3-.6-.3-.9 0l-4 4.2-.2.2v.6c0 .1.1.2.2.2l4 4.2c.3.4.6.4.9 0 .3-.3.3-.7 0-1l-2.8-3h13c.2 0 .4-.1.5-.2s.2-.3.2-.5-.1-.4-.2-.5c-.1-.1-.3-.2-.5-.2z"/>
 					</svg>
 				</span>
 
 				<span class="<?php echo trim('flexy-arrow-next' . ' ' . $args['arrows_class']) ?>">
-					<svg width="16" height="10" viewBox="0 0 16 10">
+					<svg width="16" height="10" fill="currentColor" viewBox="0 0 16 10">
 						<path d="M.2 4.5c-.1.1-.2.3-.2.5s.1.4.2.5c.1.1.3.2.5.2h13l-2.8 3c-.3.3-.3.7 0 1 .3.3.6.3.9 0l4-4.2.2-.2V5v-.3c0-.1-.1-.2-.2-.2l-4-4.2c-.3-.4-.6-.4-.9 0-.3.3-.3.7 0 1l2.8 3H.7c-.2 0-.4.1-.5.2z"/>
 					</svg>
 				</span>
@@ -262,14 +267,15 @@ if (! function_exists('blocksy_flexy_pills')) {
 					$class = ' class="active"';
 				}
 
-				$image_output = '<li' . $class . '>' . blocksy_image([
+				$image_output = '<li' . $class . '>' . blocksy_media([
 					'attachment_id' => $args['pills_images'][$index - 1],
 					'ratio' => 'original',
 					'tag_name' => 'span',
 					'size' => "woocommerce_gallery_thumbnail",
 					'html_atts' => [
-						'aria-label' => sprintf(__('Slide %s', 'blocksy'), $index)
+						'aria-label' => blocksy_safe_sprintf(__('Slide %s', 'blocksy'), $index)
 					],
+					// TODO: need to discuss
 					'display_video' => 'pill',
 					'lazyload' => $args['lazyload']
 				]) . '</li>';
@@ -279,7 +285,7 @@ if (! function_exists('blocksy_flexy_pills')) {
 				echo blocksy_html_tag(
 					'li',
 					array_merge([
-						'aria-label' => sprintf(__('Slide %s', 'blocksy'), $index)
+						'aria-label' => blocksy_safe_sprintf(__('Slide %s', 'blocksy'), $index)
 					], intval($index) === $args['active_index'] ? [
 						'class' => 'active'
 					] : []),
@@ -292,12 +298,12 @@ if (! function_exists('blocksy_flexy_pills')) {
 
 		if ($args['pills_have_arrows']) {
 			echo '<span class="' . trim('flexy-arrow-prev' . ' ' . $args['pills_arrows_class']) . '">
-				<svg width="16" height="10" viewBox="0 0 16 10">
+				<svg width="16" height="10" fill="currentColor" viewBox="0 0 16 10">
 					<path d="M15.3 4.3h-13l2.8-3c.3-.3.3-.7 0-1-.3-.3-.6-.3-.9 0l-4 4.2-.2.2v.6c0 .1.1.2.2.2l4 4.2c.3.4.6.4.9 0 .3-.3.3-.7 0-1l-2.8-3h13c.2 0 .4-.1.5-.2s.2-.3.2-.5-.1-.4-.2-.5c-.1-.1-.3-.2-.5-.2z"/>
 				</svg>
 			</span>';
 			echo '<span class="' . trim('flexy-arrow-next' . ' ' . $args['pills_arrows_class']) . '">
-				<svg width="16" height="10" viewBox="0 0 16 10">
+				<svg width="16" height="10" fill="currentColor" viewBox="0 0 16 10">
 					<path d="M.2 4.5c-.1.1-.2.3-.2.5s.1.4.2.5c.1.1.3.2.5.2h13l-2.8 3c-.3.3-.3.7 0 1 .3.3.6.3.9 0l4-4.2.2-.2V5v-.3c0-.1-.1-.2-.2-.2l-4-4.2c-.3-.4-.6-.4-.9 0-.3.3-.3.7 0 1l2.8 3H.7c-.2 0-.4.1-.5.2z"/>
 				</svg>
 			</span>';

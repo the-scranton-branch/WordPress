@@ -124,12 +124,16 @@ if (! function_exists('blocksy_prefix_selector')) {
 	}
 }
 
-if (! function_exists('blocksy_camel_case_prefix')) {
-	function blocksy_camel_case_prefix($value, $prefix = '') {
+if (! function_exists('blocksy_prefix_theme_variable')) {
+	function blocksy_prefix_theme_variable($value, $prefix = '') {
 		if (empty($prefix)) {
 			return $value;
 		}
 
-		return $prefix . ucfirst($value);
+		return str_replace(
+			'theme-',
+			'theme-' . $prefix . '-',
+			$value
+		);
 	}
 }

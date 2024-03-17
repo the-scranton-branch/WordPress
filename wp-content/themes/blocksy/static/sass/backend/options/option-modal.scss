@@ -6,12 +6,12 @@
 	border-radius: 6px;
 	box-sizing: border-box;
 	box-shadow: var(--option-modal-shadown, 0 15px 15px rgba(0, 0, 0, 0.08));
-	right: var(--modal-x-offset);
+	inset-inline-end: var(--modal-x-offset);
 
 	&:before {
 		position: absolute;
 		content: '';
-		left: var(--option-modal-arrow-position, calc(100% - 55px));
+		inset-inline-start: var(--option-modal-arrow-position, calc(100% - 55px));
 		border-style: solid;
 	}
 

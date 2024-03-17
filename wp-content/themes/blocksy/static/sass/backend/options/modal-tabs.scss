@@ -19,7 +19,7 @@
 		border-bottom: 1px solid #eee;
 
 		&:not(:last-child) {
-			border-right: 1px solid #eee;
+			border-inline-end: 1px solid #eee;
 		}
 
 		&:not(.active) {
@@ -36,11 +36,11 @@
 			&:after {
 				position: absolute;
 				content: '';
-				left: -1px;
+				inset-inline-start: -1px;
 				bottom: -1px;
 				width: calc(100% + 2px);
 				height: 2px;
-				background: var(--accentColor);
+				background: var(--ui-accent-color);
 			}
 		}
 	}

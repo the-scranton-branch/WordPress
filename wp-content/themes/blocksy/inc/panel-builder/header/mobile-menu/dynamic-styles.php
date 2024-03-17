@@ -44,17 +44,17 @@ if (isset($row_id) && $row_id === 'offcanvas') {
 		'variables' => [
 			'default' => [
 				'selector' => blocksy_assemble_selector($root_selector),
-				'variable' => 'linkInitialColor'
+				'variable' => 'theme-link-initial-color'
 			],
 
 			'hover' => [
 				'selector' => blocksy_assemble_selector($root_selector),
-				'variable' => 'linkHoverColor'
+				'variable' => 'theme-link-hover-color'
 			],
 
 			'active' => [
 				'selector' => blocksy_assemble_selector($root_selector),
-				'variable' => 'linkActiveColor'
+				'variable' => 'theme-link-active-color'
 			],
 		],
 	]);
@@ -88,7 +88,7 @@ if (isset($row_id) && $row_id === 'offcanvas') {
 					'operation' => 'suffix',
 					'to_add' => '.sub-menu'
 				])),
-				'variable' => 'linkInitialColor'
+				'variable' => 'theme-link-initial-color'
 			],
 
 			'hover' => [
@@ -97,7 +97,7 @@ if (isset($row_id) && $row_id === 'offcanvas') {
 					'operation' => 'suffix',
 					'to_add' => '.sub-menu'
 				])),
-				'variable' => 'linkHoverColor'
+				'variable' => 'theme-link-hover-color'
 			],
 
 			'active' => [
@@ -106,19 +106,10 @@ if (isset($row_id) && $row_id === 'offcanvas') {
 					'operation' => 'suffix',
 					'to_add' => '.sub-menu'
 				])),
-				'variable' => 'linkActiveColor'
+				'variable' => 'theme-link-active-color'
 			],
 		],
 	]);
-
-	// $mobile_menu_child_size = blocksy_akg( 'mobile_menu_child_size', $atts, '20px' );
-
-	// if ($mobile_menu_child_size !== '20px') {
-	// 	$css->put(
-	// 		blocksy_assemble_selector($root_selector),
-	// 		'--mobile-menu-child-size: ' . $mobile_menu_child_size
-	// 	);
-	// }
 
 	blocksy_output_border([
 		'css' => $css,
@@ -144,7 +135,6 @@ if (isset($row_id) && $row_id === 'offcanvas') {
 			blocksy_spacing_value([
 				'left' => 'auto',
 				'right' => 'auto',
-				'linked' => true,
 			])
 		)
 	]);
@@ -202,7 +192,7 @@ blocksy_output_font_css([
 blocksy_output_colors([
 	'value' => blocksy_akg('inline_menu_font_color', $atts),
 	'default' => [
-		'default' => [ 'color' => 'var(--color)' ],
+		'default' => [ 'color' => 'var(--theme-text-color)' ],
 		'hover' => [ 'color' => Blocksy_Css_Injector::get_skip_rule_keyword('DEFAULT') ],
 		'active' => [ 'color' => Blocksy_Css_Injector::get_skip_rule_keyword('DEFAULT') ],
 	],
@@ -214,7 +204,7 @@ blocksy_output_colors([
 				'operation' => 'suffix',
 				'to_add' => '> ul > li > a'
 			])),
-			'variable' => 'linkInitialColor'
+			'variable' => 'theme-link-initial-color'
 		],
 
 		'hover' => [
@@ -223,7 +213,7 @@ blocksy_output_colors([
 				'operation' => 'suffix',
 				'to_add' => '> ul > li > a'
 			])),
-			'variable' => 'linkHoverColor'
+			'variable' => 'theme-link-hover-color'
 		],
 
 		'active' => [
@@ -232,7 +222,7 @@ blocksy_output_colors([
 				'operation' => 'suffix',
 				'to_add' => '> ul > li > a'
 			])),
-			'variable' => 'linkActiveColor'
+			'variable' => 'theme-link-active-color'
 		],
 	],
 ]);
@@ -261,7 +251,7 @@ if (isset($has_transparent_header) && $has_transparent_header) {
 						'to_add' => '[data-transparent-row="yes"]'
 					])
 				),
-				'variable' => 'linkInitialColor'
+				'variable' => 'theme-link-initial-color'
 			],
 
 			'hover' => [
@@ -276,7 +266,7 @@ if (isset($has_transparent_header) && $has_transparent_header) {
 						'to_add' => '[data-transparent-row="yes"]'
 					])
 				),
-				'variable' => 'linkHoverColor'
+				'variable' => 'theme-link-hover-color'
 			],
 
 			'active' => [
@@ -291,7 +281,7 @@ if (isset($has_transparent_header) && $has_transparent_header) {
 						'to_add' => '[data-transparent-row="yes"]'
 					])
 				),
-				'variable' => 'linkActiveColor'
+				'variable' => 'theme-link-active-color'
 			],
 		],
 	]);
@@ -321,7 +311,7 @@ if (isset($has_sticky_header) && $has_sticky_header) {
 						'to_add' => '[data-sticky*="yes"]'
 					])
 				),
-				'variable' => 'linkInitialColor'
+				'variable' => 'theme-link-initial-color'
 			],
 
 			'hover' => [
@@ -336,7 +326,7 @@ if (isset($has_sticky_header) && $has_sticky_header) {
 						'to_add' => '[data-sticky*="yes"]'
 					])
 				),
-				'variable' => 'linkHoverColor'
+				'variable' => 'theme-link-hover-color'
 			],
 
 			'active' => [
@@ -351,7 +341,7 @@ if (isset($has_sticky_header) && $has_sticky_header) {
 						'to_add' => '[data-sticky*="yes"]'
 					])
 				),
-				'variable' => 'linkActiveColor'
+				'variable' => 'theme-link-active-color'
 			],
 		],
 	]);
@@ -364,9 +354,8 @@ blocksy_output_spacing([
 	'selector' => blocksy_assemble_selector($root_selector),
 	'important' => true,
 	'value' => blocksy_default_akg(
-		'inline_menu_margin', $atts,
-		blocksy_spacing_value([
-			'linked' => true,
-		])
+		'inline_menu_margin',
+		$atts,
+		blocksy_spacing_value()
 	)
 ]);

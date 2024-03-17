@@ -6,7 +6,6 @@ form.cart {
 
 	td, th {
 		border: none;
-		// padding-top: 0;
 
 		&:first-child {
 			padding-inline-start: 0;
@@ -32,16 +31,6 @@ form.cart {
 	}
 }
 
-.ct-default-gallery,
-.ct-stacked-gallery {
-	.entry-summary > form.cart {
-		margin-top: var(--product-element-spacing, 35px);
-		padding-top: var(--product-element-spacing, 35px);
-		border-top: 1px solid var(--border-color);
-	}
-}
-
-
 
 // only for simple and variable products
 .ct-cart-actions {
@@ -52,13 +41,11 @@ form.cart {
 	> * {
 		order: var(--item-order, 5);
 		width: var(--item-width, 100%);
-		// margin-bottom: var(--cart-actions-items-spacing, 10px);
 	}
 
 	.quantity {
 		--item-order: 1;
-		--quantity-height: var(--buttonMinHeight);
-		// margin-inline-end: var(--cart-actions-items-spacing, 10px);
+		--quantity-height: var(--theme-button-min-height);
 
 		@include media-breakpoint-down (xs) {
 			&[data-type='type-1'] {
@@ -72,33 +59,26 @@ form.cart {
 	}
 
 	// buttons
-	--button-padding: 5px 20px;
+	--theme-button-padding: 5px 20px;
 
 	@include media-breakpoint-up (sm) {
-		--buttonMinHeight: 55px;
+		--theme-button-min-height: 55px;
 	}
 
 	.single_add_to_cart_button {
 		flex: 1;
 		--item-order: 2;
-
-		// @include media-breakpoint-up (sm) {
-		// 	&:not(.added) {
-		// 		max-width: var(--button-width);
-		// 	}
-		// }
 	}
 
 	.added_to_cart {
 		--item-order: 3;
-		--buttonTextInitialColor: var(--color);
-		--buttonTextHoverColor: var(--color);
-		--buttonInitialColor: rgba(224,229,235,0.6);
-		--buttonHoverColor: rgba(224,229,235,1);
+		--theme-button-text-initial-color: var(--theme-text-color);
+		--theme-button-text-hover-color: var(--theme-text-color);
+		--theme-button-background-initial-color: rgba(224,229,235,0.6);
+		--theme-button-background-hover-color: rgba(224,229,235,1);
 
 		@include media-breakpoint-up (sm) {
 			flex: 1;
-			// margin-inline-start: var(--cart-actions-items-spacing, 10px);
 		}
 	}
 
@@ -107,8 +87,7 @@ form.cart {
 	.added_to_cart {
 
 		@include media-breakpoint-up (md) {
-			max-width: var(--button-width);
+			max-width: var(--theme-button-max-width);
 		}
 	}
 }
-

@@ -15,17 +15,16 @@ $plug = [
 		'description' => __( 'JetEngine is a dynamic content plugin that lets you build a complex websites fast and cost-effectively.', 'blocksy' ),
 	],
 
-	'toolset' => [
-		'type' => 'link',
-		'title' => 'Toolset',
-		'link' => 'https://toolset.com/',
-		'description' => __( 'Toolset helps WordPress professionals build advanced dynamic sites without programming.', 'blocksy' ),
+	'greenshift-animation-and-page-builder-blocks' => [
+		'type' => 'web',
+		'title' => 'Greenshift',
+		'description' => __( 'Greenshift helps you create complex pages and animations without code skills and directly inside core editor.', 'blocksy' ),
 	],
 
-	'getwid' => [
+	'modula-best-grid-gallery' => [
 		'type' => 'web',
-		'title' => 'Getwid – Gutenberg Blocks',
-		'description' => __( '40+ Gutenberg Blocks, plus multiple pre-made free block templates for the WordPress block editor.', 'blocksy' ),
+		'title' => 'Modula – Customizable Gallery Plugin',
+		'description' => __( 'Build stunning lightbox galleries, masonry grids, custom grids with no more than a few clicks right from the WordPress dashboard.', 'blocksy' ),
 	],
 
 	'translatepress-multilingual' => [

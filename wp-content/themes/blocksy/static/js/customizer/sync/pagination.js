@@ -67,7 +67,7 @@ export const getPaginationVariables = () => ({
 		),
 		variable: 'spacing',
 		responsive: true,
-		unit: 'px',
+		unit: '',
 	},
 
 	[`${prefix}_paginationDivider`]: {
@@ -86,7 +86,7 @@ export const getPaginationVariables = () => ({
 				'[data-pagination="simple"], [data-pagination="next_prev"]',
 				prefix === 'blog' ? '' : prefix
 			),
-			variable: 'color',
+			variable: 'theme-text-color',
 			type: 'color:default',
 		},
 
@@ -95,7 +95,7 @@ export const getPaginationVariables = () => ({
 				'.ct-pagination[data-pagination="simple"]',
 				prefix === 'blog' ? '' : prefix
 			),
-			variable: 'colorActive',
+			variable: 'theme-text-active-color',
 			type: 'color:active',
 		},
 
@@ -104,7 +104,7 @@ export const getPaginationVariables = () => ({
 				'[data-pagination="simple"], [data-pagination="next_prev"]',
 				prefix === 'blog' ? '' : prefix
 			),
-			variable: 'linkHoverColor',
+			variable: 'theme-link-hover-color',
 			type: 'color:hover',
 		},
 	],
@@ -115,7 +115,7 @@ export const getPaginationVariables = () => ({
 				'[data-pagination="load_more"]',
 				prefix === 'blog' ? '' : prefix
 			),
-			variable: 'buttonTextInitialColor',
+			variable: 'theme-button-text-initial-color',
 			type: 'color:default',
 		},
 
@@ -124,7 +124,7 @@ export const getPaginationVariables = () => ({
 				'[data-pagination="load_more"]',
 				prefix === 'blog' ? '' : prefix
 			),
-			variable: 'buttonTextHoverColor',
+			variable: 'theme-button-text-hover-color',
 			type: 'color:hover',
 		},
 	],
@@ -135,7 +135,7 @@ export const getPaginationVariables = () => ({
 				'[data-pagination="load_more"]',
 				prefix === 'blog' ? '' : prefix
 			),
-			variable: 'buttonInitialColor',
+			variable: 'theme-button-background-initial-color',
 			type: 'color:default',
 		},
 
@@ -144,7 +144,7 @@ export const getPaginationVariables = () => ({
 				'[data-pagination="load_more"]',
 				prefix === 'blog' ? '' : prefix
 			),
-			variable: 'buttonHoverColor',
+			variable: 'theme-button-background-hover-color',
 			type: 'color:hover',
 		},
 	],
@@ -152,7 +152,7 @@ export const getPaginationVariables = () => ({
 	[`${prefix}_pagination_border_radius`]: {
 		selector: applyPrefixFor('.ct-pagination', prefix),
 		type: 'spacing',
-		variable: 'border-radius',
+		variable: 'theme-border-radius',
 		// responsive: true,
 	},
 })

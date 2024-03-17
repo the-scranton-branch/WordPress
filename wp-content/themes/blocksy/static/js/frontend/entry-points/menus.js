@@ -15,6 +15,20 @@ export const menuEntryPoints = [
 	},
 
 	{
+		els: () => ['.ct-header-account > ul'],
+		// TODO: dont load JS if header account doesn't have any menu
+		// condition: () =>
+		load: loadMenuEntry,
+		onLoad: false,
+		mount: ({ el, mountMenuLevel }) =>
+			mountMenuLevel(el, {
+				startPosition: 'left',
+				checkForFirstLevel: false,
+			}),
+		events: ['ct:general:device-change', 'ct:header:init-popper'],
+	},
+
+	{
 		els: () => [
 			'header [data-device="desktop"] [data-id*="menu"] > .menu .menu-item-has-children',
 			'header [data-device="desktop"] [data-id*="menu"] > .menu .page_item_has_children',
@@ -35,7 +49,7 @@ export const menuEntryPoints = [
 		// load: () => new Promise((r) => r({ mount: mountResponsiveHeader })),
 		load: () => import('../header/responsive-desktop-menu'),
 		// onLoad: false,
-		events: ['ct:general:device-change', 'ct:header:render-frame'],
+		events: ['ct:general:device-change'],
 		condition: () => {
 			if (getCurrentScreen() !== 'desktop') {
 				return false
@@ -78,7 +92,7 @@ export const menuEntryPoints = [
 					baseContainer.getBoundingClientRect().width -
 						[
 							...baseContainer.querySelectorAll(
-								'[data-id]:not([data-id*="menu"])'
+								'[data-items] > [data-id]:not([data-id*="menu"])'
 							),
 						].reduce((t, item) => {
 							let style = window.getComputedStyle(item)
@@ -101,11 +115,30 @@ export const menuEntryPoints = [
 							el.closest('[data-id*="menu"]')
 						)
 
+						let extraWidth = 0
+
+						let parentComputedStyle = window.getComputedStyle(
+							el.parentNode,
+							null
+						)
+
+						if (parentComputedStyle.gap !== 'normal') {
+							extraWidth = parseFloat(parentComputedStyle.gap)
+
+							if (
+								el.parentNode.firstElementChild === el ||
+								el === el.parentNode.lastElementChild
+							) {
+								extraWidth = extraWidth / 2
+							}
+						}
+
 						return (
 							t +
 							el.getBoundingClientRect().width +
 							parseInt(style.getPropertyValue('margin-left')) +
-							parseInt(style.getPropertyValue('margin-right'))
+							parseInt(style.getPropertyValue('margin-right')) +
+							extraWidth
 						)
 					}, 0)
 
@@ -138,8 +171,10 @@ export const menuEntryPoints = [
 	},
 
 	{
-		els: () =>
+		els: () => [
 			'header [data-device="desktop"] [data-id^="menu"]:not([data-responsive])',
+			'.ct-header-account > ul',
+		],
 		load: () =>
 			new Promise((r) =>
 				r({

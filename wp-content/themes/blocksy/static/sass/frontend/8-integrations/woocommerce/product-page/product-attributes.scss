@@ -1,6 +1,11 @@
 .woocommerce-product-attributes {
 	font-size: 15px;
-	--content-spacing: 0;
+
+	p {
+		&:last-child {
+			margin-bottom: 0;
+		}
+	}
 
 	th {
 		font-weight: 500;

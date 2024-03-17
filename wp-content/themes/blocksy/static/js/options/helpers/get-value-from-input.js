@@ -1,4 +1,4 @@
-import _ from 'underscore'
+import { isString, isObject, isNumber } from './primitive-types'
 
 export const getFirstLevelOptions = (options, hasInnerOptions = true) => {
 	const { __CT_KEYS_ORDER__, ...rest } = options
@@ -72,20 +72,25 @@ export const getValueFromInput = (
 
 				if (Object.keys(values).indexOf(currentOptionId) > -1) {
 					if (
-						_.isString(values[currentOptionId]) ||
-						_.isNumber(values[currentOptionId])
+						isString(values[currentOptionId]) ||
+						isNumber(values[currentOptionId])
 					) {
 						actualValue = values[currentOptionId]
 					}
 
-					if (_.isObject(values[currentOptionId])) {
+					if (
+						isObject(values[currentOptionId]) &&
+						!Array.isArray(values[currentOptionId])
+					) {
+						// Dont touch responsive values and dont spread all keys
+						// together.
 						actualValue = {
-							...(firstLevelOptions[currentOptionId].value || {}),
+							// ...(firstLevelOptions[currentOptionId].value || {}),
 							...values[currentOptionId],
 						}
 					}
 
-					if (_.isArray(values[currentOptionId])) {
+					if (Array.isArray(values[currentOptionId])) {
 						actualValue = values[currentOptionId]
 							? values[currentOptionId]
 							: [

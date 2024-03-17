@@ -2,7 +2,7 @@ import {
 	createElement,
 	Component,
 	createContext,
-	Fragment
+	Fragment,
 } from '@wordpress/element'
 import { maybeTransformUnorderedChoices } from '../helpers/parse-choices.js'
 import classnames from 'classnames'
@@ -13,7 +13,7 @@ const Checkboxes = ({
 	option,
 	value,
 	onChange,
-	option: { view = 'checkboxes' }
+	option: { view = 'checkboxes' },
 }) => {
 	const orderedChoices = maybeTransformUnorderedChoices(option.choices)
 
@@ -24,7 +24,7 @@ const Checkboxes = ({
 			<div
 				className="ct-option-checkbox"
 				{...(inline ? { ['data-inline']: '' } : {})}
-				{...option.attr || {}}>
+				{...(option.attr || {})}>
 				{orderedChoices.map(({ key, value: choiceValue }) => (
 					<label key={key}>
 						<input
@@ -39,12 +39,12 @@ const Checkboxes = ({
 								onChange({
 									...value,
 									[key]: value[key]
-										? Object.values(value).filter(v => v)
+										? Object.values(value).filter((v) => v)
 												.length === 1 &&
-											!option.allow_empty
+										  !option.allow_empty
 											? true
 											: false
-										: true
+										: true,
 								})
 							}
 						/>
@@ -60,14 +60,14 @@ const Checkboxes = ({
 		<ul
 			className="ct-option-checkbox ct-buttons-group"
 			{...(inline ? { ['data-inline']: '' } : {})}
-			{...option.attr || {}}>
+			{...(option.attr || {})}>
 			{orderedChoices.map(({ key, value: choiceValue }) => (
 				<li
 					className={classnames({
 						active:
 							typeof value[key] === 'boolean'
 								? value[key]
-								: value[key] === 'true'
+								: value[key] === 'true',
 					})}
 					data-id={key}
 					key={key}
@@ -75,11 +75,11 @@ const Checkboxes = ({
 						onChange({
 							...value,
 							[key]: value[key]
-								? Object.values(value).filter(v => v).length ===
-										1 && !option.allow_empty
+								? Object.values(value).filter((v) => v)
+										.length === 1 && !option.allow_empty
 									? true
 									: false
-								: true
+								: true,
 						})
 					}>
 					{choiceValue}

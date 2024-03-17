@@ -6,28 +6,56 @@ $margin: 22px;
 		margin-bottom: $margin;
 	}
 
-	.customize-control,
-	.customize-section-description {
-		padding: var(--ui-padding, 0 14px) !important;
-		box-sizing: border-box;
+
+	.customize-pane-child {
+
+		> .customize-control,
+		.customize-section-description {
+			box-sizing: border-box;
+			padding: var(--ui-padding, 0 14px);
+		}
 	}
 
 	// menus section
-	.control-panel-nav_menus {
-		.customize-control-title {
-			margin-top: $margin;
-			padding: 0 26px;
+	.customize-pane-child {
 
-			+ li {
-				border-top: none;
+		&.control-panel-nav_menus {
+
+			.customize-control-title {
+				margin-top: $margin;
+				padding: 0 26px;
+
+				+ li {
+					border-top: none;
+				}
+			}
+
+			h3.accordion-section-title {
+				flex-direction: column;
+				align-items: flex-start;
+				gap: 5px;
+				font-weight: 600;
 			}
 		}
 	}
 
-	.control-section-nav_menu {
-		.customize-control-nav_menu_name {
-			margin-top: $margin;
+	#accordion-section-add_menu,
+	.customize-control-description {
+		padding: 0 26px;
+		margin-inline: 0;
+	}
+
+	#accordion-section-add_menu {
+		border-block: 1px solid #dcdcde;
+		padding-block: 30px;
+
+		p {
+			margin-top: 0;
 		}
+	}
+
+	#accordion-section-add_menu h3 {
+		text-align: start;
 	}
 
 

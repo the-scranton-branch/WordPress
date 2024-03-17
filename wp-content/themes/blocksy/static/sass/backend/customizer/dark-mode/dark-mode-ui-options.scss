@@ -1,15 +1,16 @@
 .ct-dark-mode {
 
 	// input
-	textarea,
-	input[type='text'],
-	input[type='number'],
-	input[type='search'] {
-		// &:not(.components-text-control__input) {
+	[class^=ct-option] {
+		
+		textarea,
+		input[type='text'],
+		input[type='number'],
+		[class^=ct-option] input[type='search'] {
 			color: $light;
 			border-color: $border;
 			background: $background_light;
-		// }
+		}
 	}
 
 	// checkbox & radiobox
@@ -24,9 +25,12 @@
 		}
 	}
 
-	.ct-option-spacing > span input.inactive {
-		color: darken($light, 50%);
-		background: darken($background_light, 2%);
+	.ct-option-spacing {
+
+		> span input.inactive {
+			color: darken($light, 50%);
+			background: darken($background_light, 2%);
+		}
 	}
 
 
@@ -49,12 +53,6 @@
 			// color: $accent;
 			color: lighten($accent, 7%);
 		}
-	}
-
-
-	// revert button
-	.ct-control .ct-revert {
-		color: $light;
 	}
 
 	.ct-control > header label {
@@ -94,7 +92,7 @@
 	// slider
 	.ct-option-slider .ct-slider{
 		&:before {
-			--backgroundColor: var(--borderColor);
+			--backgroundColor: var(--optionBorderColor);
 		}
 	}
 
@@ -142,26 +140,20 @@
 		border-top-color: $border;
 	}
 
+	.ct-more-options-trigger button {
+		color: $color_background_light;
+	}
+
 	// tabs
 	.ct-tabs {
-		> ul > li {
-			color: lighten($background, 60%);
-			border-color: lighten($border, 5%);
-			background: $background_light;
+		--tabs-pills-inactive-color: #{lighten($background, 60%)};
+		--tabs-pills-inactive-background-color: #{$background_light};
 
-			&:after {
-				background: $background;
-			}
+		--tabs-pills-hover-color: #{lighten($background, 60%)};
+		--tabs-pills-hover-background-color: #{lighten($background_light, 2%)};
 
-			&:not(.active):hover {
-				color: lighten($background, 60%);
-				background: lighten($background_light, 5%);
-			}
-		}
-
-		.ct-current-tab {
-			border-top-color: lighten($border, 5%);
-		}
+		--tabs-pills-active-color: #{lighten($background, 60%)};
+		--tabs-pills-active-background-color: #{$background};
 	}
 
 	.widget-inside .ct-tabs li.active:after {
@@ -187,19 +179,26 @@
 		}
 	}
 
+	.ct-option-color-value,
+	.ct-color-picker-palette,
+	.ct-image-tab > *:not(:last-child) {
+		border-color: $border;
+	}
+
 
 	// responsive controls
 	.ct-responsive-controls li {
-		&:not(.active) {
-			--color: #929499;
-
-			&:hover {
-				--color: #babbbe;
-			}
-		}
+		color: #929499;
 
 		&.active {
 			color: $accent;
+		}
+
+		&:not(.active) {
+
+			&:hover {
+				color: #babbbe;
+			}
 		}
 	}
 
@@ -274,9 +273,6 @@
 	}
 
 	// layers
-	.ct-layer {
-		background: darken($background_light, 1.5%);
-	}
 
 	.ct-layer-controls {
 		color: lighten($background, 60%);
@@ -290,6 +286,10 @@
 			background: lighten($background, 60%);
 			box-shadow: 0px 0px 0px 1px lighten($background_light, 1%);
 		}
+	}
+
+	.ct-layer-content {
+		background: darken($background_light, 1.5%);
 	}
 
 	// value changer
@@ -343,14 +343,23 @@
 	}
 
 	// tooltip
-	[class*="ct-tooltip"] {
+	.ct-tooltip {
 		background: $accent;
 	}
 
-	.ct-tooltip-top:after {
-		border-top: 5px solid $accent;
+	[data-tooltip="top"] .ct-tooltip {
+		
+		&:after {
+			border-top-color: $accent;
+		}
 	}
 
+	[data-tooltip="left"] .ct-tooltip {
+		
+		&:after {
+			border-inline-start-color: $accent;
+		}
+	}
 
 	// color pallete
 	.ct-color-palettes {
@@ -374,7 +383,7 @@
 
 		button {
 			color: lighten($background, 65%);
-			border-right-color: var(--borderColor);
+			border-right-color: var(--optionBorderColor);
 
 			&:before {
 				background: lighten($background, 65%);
@@ -388,7 +397,7 @@
 			}
 
 			&:after {
-				background: var(--accentColor);
+				background: var(--ui-accent-color);
 			}
 		}
 	}
@@ -483,13 +492,31 @@
 		}
 	}
 
-	.components-popover__content {
+	.ct-options-popover .components-popover__content {
 		background: $background_light;
 	}
 
 	.ct-color-picker-value,
 	.components-popover__content {
 		border-color: $border !important;
+	}
+
+	.ct-color-palettes-container .ct-single-palette {
+		&:not(.active):not(:hover) {
+			border-color: var(--optionBorderColor);
+		}
+	}
+
+	.ct-options-popover {
+		
+		.components-button {
+			color: lighten($background, 60%);
+		}
+	}
+
+	// modal
+	.ct-admin-modal .ct-modal-content {
+		--optionBorderColor: #{$border};
 	}
 
 	// option modal tabs
@@ -544,6 +571,10 @@
 
 		&:hover {
 			border-color: $accent;
+
+			a {
+				color: $accent;
+			}
 		}
 
 		> div > span {
@@ -655,8 +686,62 @@
 
 			&:hover {
 				background: lighten($background_light, 3%);
-				border-left-color: var(--accentColor);
+				border-left-color: var(--ui-accent-color);
 				border-bottom-color: lighten($border, 3%);
+			}
+		}
+	}
+
+
+	// block widgets
+	#customize-sidebar-outer-content {
+		border-color: $border;
+		background: $background;
+
+		.customize-widgets-layout__inserter-panel {
+			background: transparent;
+
+			.customize-widgets-layout__inserter-panel-header {
+				border-bottom-color: $border;
+				background: $background_light;
+
+				h2,
+				button {
+					color: $color_background_light;
+				}
+			}
+
+			.customize-widgets-layout__inserter-panel-content {
+
+				.components-search-control__input-wrapper {
+
+					input[type=search] {
+						background: $background_light;
+					}
+
+					.components-search-control__icon svg {
+						fill: $color_background_light;
+					}
+				}
+
+				.block-editor-inserter__panel-content {
+
+					.components-button {
+
+						&:hover {
+							background: $background_light;
+						}
+
+						.block-editor-block-types-list__item-icon {
+							--wp-admin-theme-color: var(--ui-accent-color);
+							color: lighten($background, 65%);
+						}
+
+						.block-editor-block-types-list__item-title {
+							color: lighten($background, 65%) !important;
+						}
+					}
+				}
 			}
 		}
 	}
@@ -693,7 +778,7 @@
 		}
 
 		.ct-builder-item:not(.sortable-chosen):hover {
-			border-color: var(--accentColor);
+			border-color: var(--ui-accent-color);
 		}
 	}
 
@@ -715,7 +800,7 @@
 
 			&.active {
 				&:after {
-					background: var(--accentColor);
+					background: var(--ui-accent-color);
 				}
 			}
 
@@ -736,7 +821,7 @@
 		border-color: lighten($background, 20%);
 
 		.ct-builder-item:not(.sortable-ghost):hover {
-			border-color: var(--accentColor);
+			border-color: var(--ui-accent-color);
 		}
 	}
 
@@ -765,7 +850,7 @@
 		background: lighten($background_light, 1%);
 
 		&:hover {
-			border-color: var(--accentColor);
+			border-color: var(--ui-accent-color);
 		}
 	}
 

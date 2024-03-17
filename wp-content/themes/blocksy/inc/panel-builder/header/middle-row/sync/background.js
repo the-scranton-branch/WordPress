@@ -4,6 +4,8 @@ import {
 	disableTransitionsEnd,
 } from '../../../../../static/js/customizer/sync/helpers'
 
+import deepEqual from 'deep-equal'
+
 import {
 	getRootSelectorFor,
 	assembleSelector,
@@ -14,7 +16,42 @@ import { handleBackgroundOptionFor } from '../../../../../static/js/customizer/s
 
 import { maybePromoteScalarValueIntoResponsive } from 'customizer-sync-helpers/dist/promote-into-responsive'
 
-const transformBgFor = ({ background, headerRowWidth, predicate }) => {
+let defaultBg = {
+	headerRowBackground: {
+		background_type: 'color',
+		backgroundColor: {
+			default: {
+				color: 'var(--theme-palette-color-8)',
+			},
+		},
+	},
+	transparentHeaderRowBackground: {
+		background_type: 'color',
+		backgroundColor: {
+			default: {
+				color: 'rgba(255,255,255,0)',
+			},
+		},
+	},
+	stickyHeaderRowBackground: {
+		background_type: 'color',
+		backgroundColor: {
+			default: {
+				color: 'var(--theme-palette-color-8)',
+			},
+		},
+	},
+}
+
+const transformBgFor = ({ background, headerRowWidth, predicate, type }) => {
+	if (!defaultBg[type]) {
+		defaultBg[type] = background
+	} else {
+		if (!deepEqual(background, defaultBg[type]) && background) {
+			defaultBg[type] = background
+		}
+	}
+
 	let bg = maybePromoteScalarValueIntoResponsive(background)
 
 	headerRowWidth = maybePromoteScalarValueIntoResponsive(headerRowWidth)
@@ -80,12 +117,16 @@ export const getRowBackgroundVariables = ({ itemId }) => {
 
 					forced_background_image: true,
 
-					valueExtractor: ({ headerRowBackground, headerRowWidth }) =>
+					valueExtractor: ({
+						headerRowBackground = defaultBg['headerRowBackground'],
+						headerRowWidth,
+					}) =>
 						transformBgFor({
 							background: headerRowBackground,
 							headerRowWidth,
 							predicate: ({ headerRowWidth }) =>
 								headerRowWidth !== 'boxed',
+							type: 'headerRowBackground',
 						}),
 				}).headerRowBackground,
 
@@ -106,12 +147,16 @@ export const getRowBackgroundVariables = ({ itemId }) => {
 						fullValue: true,
 					},
 
-					valueExtractor: ({ headerRowBackground, headerRowWidth }) =>
+					valueExtractor: ({
+						headerRowBackground = defaultBg['headerRowBackground'],
+						headerRowWidth,
+					}) =>
 						transformBgFor({
 							background: headerRowBackground,
 							headerRowWidth,
 							predicate: ({ headerRowWidth }) =>
 								headerRowWidth === 'boxed',
+							type: 'headerRowBackground',
 						}),
 				}).headerRowBackground,
 
@@ -133,7 +178,9 @@ export const getRowBackgroundVariables = ({ itemId }) => {
 					},
 
 					valueExtractor: ({
-						transparentHeaderRowBackground,
+						transparentHeaderRowBackground = defaultBg[
+							'transparentHeaderRowBackground'
+						],
 						headerRowWidth,
 					}) =>
 						transformBgFor({
@@ -141,6 +188,7 @@ export const getRowBackgroundVariables = ({ itemId }) => {
 							headerRowWidth,
 							predicate: ({ headerRowWidth }) =>
 								headerRowWidth !== 'boxed',
+							type: 'transparentHeaderRowBackground',
 						}),
 
 					responsive: true,
@@ -168,7 +216,9 @@ export const getRowBackgroundVariables = ({ itemId }) => {
 					},
 
 					valueExtractor: ({
-						transparentHeaderRowBackground,
+						transparentHeaderRowBackground = defaultBg[
+							'transparentHeaderRowBackground'
+						],
 						headerRowWidth,
 					}) =>
 						transformBgFor({
@@ -176,6 +226,7 @@ export const getRowBackgroundVariables = ({ itemId }) => {
 							headerRowWidth,
 							predicate: ({ headerRowWidth }) =>
 								headerRowWidth === 'boxed',
+							type: 'transparentHeaderRowBackground',
 						}),
 
 					responsive: true,
@@ -198,7 +249,9 @@ export const getRowBackgroundVariables = ({ itemId }) => {
 					},
 
 					valueExtractor: ({
-						stickyHeaderRowBackground,
+						stickyHeaderRowBackground = defaultBg[
+							'stickyHeaderRowBackground'
+						],
 						headerRowWidth,
 					}) =>
 						transformBgFor({
@@ -206,6 +259,7 @@ export const getRowBackgroundVariables = ({ itemId }) => {
 							headerRowWidth,
 							predicate: ({ headerRowWidth }) =>
 								headerRowWidth !== 'boxed',
+							type: 'stickyHeaderRowBackground',
 						}),
 
 					responsive: true,
@@ -232,7 +286,9 @@ export const getRowBackgroundVariables = ({ itemId }) => {
 					},
 
 					valueExtractor: ({
-						stickyHeaderRowBackground,
+						stickyHeaderRowBackground = defaultBg[
+							'stickyHeaderRowBackground'
+						],
 						headerRowWidth,
 					}) =>
 						transformBgFor({
@@ -240,6 +296,7 @@ export const getRowBackgroundVariables = ({ itemId }) => {
 							headerRowWidth,
 							predicate: ({ headerRowWidth }) =>
 								headerRowWidth === 'boxed',
+							type: 'stickyHeaderRowBackground',
 						}),
 
 					responsive: true,

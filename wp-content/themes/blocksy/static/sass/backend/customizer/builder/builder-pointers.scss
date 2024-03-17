@@ -1,5 +1,5 @@
 $pointer-color: rgba(130, 131, 134, 0.7);
-$pointer-color: var(--accentColor);
+$pointer-color: var(--ui-accent-color);
 
 .ct-builder-column-start > * {
 	&:first-child {

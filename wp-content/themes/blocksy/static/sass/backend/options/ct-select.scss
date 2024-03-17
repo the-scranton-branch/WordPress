@@ -18,17 +18,13 @@
 		width: inherit;
 		height: var(--input-height, 30px);
 		margin: 0;
-		padding: var(--padding, 0 20px 0 8px);
-		border: 1px solid #ddd;
-		border-radius: 3px;
+		padding-block: 0;
+		padding-inline-end: 20px;
+		padding-inline-start: 8px;
+		border: 1px solid var(--optionBorderColor);
+		border-radius: var(--ui-border-radius, 3px);
 		text-overflow: ellipsis;
 		transition: box-shadow 0.1s linear, border-color 0.1s linear;
-
-		&:focus {
-			outline: none;
-			border-color: var(--accentColor);
-			box-shadow: 0 0 0 1px #007cba;
-		}
 
 		&::-moz-placeholder {
 			line-height: 26px;
@@ -38,14 +34,23 @@
 			background-color: #fff;
 		}
 
-		&:hover {
-			border-color: #5b9dd9;
+		&:not([disabled]) {
+			
+			&:hover {
+				border-color: var(--ui-accent-color);
+			}
+		}
+
+		&:focus {
+			outline: none;
+			border-color: var(--ui-accent-color);
+			box-shadow: 0 0 0 1px var(--ui-accent-color);
 		}
 	}
 
 	&[aria-expanded='true'] {
 		input {
-			border-color: #5b9dd9;
+			border-color: var(--ui-accent-color);
 		}
 
 		&:after {
@@ -65,12 +70,11 @@
 		width: 10px;
 		height: 10px;
 		top: calc(50% - 5px);
-		right: 8px;
+		inset-inline-end: 8px;
 		transform: rotate(-90deg);
 	}
 
 	&:before {
-		// content: 'ref-width:right';
 		position: absolute;
 		visibility: hidden;
 		width: 0;
@@ -90,10 +94,9 @@
 	border-radius: 3px;
 	box-sizing: border-box;
 	box-shadow: 0 10px 15px rgba(0, 0, 0, 0.08),
-		0px 0px 1px 1px rgba(0, 0, 0, 0.02);
+				0px 0px 1px 1px rgba(0, 0, 0, 0.02);
 	width: var(--x-select-dropdown-width, 100%);
-
-	right: var(--modal-x-offset);
+	inset-inline-end: var(--modal-x-offset);
 
 	&[data-position='bottom'] {
 		top: calc(var(--modal-y-offset) + var(--modal-y-offset-plus, 7px));
@@ -113,7 +116,7 @@
 		margin-top: 7px;
 		margin-bottom: 20px;
 		top: 100%;
-		right: var(--x-select-dropdown-right, initial);
+		inset-inline-end: var(--x-select-dropdown-right, initial);
 	}
 
 	.ct-select-no-results,
@@ -141,7 +144,7 @@
 		}
 
 		&.selected {
-			color: #0073aa;
+			color: var(--ui-accent-color);
 			font-weight: 500;
 
 			&:after {
@@ -150,7 +153,7 @@
 				font-family: dashicons;
 				font-size: 13px;
 				top: 10px;
-				right: 6px;
+				inset-inline-end: 6px;
 			}
 		}
 	}
@@ -161,7 +164,7 @@
 		background: #f7f7f7;
 
 		~ .ct-select-dropdown-item {
-			padding-left: 20px !important;
+			padding-inline-start: 20px !important;
 		}
 	}
 

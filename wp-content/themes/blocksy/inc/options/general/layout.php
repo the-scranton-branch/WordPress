@@ -38,7 +38,24 @@ $options = [
 					'responsive' => true,
 					'divider' => 'top',
 					'setting' => [ 'transport' => 'postMessage' ],
-					'desc' => __( 'Adjusts the spacing between the main content area and the header and footer.', 'blocksy' ),
+					'desc' => __( 'Adjusts vertical spacing between main content area and header/footer.', 'blocksy' ),
+				],
+
+				'contentEdgeSpacing' => [
+					'label' => __( 'Content Edge Spacing', 'blocksy' ),
+					'type' => 'ct-slider',
+					'value' => [
+						'desktop' => 5,
+						'tablet' => 5,
+						'mobile' => 6,
+					],
+					'min' => 0,
+					'max' => 15,
+					'defaultUnit' => 'vw',
+					'responsive' => true,
+					'divider' => 'top',
+					'sync' => 'live',
+					'desc' => __( 'Adjusts horizontal spacing between main content area and edges of the screen.', 'blocksy' ),
 				],
 
 				blocksy_rand_md5() => [

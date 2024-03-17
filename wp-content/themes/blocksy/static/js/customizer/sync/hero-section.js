@@ -14,7 +14,7 @@ const getMetaSpacingVariables = ({ prefix }) =>
 	[
 		{
 			key: 'author_social_channels',
-			selector: `[data-prefix="${prefix}"] .hero-section .author-box-social`,
+			selector: `[data-prefix="${prefix}"] .hero-section .author-box-socials`,
 		},
 
 		{
@@ -87,7 +87,7 @@ const getVariablesForPrefix = (prefix) => ({
 
 	[`${prefix}_pageTitleFontColor`]: {
 		selector: `[data-prefix="${prefix}"] .entry-header .page-title`,
-		variable: 'heading-color',
+		variable: 'theme-heading-color',
 		type: 'color',
 	},
 
@@ -99,13 +99,13 @@ const getVariablesForPrefix = (prefix) => ({
 	[`${prefix}_pageMetaFontColor`]: [
 		{
 			selector: `[data-prefix="${prefix}"] .entry-header .entry-meta`,
-			variable: 'color',
+			variable: 'theme-text-color',
 			type: 'color:default',
 		},
 
 		{
 			selector: `[data-prefix="${prefix}"] .entry-header .entry-meta`,
-			variable: 'linkHoverColor',
+			variable: 'theme-link-hover-color',
 			type: 'color:hover',
 		},
 	],
@@ -113,13 +113,13 @@ const getVariablesForPrefix = (prefix) => ({
 	[`${prefix}_page_meta_button_type_font_colors`]: [
 		{
 			selector: `[data-prefix="${prefix}"] .entry-header [data-type="pill"]`,
-			variable: 'buttonTextInitialColor',
+			variable: 'theme-button-text-initial-color',
 			type: 'color:default',
 		},
 
 		{
 			selector: `[data-prefix="${prefix}"] .entry-header [data-type="pill"]`,
-			variable: 'buttonTextHoverColor',
+			variable: 'theme-button-text-hover-color',
 			type: 'color:hover',
 		},
 	],
@@ -127,13 +127,13 @@ const getVariablesForPrefix = (prefix) => ({
 	[`${prefix}_page_meta_button_type_background_colors`]: [
 		{
 			selector: `[data-prefix="${prefix}"] .entry-header [data-type="pill"]`,
-			variable: 'buttonInitialColor',
+			variable: 'theme-button-background-initial-color',
 			type: 'color:default',
 		},
 
 		{
 			selector: `[data-prefix="${prefix}"] .entry-header [data-type="pill"]`,
-			variable: 'buttonHoverColor',
+			variable: 'theme-button-background-hover-color',
 			type: 'color:hover',
 		},
 	],
@@ -145,7 +145,7 @@ const getVariablesForPrefix = (prefix) => ({
 
 	[`${prefix}_pageExcerptColor`]: {
 		selector: `[data-prefix="${prefix}"] .entry-header .page-description`,
-		variable: 'color',
+		variable: 'theme-text-color',
 		type: 'color',
 	},
 
@@ -157,19 +157,19 @@ const getVariablesForPrefix = (prefix) => ({
 	[`${prefix}_breadcrumbsFontColor`]: [
 		{
 			selector: `[data-prefix="${prefix}"] .entry-header .ct-breadcrumbs`,
-			variable: 'color',
+			variable: 'theme-text-color',
 			type: 'color:default',
 		},
 
 		{
 			selector: `[data-prefix="${prefix}"] .entry-header .ct-breadcrumbs`,
-			variable: 'linkInitialColor',
+			variable: 'theme-link-initial-color',
 			type: 'color:initial',
 		},
 
 		{
 			selector: `[data-prefix="${prefix}"] .entry-header .ct-breadcrumbs`,
-			variable: 'linkHoverColor',
+			variable: 'theme-link-hover-color',
 			type: 'color:hover',
 		},
 	],
@@ -185,7 +185,7 @@ const getVariablesForPrefix = (prefix) => ({
 		selector: `[data-prefix="${prefix}"] .hero-section[data-type="type-1"]`,
 		variable: 'margin-bottom',
 		responsive: true,
-		unit: 'px',
+		unit: '',
 	},
 
 	[`${prefix}_hero_alignment2`]: {
@@ -204,7 +204,7 @@ const getVariablesForPrefix = (prefix) => ({
 
 	...handleBackgroundOptionFor({
 		id: `${prefix}_pageTitleOverlay`,
-		selector: `[data-prefix="${prefix}"] .hero-section[data-type="type-2"] > figure .ct-image-container:after`,
+		selector: `[data-prefix="${prefix}"] .hero-section[data-type="type-2"] > figure .ct-media-container:after`,
 	}),
 
 	...handleBackgroundOptionFor({
@@ -246,7 +246,7 @@ const getVariablesForPrefix = (prefix) => ({
 							0,
 							6
 						)}"]`,
-						variable: 'color',
+						variable: 'theme-text-color',
 						type: 'color:default',
 						extractValue: () => layer.color,
 					},
@@ -256,7 +256,7 @@ const getVariablesForPrefix = (prefix) => ({
 							0,
 							6
 						)}"]`,
-						variable: 'linkHoverColor',
+						variable: 'theme-link-hover-color',
 						type: 'color:hover',
 						extractValue: () => layer.color,
 					},
@@ -309,7 +309,7 @@ const getVariablesForPrefix = (prefix) => ({
 
 	courses_single_hero_title_font_color: {
 		selector: `[data-prefix="${prefix}"] .tutor-course-details-title`,
-		variable: 'heading-color',
+		variable: 'theme-heading-color',
 		type: 'color',
 	},
 
@@ -321,13 +321,13 @@ const getVariablesForPrefix = (prefix) => ({
 	courses_single_hero_categories_colors: [
 		{
 			selector: `[data-prefix="${prefix}"] .tutor-meta`,
-			variable: 'color',
+			variable: 'theme-text-color',
 			type: 'color:default',
 		},
 
 		{
 			selector: `[data-prefix="${prefix}"] .tutor-meta`,
-			variable: 'linkHoverColor',
+			variable: 'theme-link-hover-color',
 			type: 'color:hover',
 		},
 	],
@@ -340,13 +340,13 @@ const getVariablesForPrefix = (prefix) => ({
 	courses_single_hero_actions_colors: [
 		{
 			selector: `[data-prefix="${prefix}"] .tutor-course-details-actions > a`,
-			variable: 'color',
+			variable: 'theme-text-color',
 			type: 'color:default',
 		},
 
 		{
 			selector: `[data-prefix="${prefix}"] .tutor-course-details-actions > a`,
-			variable: 'linkHoverColor',
+			variable: 'theme-link-hover-color',
 			type: 'color:hover',
 		},
 	],
@@ -358,13 +358,13 @@ const getVariablesForPrefix = (prefix) => ({
 
 	courses_single_hero_title_rating_font_color: {
 		selector: `[data-prefix="${prefix}"] .tutor-ratings`,
-		variable: 'color',
+		variable: 'theme-text-color',
 		type: 'color',
 	},
 
 	hero_title_rating_font_color: {
 		selector: `[data-prefix="${prefix}"] .tutor-ratings`,
-		variable: 'color',
+		variable: 'theme-text-color',
 		type: 'color',
 	},
 })
@@ -417,7 +417,7 @@ watchOptionsWithPrefix({
 					let { has_author_avatar, author_avatar_size } = singleLayer
 
 					let image = heroElementsContainer.querySelector(
-						'.ct-author-name .ct-image-container-static'
+						'.ct-author-name .ct-media-container-static'
 					)
 
 					if (image) {
@@ -439,6 +439,18 @@ watchOptionsWithPrefix({
 						responsiveClassesFor(
 							singleLayer.description_visibility,
 							description
+						)
+					}
+				}
+
+				if (singleLayer.id === 'breadcrumbs') {
+					let breadcrumbs =
+						heroElementsContainer.querySelector('.ct-breadcrumbs')
+
+					if (singleLayer.enabled && breadcrumbs) {
+						responsiveClassesFor(
+							singleLayer.breadcrumbs_visibility,
+							breadcrumbs
 						)
 					}
 				}

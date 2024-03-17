@@ -53,7 +53,7 @@ export const getCommentsVariables = () => {
 	const prefix = getPrefixFor()
 	return {
 		[`${prefix}_comments_narrow_width`]: {
-			variable: 'narrow-container-max-width',
+			variable: 'theme-narrow-container-max-width',
 			selector: applyPrefixFor('.ct-comments-container', prefix),
 			unit: 'px',
 		},
@@ -61,13 +61,13 @@ export const getCommentsVariables = () => {
 		[`${prefix}_comments_font_color`]: [
 			{
 				selector: applyPrefixFor('.ct-comments', prefix),
-				variable: 'color',
+				variable: 'theme-text-color',
 				type: 'color:default',
 			},
 
 			{
 				selector: applyPrefixFor('.ct-comments', prefix),
-				variable: 'linkHoverColor',
+				variable: 'theme-link-hover-color',
 				type: 'color:hover',
 			},
 		],

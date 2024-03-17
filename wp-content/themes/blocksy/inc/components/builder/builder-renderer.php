@@ -82,22 +82,25 @@ abstract class Blocksy_Builder_Render {
 		if (
 			$item
 			&&
-			in_array($item['id'], [
-				'middle-row', 'top-row', 'bottom-row',
-				'menu',
-				'menu-secondary',
-				'menu-tertiary',
-				'logo',
-				'language-switcher',
-				'button',
-				'text',
-				'search-input',
-				'contacts',
-				'widget-area-1',
-				'widget-area-2',
-				'widget-area-3',
-				'widget-area-4'
-			])
+			in_array(
+				$this->get_original_id($item['id']),
+				[
+					'middle-row', 'top-row', 'bottom-row',
+					'menu',
+					'menu-secondary',
+					'menu-tertiary',
+					'logo',
+					'language-switcher',
+					'button',
+					'text',
+					'search-input',
+					'contacts',
+					'widget-area-1',
+					'widget-area-2',
+					'widget-area-3',
+					'widget-area-4'
+				]
+			)
 		) {
 			if ($this->get_section_type() === 'header') {
 				$header_prefix .= ' .ct-header';

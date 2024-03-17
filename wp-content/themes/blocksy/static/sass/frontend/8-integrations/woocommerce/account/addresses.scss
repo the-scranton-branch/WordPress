@@ -13,13 +13,11 @@
 	> * {
 		padding: 1.5em;
 		border-radius: 5px;
-		border: 1px dashed var(--border-color);
+		border: 1px dashed var(--theme-border-color);
 	}
 
-
-	.woocommerce-column__title,
 	.woocommerce-Address-title h3 {
-		--fontSize: 20px;
+		font-size: 16px;
 	}
 
 	.woocommerce-Address-title {

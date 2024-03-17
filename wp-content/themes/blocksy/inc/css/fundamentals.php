@@ -69,6 +69,8 @@ function blocksy_output_css_vars($args = []) {
 			'mobile_selector_prefix' => '',
 
 			'variableName' => null,
+			'variableType' => 'custom-property',
+
 			'value' => null,
 
 			'value_suffix' => '',
@@ -87,11 +89,45 @@ function blocksy_output_css_vars($args = []) {
 
 	$value = blocksy_expand_responsive_value($args['value']);
 
+	if ($args['variableType'] === 'custom-property') {
+		$args['variableName'] = '--' . $args['variableName'];
+	}
+
+	if (
+		substr_count(
+			$value['desktop'], '('
+		) !== substr_count(
+			$value['desktop'], ')'
+		)
+	) {
+		$value['desktop'] = '"' . $value['desktop'] . '"';
+	}
+
+	if (
+		substr_count(
+			$value['tablet'], '('
+		) !== substr_count(
+			$value['tablet'], ')'
+		)
+	) {
+		$value['tablet'] = '"' . $value['tablet'] . '"';
+	}
+
+	if (
+		substr_count(
+			$value['mobile'], '('
+		) !== substr_count(
+			$value['mobile'], ')'
+		)
+	) {
+		$value['mobile'] = '"' . $value['mobile'] . '"';
+	}
+
 	$args['css']->put(
 		empty($args['desktop_selector_prefix']) ? $args['selector'] : (
 			$args['desktop_selector_prefix'] . ' ' . $args['selector']
 		),
-		'--' . $args['variableName'] . ': ' . $value['desktop'] . $args['value_suffix']
+		$args['variableName'] . ': ' . $value['desktop'] . $args['value_suffix']
 	);
 
 	if (
@@ -103,7 +139,7 @@ function blocksy_output_css_vars($args = []) {
 			empty($args['tablet_selector_prefix']) ? $args['selector'] : (
 				$args['tablet_selector_prefix'] . ' ' . $args['selector']
 			),
-			'--' . $args['variableName'] . ': ' . $value['tablet'] . $args['value_suffix']
+			$args['variableName'] . ': ' . $value['tablet'] . $args['value_suffix']
 		);
 	}
 
@@ -116,7 +152,7 @@ function blocksy_output_css_vars($args = []) {
 			empty($args['mobile_selector_prefix']) ? $args['selector'] : (
 				$args['mobile_selector_prefix'] . ' ' . $args['selector']
 			),
-			'--' . $args['variableName'] . ': ' . $value['mobile'] . $args['value_suffix']
+			$args['variableName'] . ': ' . $value['mobile'] . $args['value_suffix']
 		);
 	}
 }

@@ -69,7 +69,7 @@ export const handleMenuVariables = ({ itemId }) => ({
 					to_add: '> ul > li > a',
 				})
 			),
-			variable: 'linkInitialColor',
+			variable: 'theme-link-initial-color',
 			type: 'color:default',
 		},
 
@@ -84,7 +84,7 @@ export const handleMenuVariables = ({ itemId }) => ({
 					to_add: '> ul > li > a',
 				})
 			),
-			variable: 'linkHoverColor',
+			variable: 'theme-link-hover-color',
 			type: 'color:hover',
 		},
 
@@ -99,7 +99,7 @@ export const handleMenuVariables = ({ itemId }) => ({
 					to_add: '> ul > li > a',
 				})
 			),
-			variable: 'linkActiveColor',
+			variable: 'theme-link-active-color',
 			type: 'color:active',
 		},
 	],

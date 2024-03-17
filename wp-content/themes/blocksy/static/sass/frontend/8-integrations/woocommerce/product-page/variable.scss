@@ -11,49 +11,22 @@ form.variations_form {
 			&:not(:last-child) {
 				margin-bottom: 1.5em;
 			}
-
-			&:last-child td select {
-				margin-bottom: 0.5em;
-			}
 		}
 
-		td, th {
-			text-align: initial;
+		th, td {
 			padding: 0;
-			// border: none;
+			text-align: initial;
 		}
 
 		label {
 			display: block;
-			// margin-bottom: 10px;
 			margin-bottom: 0;
-			--fontWeight: 500;
+			font-weight: 500;
 		}
 
 		select {
 			width: 100%;
 			max-width: 100%;
-		}
-
-		// reset variations
-		.reset_variations {
-			display: none;
-			visibility: hidden;
-			margin-top: 0.5em;
-			font-size: 13px;
-			line-height: 13px;
-			--linkInitialColor: var(--color);
-
-			&[style*="visible"] {
-				display: inline-block;
-			}
-
-			&:before {
-				font-family: 'woo';
-				content: '\e910';
-				margin-right: 5px;
-				font-size: 10px;
-			}
 		}
 	}
 

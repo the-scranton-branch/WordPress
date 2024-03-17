@@ -7,10 +7,10 @@
  * @package   Blocksy
  */
 
-add_filter('widget_nav_menu_args', function ($nav_menu_args, $nav_menu, $args, $instance) {
+add_filter('widget_nav_menu_args', function ($nav_menu_args) {
 	$nav_menu_args['menu_class'] = 'widget-menu';
 	return $nav_menu_args;
-}, 10, 4);
+}, 10, 1);
 
 add_action(
 	'dynamic_sidebar_before',
@@ -22,37 +22,15 @@ add_action(
 add_action(
 	'dynamic_sidebar_after',
 	function () {
-		$text = str_replace(
-			'textwidget',
-			'textwidget entry-content',
+		$text = preg_replace(
+			'/<div class="ct-widget[^>]*><\\/div[^>]*>/',
+			'',
 			ob_get_clean()
 		);
 
 		echo $text;
 	}
 );
-
-if (! function_exists('blocksy_get_sidebar_to_render')) {
-	function blocksy_get_sidebar_to_render() {
-		if (class_exists('BlocksySidebarsManager')) {
-			$manager = new BlocksySidebarsManager();
-
-			$maybe_sidebar = $manager->maybe_get_sidebar_that_matches();
-
-			if ($maybe_sidebar) {
-				return $maybe_sidebar;
-			}
-		}
-
-		$prefix = blocksy_manager()->screen->get_prefix();
-
-		if ($prefix === 'product' || $prefix === 'woo_categories') {
-			return 'sidebar-woocommerce';
-		}
-
-		return 'sidebar-1';
-	}
-}
 
 if (! function_exists('blocksy_sidebar_position_attr')) {
 	function blocksy_sidebar_position_attr($args = []) {
@@ -110,6 +88,22 @@ if (! function_exists('blocksy_get_single_page_structure')) {
 				||
 				! function_exists('tutor')
 			)
+			&&
+			(
+				$prefix !== 'tribe_events_single'
+				&&
+				class_exists('Tribe__Events__Main')
+				||
+				! class_exists('Tribe__Events__Main')
+			)
+			&&
+			(
+				$prefix !== 'tribe_events_archive'
+				&&
+				class_exists('Tribe__Events__Main')
+				||
+				! class_exists('Tribe__Events__Main')
+			)
 		) {
 			$result = 'none';
 		} else {
@@ -119,7 +113,7 @@ if (! function_exists('blocksy_get_single_page_structure')) {
 				$default_structure = 'type-1';
 			}
 
-			$result = get_theme_mod($prefix . '_structure', $default_structure);
+			$result = blocksy_get_theme_mod($prefix . '_structure', $default_structure);
 
 			if ($prefix === 'courses_single' && function_exists('tutor')) {
 				$current_template = blocksy_manager()->get_current_template();
@@ -128,6 +122,10 @@ if (! function_exists('blocksy_get_single_page_structure')) {
 					$result = 'type-4';
 				}
 			}
+		}
+
+		if ($prefix === 'lms') {
+			$result = 'none';
 		}
 
 		return apply_filters('blocksy:global:page_structure', $result);
@@ -171,15 +169,45 @@ if (! function_exists('blocksy_sidebar_position_unfiltered')) {
 			return 'none';
 		}
 
-		$is_dokan_store = class_exists('WeDevs_Dokan') && function_exists('dokan_is_store_page') && dokan_is_store_page();
+		$is_dokan_store = (
+			class_exists('WeDevs_Dokan')
+			&&
+			function_exists('dokan_is_store_page')
+			&&
+			dokan_is_store_page()
+		);
 
 		if ($is_dokan_store) {
+			return 'none';
+		}
+
+		if (! $prefix) {
 			return 'none';
 		}
 
 		$blog_post_structure = blocksy_listing_page_structure([
 			'prefix' => $prefix
 		]);
+
+		$allows_custom_sidebar = (
+			$prefix !== 'courses_archive'
+			&&
+			function_exists('tutor')
+			||
+			! function_exists('tutor')
+		) && (
+			$prefix !== 'tribe_events_single'
+			&&
+			class_exists('Tribe__Events__Main')
+			||
+			! class_exists('Tribe__Events__Main')
+		) && (
+			$prefix !== 'tribe_events_archive'
+			&&
+			class_exists('Tribe__Events__Main')
+			||
+			! class_exists('Tribe__Events__Main')
+		);
 
 		if (
 			strpos($prefix, '_archive') !== false
@@ -194,22 +222,16 @@ if (! function_exists('blocksy_sidebar_position_unfiltered')) {
 			||
 			$prefix === 'woo_categories'
 		) {
-			if (
-				$prefix !== 'courses_archive'
-				&&
-				function_exists('tutor')
-				||
-				! function_exists('tutor')
-			) {
+			if ($allows_custom_sidebar) {
 				if (
-					get_theme_mod($prefix . '_has_sidebar', 'no') === 'no'
+					blocksy_get_theme_mod($prefix . '_has_sidebar', 'no') === 'no'
 					||
 					$blog_post_structure === 'gutenberg'
 				) {
 					return 'none';
 				}
 
-				return get_theme_mod($prefix . '_sidebar_position', 'right');
+				return blocksy_get_theme_mod($prefix . '_sidebar_position', 'right');
 			}
 		}
 
@@ -222,13 +244,7 @@ if (! function_exists('blocksy_sidebar_position_unfiltered')) {
 			&&
 			strpos($prefix, '_single') === false
 			&&
-			(
-				$prefix !== 'courses_archive'
-				&&
-				function_exists('tutor')
-				||
-				! function_exists('tutor')
-			)
+			$allows_custom_sidebar
 		) {
 			return 'right';
 		}

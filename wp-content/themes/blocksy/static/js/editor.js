@@ -1,8 +1,6 @@
 import {
 	createElement,
 	Fragment,
-	Component,
-	useCallback,
 	useRef,
 	useEffect,
 	useState,
@@ -12,7 +10,7 @@ import { PluginSidebar, PluginSidebarMoreMenuItem } from '@wordpress/edit-post'
 import { withSelect, withDispatch } from '@wordpress/data'
 import { compose } from '@wordpress/compose'
 import { IconButton, Button } from '@wordpress/components'
-import { handleMetaboxValueChange, mountSync } from './editor/sync'
+import { handleMetaboxValueChange } from './editor/sync'
 
 import ctEvents from 'ct-events'
 
@@ -49,18 +47,7 @@ const starFilled = (
 	</SVG>
 )
 
-const BlocksyOptions = ({
-	name,
-	value,
-	options,
-	onChange,
-	isActive,
-	isPinnable = true,
-	isPinned,
-	togglePin,
-	toggleSidebar,
-	closeGeneralSidebar,
-}) => {
+const BlocksyOptions = ({ name, value, options, onChange, isActive }) => {
 	const containerRef = useRef()
 	const parentContainerRef = useRef()
 	const [values, setValues] = useState(null)
@@ -79,7 +66,10 @@ const BlocksyOptions = ({
 
 		handleMetaboxValueChange(key, v)
 
-		onChange(futureValue)
+		onChange({
+			...value,
+			[key]: v,
+		})
 		setValues(futureValue)
 	}
 
@@ -104,7 +94,11 @@ const BlocksyOptions = ({
 				name={name}
 				icon={
 					<span
-						style={{display: 'flex', width: '20px', height: '20px'}}
+						style={{
+							display: 'flex',
+							width: '20px',
+							height: '20px',
+						}}
 						dangerouslySetInnerHTML={{
 							__html: ct_editor_localizations.options_panel_svg,
 						}}
@@ -122,44 +116,6 @@ const BlocksyOptions = ({
 								containerRef={containerRef}
 								parentContainerRef={parentContainerRef}
 								useRefsAsWrappers>
-								<div className="ct-panel-options-header components-panel__header edit-post-sidebar-header">
-									<strong>
-										{sprintf(
-											__('%s Page Settings', 'blocksy'),
-											ct_localizations.product_name
-										)}
-									</strong>
-
-									{isPinnable && (
-										<Button
-											icon={
-												isPinned
-													? starFilled
-													: starEmpty
-											}
-											label={
-												isPinned
-													? __(
-															'Unpin from toolbar',
-															'blocksy'
-													  )
-													: __(
-															'Pin to toolbar',
-															'blocksy'
-													  )
-											}
-											onClick={togglePin}
-											isPressed={isPinned}
-											aria-expanded={isPinned}
-										/>
-									)}
-
-									<IconButton
-										onClick={closeGeneralSidebar}
-										icon={closeSmall}
-										label={__('Close plugin', 'blocksy')}
-									/>
-								</div>
 								<OptionsPanel
 									onChange={(key, v) => {
 										const futureValue = {
@@ -173,7 +129,10 @@ const BlocksyOptions = ({
 
 										handleMetaboxValueChange(key, v)
 
-										onChange(futureValue)
+										onChange({
+											...value,
+											[key]: v,
+										})
 										setValues(futureValue)
 									}}
 									value={
@@ -197,34 +156,20 @@ const BlocksyOptionsComposed = compose(
 	})),
 
 	withSelect((select, { sidebarName }) => {
-		const value = select('core/editor').getEditedPostAttribute(
-			'blocksy_meta'
-		)
+		const value =
+			select('core/editor').getEditedPostAttribute('blocksy_meta')
 
-		const { getActiveGeneralSidebarName, isPluginItemPinned } = select(
-			'core/edit-post'
-		)
+		const { getActiveGeneralSidebarName, isPluginItemPinned } =
+			select('core/edit-post')
 
 		return {
 			isActive: getActiveGeneralSidebarName() === sidebarName,
-			isPinned: isPluginItemPinned(sidebarName),
 			value: Array.isArray(value) ? {} : value || {},
 			options: ct_editor_localizations.post_options,
 		}
 	}),
 	withDispatch((dispatch, { sidebarName }) => {
-		const {
-			closeGeneralSidebar,
-			openGeneralSidebar,
-			togglePinnedPluginItem,
-		} = dispatch('core/edit-post')
-
 		return {
-			closeGeneralSidebar,
-			togglePin: () => {
-				togglePinnedPluginItem(sidebarName)
-			},
-
 			onChange: (blocksy_meta) => {
 				dispatch('core/editor').editPost({
 					blocksy_meta,

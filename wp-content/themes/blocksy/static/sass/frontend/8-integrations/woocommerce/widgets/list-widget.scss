@@ -1,14 +1,10 @@
 .product_list_widget {
 	li {
 		display: grid;
-		grid-template-columns: 25% 1fr;
+		grid-template-columns: 20% 1fr;
 		grid-column-gap: 20px;
 		align-items: center;
-		--listItemSpacing: 20px;
-	}
-
-	.ct-image-container {
-		align-self: flex-start;
+		margin-bottom: var(--mini-cart-items-spacing, 20px);
 	}
 
 	.product-data {
@@ -20,8 +16,6 @@
 		font-size: 15px;
 		font-weight: 500;
 		padding-inline-end: 15px;
-		
-		// @include lhCrop(1.65);
 	}
 
 	.star-rating {
@@ -51,6 +45,9 @@
 
 	// product quantity
 	.ct-product-actions {
+		display: flex;
+		align-items: center;
+		gap: 12px;
 		margin-top: 0.7em;
 	}
 

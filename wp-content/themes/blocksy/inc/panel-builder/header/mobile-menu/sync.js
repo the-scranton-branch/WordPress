@@ -1,6 +1,5 @@
 import { typographyOption } from '../../../../static/js/customizer/sync/variables/typography'
 import ctEvents from 'ct-events'
-import { updateAndSaveEl } from '../../../../static/js/frontend/header/render-loop'
 
 import {
 	responsiveClassesFor,
@@ -10,7 +9,6 @@ import {
 } from '../../../../static/js/customizer/sync/helpers'
 
 const handleMenuVariables = ({ itemId, panelType }) => ({
-
 	// off canvas menu styles
 	mobile_menu_items_spacing: {
 		selector: assembleSelector(getRootSelectorFor({ itemId })),
@@ -18,7 +16,7 @@ const handleMenuVariables = ({ itemId, panelType }) => ({
 		responsive: true,
 		unit: 'px',
 	},
-	
+
 	...typographyOption({
 		id: 'mobileMenuFont',
 		selector: assembleSelector(getRootSelectorFor({ itemId })),
@@ -27,21 +25,21 @@ const handleMenuVariables = ({ itemId, panelType }) => ({
 	mobileMenuColor: [
 		{
 			selector: assembleSelector(getRootSelectorFor({ itemId })),
-			variable: 'linkInitialColor',
+			variable: 'theme-link-initial-color',
 			type: 'color:default',
 			responsive: true,
 		},
 
 		{
 			selector: assembleSelector(getRootSelectorFor({ itemId })),
-			variable: 'linkHoverColor',
+			variable: 'theme-link-hover-color',
 			type: 'color:hover',
 			responsive: true,
 		},
 
 		{
 			selector: assembleSelector(getRootSelectorFor({ itemId })),
-			variable: 'linkActiveColor',
+			variable: 'theme-link-active-color',
 			type: 'color:active',
 			responsive: true,
 		},
@@ -67,7 +65,7 @@ const handleMenuVariables = ({ itemId, panelType }) => ({
 					to_add: '.sub-menu',
 				})
 			),
-			variable: 'linkInitialColor',
+			variable: 'theme-link-initial-color',
 			type: 'color:default',
 			responsive: true,
 		},
@@ -80,7 +78,7 @@ const handleMenuVariables = ({ itemId, panelType }) => ({
 					to_add: '.sub-menu',
 				})
 			),
-			variable: 'linkHoverColor',
+			variable: 'theme-link-hover-color',
 			type: 'color:hover',
 			responsive: true,
 		},
@@ -93,17 +91,11 @@ const handleMenuVariables = ({ itemId, panelType }) => ({
 					to_add: '.sub-menu',
 				})
 			),
-			variable: 'linkActiveColor',
+			variable: 'theme-link-active-color',
 			type: 'color:active',
 			responsive: true,
 		},
 	],
-
-	// mobile_menu_child_size: {
-	// 	selector: assembleSelector(getRootSelectorFor({ itemId })),
-	// 	variable: 'mobile-menu-child-size',
-	// 	unit: '',
-	// },
 
 	mobile_menu_items_divider: {
 		selector: assembleSelector(getRootSelectorFor({ itemId })),
@@ -117,7 +109,6 @@ const handleMenuVariables = ({ itemId, panelType }) => ({
 		variable: 'margin',
 		responsive: true,
 	},
-
 
 	// inline menu styles
 	inline_menu_items_spacing: {
@@ -152,7 +143,7 @@ const handleMenuVariables = ({ itemId, panelType }) => ({
 					to_add: '> ul > li > a',
 				})
 			),
-			variable: 'linkInitialColor',
+			variable: 'theme-link-initial-color',
 			type: 'color:default',
 		},
 
@@ -164,7 +155,7 @@ const handleMenuVariables = ({ itemId, panelType }) => ({
 					to_add: '> ul > li > a',
 				})
 			),
-			variable: 'linkHoverColor',
+			variable: 'theme-link-hover-color',
 			type: 'color:hover',
 		},
 
@@ -176,7 +167,7 @@ const handleMenuVariables = ({ itemId, panelType }) => ({
 					to_add: '> ul > li > a',
 				})
 			),
-			variable: 'linkActiveColor',
+			variable: 'theme-link-active-color',
 			type: 'color:active',
 		},
 	],
@@ -195,7 +186,7 @@ const handleMenuVariables = ({ itemId, panelType }) => ({
 					to_add: '[data-transparent-row="yes"]',
 				})
 			),
-			variable: 'linkInitialColor',
+			variable: 'theme-link-initial-color',
 			type: 'color:default',
 		},
 
@@ -211,7 +202,7 @@ const handleMenuVariables = ({ itemId, panelType }) => ({
 					to_add: '[data-transparent-row="yes"]',
 				})
 			),
-			variable: 'linkHoverColor',
+			variable: 'theme-link-hover-color',
 			type: 'color:hover',
 		},
 
@@ -227,7 +218,7 @@ const handleMenuVariables = ({ itemId, panelType }) => ({
 					to_add: '[data-transparent-row="yes"]',
 				})
 			),
-			variable: 'linkActiveColor',
+			variable: 'theme-link-active-color',
 			type: 'color:active',
 		},
 	],
@@ -246,7 +237,7 @@ const handleMenuVariables = ({ itemId, panelType }) => ({
 					to_add: '[data-sticky*="yes"]',
 				})
 			),
-			variable: 'linkInitialColor',
+			variable: 'theme-link-initial-color',
 			type: 'color:default',
 		},
 
@@ -262,7 +253,7 @@ const handleMenuVariables = ({ itemId, panelType }) => ({
 					to_add: '[data-sticky*="yes"]',
 				})
 			),
-			variable: 'linkHoverColor',
+			variable: 'theme-link-hover-color',
 			type: 'color:hover',
 		},
 
@@ -278,7 +269,7 @@ const handleMenuVariables = ({ itemId, panelType }) => ({
 					to_add: '[data-sticky*="yes"]',
 				})
 			),
-			variable: 'linkActiveColor',
+			variable: 'theme-link-active-color',
 			type: 'color:active',
 		},
 	],

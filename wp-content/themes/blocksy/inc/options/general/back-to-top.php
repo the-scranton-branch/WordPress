@@ -269,13 +269,13 @@ $options = [
 							[
 								'title' => __( 'Initial', 'blocksy' ),
 								'id' => 'default',
-								'inherit' => 'var(--paletteColor3)'
+								'inherit' => 'var(--theme-palette-color-3)'
 							],
 
 							[
 								'title' => __( 'Hover', 'blocksy' ),
 								'id' => 'hover',
-								'inherit' => 'var(--paletteColor4)'
+								'inherit' => 'var(--theme-palette-color-4)'
 							],
 						],
 					],
@@ -291,7 +291,6 @@ $options = [
 								'divider' => 'top',
 								'setting' => [ 'transport' => 'postMessage' ],
 								'value' => blocksy_spacing_value([
-									'linked' => true,
 									'top' => '2px',
 									'left' => '2px',
 									'right' => '2px',

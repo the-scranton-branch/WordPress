@@ -17,10 +17,7 @@ $border: lighten($background, 10%);
 
 
 .ct-dark-mode {
-	--accentColor: #157EFB;
-	--accentColorHover: #0b78fb;
-	
-	--borderColor: #47484b;
+	--ui-accent-color: #157EFB;
 	--optionBorderColor: #{$border};
 }
 

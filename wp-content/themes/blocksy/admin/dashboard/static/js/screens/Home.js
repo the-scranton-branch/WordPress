@@ -5,11 +5,29 @@ import {
 	Fragment,
 } from '@wordpress/element'
 import { __, sprintf } from 'ct-i18n'
-import SubmitSupport from '../components/SubmitSupport'
 import DashboardContext from '../context'
 import ctEvents from 'ct-events'
 
 import $ from 'jquery'
+
+const DocumentationButton = ({ href = '' }) => {
+	if (ctDashboardLocalizations.plugin_data.hide_docs_section) {
+		return null
+	}
+
+	return (
+		<a href={href} target="_blank">
+			<svg
+				width="14px"
+				height="14px"
+				viewBox="0 0 24 24"
+				fill="currentColor">
+				<path d="M23 2.1h-6.6c-1.8 0-3.4.9-4.4 2.3C11 3 9.4 2.1 7.6 2.1H1c-.6 0-1 .4-1 1v16.5c0 .6.4 1 1 1h7.7c1.3 0 2.3 1 2.3 2.3 0 .6.4 1 1 1s1-.4 1-1c0-1.3 1-2.3 2.3-2.3H23c.6 0 1-.4 1-1V3.1c0-.6-.4-1-1-1zM11 19.3c-.7-.4-1.5-.7-2.3-.7H2V4.1h5.6c1.9 0 3.4 1.5 3.4 3.4v11.8zm11-.7h-6.7c-.8 0-1.6.2-2.3.7V7.5c0-1.9 1.5-3.4 3.4-3.4H22v14.5z" />
+			</svg>
+			{__('Documentation', 'blocksy')}
+		</a>
+	)
+}
 
 const Home = () => {
 	const {
@@ -33,172 +51,413 @@ const Home = () => {
 		<section>
 			{beforeContent.content}
 
-			<div className="ct-first-steps-container">
-				<h2>{__('Customizer Shortcuts', 'blocksy')}</h2>
+			<div
+				className="ct-dashboard-home-container"
+				data-columns={
+					ctDashboardLocalizations.plugin_data.hide_support_section
+						? '1'
+						: '2'
+				}>
+				<section>
+					<h4>{__('Customizer Shortcuts', 'blocksy')}</h4>
 
-				<ul className="ct-first-steps">
-					<li>
-						<svg width="20" height="20" viewBox="0 0 20 20">
-							<path d="M15.8,5.9L10,0L4.2,5.9C1,9.1,1,14.3,4.2,17.6C5.8,19.2,7.9,20,10,20s4.2-0.8,5.8-2.4C19,14.3,19,9.1,15.8,5.9z M10,17.9c-1.6,0-3.2-0.6-4.4-1.8c-1.2-1.2-1.8-2.7-1.8-4.4s0.6-3.2,1.8-4.4L10,2.9V17.9z" />
-						</svg>
+					<ul className="ct-customizer-shortcuts-list">
+						<li>
+							<h4>{__('Color Options', 'blocksy')}</h4>
 
-						<h4>{__('Color Options', 'blocksy')}</h4>
-						<p>
-							{__(
-								'Set the theme global colors, select the font, button and background colors.',
-								'blocksy'
-							)}
-						</p>
+							<p>
+								{__(
+									'Manage the colour palette, as well as setting colours for different elements of the website.',
+									'blocksy'
+								)}
+							</p>
 
-						<a
-							href={`${
-								ctDashboardLocalizations.customizer_url
-							}${encodeURI(`[section]=color`)}`}
-							className="ct-button">
-							{__('Go to option', 'blocksy')}
-						</a>
-					</li>
+							<div className="ct-shortcut-actions">
+								<DocumentationButton href="https://creativethemes.com/blocksy/docs/general-options/colors/" />
 
-					<li>
-						<svg width="20" height="20" viewBox="0 0 20 20">
-							<path d="M20,17.5v-15C20,1.1,18.9,0,17.5,0h-15C1.1,0,0,1.1,0,2.5v15C0,18.9,1.1,20,2.5,20h15C18.9,20,20,18.9,20,17.5z M18.8,17.6c0,0.6-0.6,1.2-1.2,1.2h-15c-0.7,0-1.2-0.5-1.2-1.2V7h17.5V17.6z" />
-						</svg>
+								<a
+									href={`${
+										ctDashboardLocalizations.customizer_url
+									}${encodeURI(`[section]=color`)}`}
+									target="_blank">
+									<svg
+										width="15px"
+										height="15px"
+										viewBox="0 0 24 24"
+										fill="currentColor">
+										<path d="M4 11c.6 0 1-.4 1-1V3c0-.6-.4-1-1-1s-1 .4-1 1v7c0 .6.4 1 1 1zM12 11c-.6 0-1 .4-1 1v9c0 .6.4 1 1 1s1-.4 1-1v-9c0-.6-.4-1-1-1zM20 13c.6 0 1-.4 1-1V3c0-.6-.4-1-1-1s-1 .4-1 1v9c0 .6.4 1 1 1zM7 13H1c-.6 0-1 .4-1 1s.4 1 1 1h2v6c0 .6.4 1 1 1s1-.4 1-1v-6h2c.6 0 1-.4 1-1s-.4-1-1-1zM15 7h-2V3c0-.6-.4-1-1-1s-1 .4-1 1v4H9c-.6 0-1 .4-1 1s.4 1 1 1h6c.6 0 1-.4 1-1s-.4-1-1-1zM23 15h-6c-.6 0-1 .4-1 1s.4 1 1 1h2v4c0 .6.4 1 1 1s1-.4 1-1v-4h2c.6 0 1-.4 1-1s-.4-1-1-1z" />
+									</svg>
+									{__('Customize', 'blocksy')}
+								</a>
+							</div>
+						</li>
 
-						<h4>{__('Header Options', 'blocksy')}</h4>
+						<li>
+							<h4>{__('Typography Options', 'blocksy')}</h4>
 
-						<p>
-							{__(
-								'Set the theme header type, set the colors, spacing, alignment and more.',
-								'blocksy'
-							)}
-						</p>
+							<p>
+								{__(
+									'Set the footer type, number of columns, spacing and colors.',
+									'blocksy'
+								)}
+							</p>
 
-						<a
-							href={`${
-								ctDashboardLocalizations.customizer_url
-							}${encodeURI(`[section]=header`)}`}
-							className="ct-button"
-							data-hover="white">
-							{__('Go to option', 'blocksy')}
-						</a>
-					</li>
+							<div className="ct-shortcut-actions">
+								<DocumentationButton href="https://creativethemes.com/blocksy/docs/general-options/typography/" />
 
-					<li>
-						<svg width="20" height="20" viewBox="0 0 20 20">
-							<path d="M18,0H5.3c-1.1,0-2,1.1-2,2.4V4H2C0.9,4,0,5.1,0,6.4v0.8v9.6v0.8C0,18.9,0.9,20,2,20h3.3h1.3H18c1.1,0,2-1.1,2-2.4V2.4C20,1.1,19.1,0,18,0zM3.3,16.8c0,0.4-0.3,0.8-0.7,0.8c-0.4,0-0.7-0.4-0.7-0.8V6.6c0-0.1,0.1-0.2,0.2-0.2h0.9c0.1,0,0.2,0.1,0.2,0.2V16.8z M18,17.4c0,0.1-0.1,0.2-0.2,0.2H5.2c0.1-0.3,0.1-0.5,0.1-0.8V7.2c0,0,0,0,0,0V2.6c0-0.1,0.1-0.2,0.2-0.2h12.3c0.1,0,0.2,0.1,0.2,0.2V17.4z M6.9,5.3c-0.1,0-0.2-0.1-0.2-0.2V3.5c0-0.1,0.1-0.2,0.2-0.2h9.6c0.1,0,0.2,0.1,0.2,0.2v1.6c0,0.1-0.1,0.2-0.2,0.2H6.9z M16.5,13.3c0.1,0,0.2-0.1,0.2-0.2V9.5c0-0.1-0.1-0.2-0.2-0.2h-4.3c-0.1,0-0.2,0.1-0.2,0.2v3.6c0,0.1,0.1,0.2,0.2,0.2H16.5zM10.7,7.3c0-0.4-0.3-0.7-0.7-0.7H7.3C7,6.7,6.7,7,6.7,7.3l0,0C6.7,7.7,7,8,7.3,8H10C10.4,8,10.7,7.7,10.7,7.3L10.7,7.3z M10.7,10c0-0.4-0.3-0.7-0.7-0.7H7.3C7,9.3,6.7,9.6,6.7,10l0,0c0,0.4,0.3,0.7,0.7,0.7H10C10.4,10.7,10.7,10.4,10.7,10L10.7,10z M16.7,7.3c0-0.4-0.3-0.7-0.7-0.7h-3.3C12.3,6.7,12,7,12,7.3l0,0C12,7.7,12.3,8,12.7,8H16C16.4,8,16.7,7.7,16.7,7.3L16.7,7.3z M10.7,15.3c0,0.4-0.3,0.7-0.7,0.7H7.3c-0.4,0-0.7-0.3-0.7-0.7l0,0c0-0.4,0.3-0.7,0.7-0.7H10C10.4,14.7,10.7,15,10.7,15.3L10.7,15.3zM16.7,15.3c0,0.4-0.3,0.7-0.7,0.7h-3.3c-0.4,0-0.7-0.3-0.7-0.7l0,0c0-0.4,0.3-0.7,0.7-0.7H16C16.4,14.7,16.7,15,16.7,15.3L16.7,15.3z M10.7,12.7c0-0.4-0.3-0.7-0.7-0.7H7.3c-0.4,0-0.7,0.3-0.7,0.7l0,0c0,0.4,0.3,0.7,0.7,0.7H10C10.4,13.3,10.7,13,10.7,12.7L10.7,12.7z" />
-						</svg>
+								<a
+									href={`${
+										ctDashboardLocalizations.customizer_url
+									}${encodeURI('[section]=typography')}`}
+									target="_blank">
+									<svg
+										width="15px"
+										height="15px"
+										viewBox="0 0 24 24"
+										fill="currentColor">
+										<path d="M4 11c.6 0 1-.4 1-1V3c0-.6-.4-1-1-1s-1 .4-1 1v7c0 .6.4 1 1 1zM12 11c-.6 0-1 .4-1 1v9c0 .6.4 1 1 1s1-.4 1-1v-9c0-.6-.4-1-1-1zM20 13c.6 0 1-.4 1-1V3c0-.6-.4-1-1-1s-1 .4-1 1v9c0 .6.4 1 1 1zM7 13H1c-.6 0-1 .4-1 1s.4 1 1 1h2v6c0 .6.4 1 1 1s1-.4 1-1v-6h2c.6 0 1-.4 1-1s-.4-1-1-1zM15 7h-2V3c0-.6-.4-1-1-1s-1 .4-1 1v4H9c-.6 0-1 .4-1 1s.4 1 1 1h6c.6 0 1-.4 1-1s-.4-1-1-1zM23 15h-6c-.6 0-1 .4-1 1s.4 1 1 1h2v4c0 .6.4 1 1 1s1-.4 1-1v-4h2c.6 0 1-.4 1-1s-.4-1-1-1z" />
+									</svg>
+									{__('Customize', 'blocksy')}
+								</a>
+							</div>
+						</li>
 
-						<h4>{__('Blog Options', 'blocksy')}</h4>
+						<li>
+							<h4>{__('Header Options', 'blocksy')}</h4>
 
-						<p>
-							{__(
-								'Set the blog entries type, number of cards, spacing, colors and more.',
-								'blocksy'
-							)}
-						</p>
+							<p>
+								{__(
+									'Configure the header to your liking with an easy to use drag and drop builder.',
+									'blocksy'
+								)}
+							</p>
 
-						<a
-							href={`${
-								ctDashboardLocalizations.customizer_url
-							}${encodeURI(`[section]=blog_posts`)}`}
-							className="ct-button"
-							data-hover="white">
-							{__('Go to option', 'blocksy')}
-						</a>
-					</li>
+							<div className="ct-shortcut-actions">
+								<DocumentationButton href="https://creativethemes.com/blocksy/docs/header-elements/header-builder-elements/" />
 
-					<li>
-						<svg width="20" height="20" viewBox="0 0 20 20">
-							<path d="M18,2h-2v16h2c1.1,0,2-0.9,2-2V4C20,2.9,19.1,2,18,2z" />
-							<path d="M13.1,0H1.9C0.8,0,0,0.9,0,2v16c0,1.1,0.8,2,1.9,2h11.2c1,0,1.9-0.9,1.9-2V2C15,0.9,14.2,0,13.1,0zM13,16c0,0.5-0.5,1-1,1H3c-0.5,0-1-0.5-1-1v-2c0-0.5,0.5-1,1-1h9c0.5,0,1,0.5,1,1V16zM12.5,11h-10C2.2,11,2,10.8,2,10.5C2,10.2,2.2,10,2.5,10h10c0.3,0,0.5,0.2,0.5,0.5C13,10.8,12.8,11,12.5,11z M12.5,8h-10C2.2,8,2,7.8,2,7.5C2,7.2,2.2,7,2.5,7h10C12.8,7,13,7.2,13,7.5C13,7.8,12.8,8,12.5,8zM12.5,5h-10C2.2,5,2,4.8,2,4.5C2,4.2,2.2,4,2.5,4h10C12.8,4,13,4.2,13,4.5C13,4.8,12.8,5,12.5,5z" />
-						</svg>
+								<a
+									href={`${
+										ctDashboardLocalizations.customizer_url
+									}${encodeURI(`[section]=header`)}`}
+									target="_blank">
+									<svg
+										width="15px"
+										height="15px"
+										viewBox="0 0 24 24"
+										fill="currentColor">
+										<path d="M4 11c.6 0 1-.4 1-1V3c0-.6-.4-1-1-1s-1 .4-1 1v7c0 .6.4 1 1 1zM12 11c-.6 0-1 .4-1 1v9c0 .6.4 1 1 1s1-.4 1-1v-9c0-.6-.4-1-1-1zM20 13c.6 0 1-.4 1-1V3c0-.6-.4-1-1-1s-1 .4-1 1v9c0 .6.4 1 1 1zM7 13H1c-.6 0-1 .4-1 1s.4 1 1 1h2v6c0 .6.4 1 1 1s1-.4 1-1v-6h2c.6 0 1-.4 1-1s-.4-1-1-1zM15 7h-2V3c0-.6-.4-1-1-1s-1 .4-1 1v4H9c-.6 0-1 .4-1 1s.4 1 1 1h6c.6 0 1-.4 1-1s-.4-1-1-1zM23 15h-6c-.6 0-1 .4-1 1s.4 1 1 1h2v4c0 .6.4 1 1 1s1-.4 1-1v-4h2c.6 0 1-.4 1-1s-.4-1-1-1z" />
+									</svg>
+									{__('Customize', 'blocksy')}
+								</a>
+							</div>
+						</li>
 
-						<h4>{__('Page Options', 'blocksy')}</h4>
+						<li>
+							<h4>{__('Footer Options', 'blocksy')}</h4>
 
-						<p>
-							{__(
-								'Set the page container width, spacing, sidebar and more.',
-								'blocksy'
-							)}
-						</p>
+							<p>
+								{__(
+									'Arrange your footer in a way that actually makes sense with our drag and drop builder.',
+									'blocksy'
+								)}
+							</p>
 
-						<a
-							href={`${
-								ctDashboardLocalizations.customizer_url
-							}${encodeURI('[section]=single_pages')}`}
-							className="ct-button"
-							data-hover="white">
-							{__('Go to option', 'blocksy')}
-						</a>
-					</li>
+							<div className="ct-shortcut-actions">
+								<DocumentationButton href="https://creativethemes.com/blocksy/docs/footer-options/footer-introduction/" />
 
-					<li>
-						<svg width="20" height="20" viewBox="0 0 20 20">
-							<path d="M0,2.5l0,15C0,18.9,1.1,20,2.5,20h15c1.4,0,2.5-1.1,2.5-2.5v-15C20,1.1,18.9,0,17.5,0l-15,0C1.1,0,0,1.1,0,2.5z M2.4,1.1H13v17.5H2.4c-0.7,0-1.2-0.5-1.2-1.2v-15C1.2,1.8,1.8,1.2,2.4,1.1L2.4,1.1z" />
-						</svg>
+								<a
+									href={`${
+										ctDashboardLocalizations.customizer_url
+									}${encodeURI('[section]=footer')}`}
+									target="_blank">
+									<svg
+										width="15px"
+										height="15px"
+										viewBox="0 0 24 24"
+										fill="currentColor">
+										<path d="M4 11c.6 0 1-.4 1-1V3c0-.6-.4-1-1-1s-1 .4-1 1v7c0 .6.4 1 1 1zM12 11c-.6 0-1 .4-1 1v9c0 .6.4 1 1 1s1-.4 1-1v-9c0-.6-.4-1-1-1zM20 13c.6 0 1-.4 1-1V3c0-.6-.4-1-1-1s-1 .4-1 1v9c0 .6.4 1 1 1zM7 13H1c-.6 0-1 .4-1 1s.4 1 1 1h2v6c0 .6.4 1 1 1s1-.4 1-1v-6h2c.6 0 1-.4 1-1s-.4-1-1-1zM15 7h-2V3c0-.6-.4-1-1-1s-1 .4-1 1v4H9c-.6 0-1 .4-1 1s.4 1 1 1h6c.6 0 1-.4 1-1s-.4-1-1-1zM23 15h-6c-.6 0-1 .4-1 1s.4 1 1 1h2v4c0 .6.4 1 1 1s1-.4 1-1v-4h2c.6 0 1-.4 1-1s-.4-1-1-1z" />
+									</svg>
+									{__('Customize', 'blocksy')}
+								</a>
+							</div>
+						</li>
 
-						<h4>{__('Sidebar Options', 'blocksy')}</h4>
+						<li>
+							<h4>{__('Blog Options', 'blocksy')}</h4>
 
-						<p>
-							{__(
-								'Set the sidebar width, design type, spacing, colors.',
-								'blocksy'
-							)}
-						</p>
+							<p>
+								{__(
+									'Adjust your blog roll options in a single place and make it stand out in the crowd.',
+									'blocksy'
+								)}
+							</p>
 
-						<a
-							href={`${
-								ctDashboardLocalizations.customizer_url
-							}${encodeURI('[section]=sidebar')}`}
-							className="ct-button"
-							data-hover="white">
-							{__('Go to option', 'blocksy')}
-						</a>
-					</li>
+							<div className="ct-shortcut-actions">
+								<DocumentationButton href="https://creativethemes.com/blocksy/docs/post-types/blog-posts/" />
 
-					<li>
-						<svg width="20" height="20" viewBox="0 0 20 20">
-							<path d="M17.5,0h-15C1.1,0,0,1.1,0,2.5v15C0,18.9,1.1,20,2.5,20h15c1.4,0,2.5-1.1,2.5-2.5v-15C20,1.1,18.9,0,17.5,0z M18.8,13H1.2V2.4c0-0.6,0.6-1.2,1.2-1.2h15c0.7,0,1.2,0.5,1.2,1.2V13z" />
-						</svg>
+								<a
+									href={`${
+										ctDashboardLocalizations.customizer_url
+									}${encodeURI(`[section]=blog_posts`)}`}
+									target="_blank">
+									<svg
+										width="15px"
+										height="15px"
+										viewBox="0 0 24 24"
+										fill="currentColor">
+										<path d="M4 11c.6 0 1-.4 1-1V3c0-.6-.4-1-1-1s-1 .4-1 1v7c0 .6.4 1 1 1zM12 11c-.6 0-1 .4-1 1v9c0 .6.4 1 1 1s1-.4 1-1v-9c0-.6-.4-1-1-1zM20 13c.6 0 1-.4 1-1V3c0-.6-.4-1-1-1s-1 .4-1 1v9c0 .6.4 1 1 1zM7 13H1c-.6 0-1 .4-1 1s.4 1 1 1h2v6c0 .6.4 1 1 1s1-.4 1-1v-6h2c.6 0 1-.4 1-1s-.4-1-1-1zM15 7h-2V3c0-.6-.4-1-1-1s-1 .4-1 1v4H9c-.6 0-1 .4-1 1s.4 1 1 1h6c.6 0 1-.4 1-1s-.4-1-1-1zM23 15h-6c-.6 0-1 .4-1 1s.4 1 1 1h2v4c0 .6.4 1 1 1s1-.4 1-1v-4h2c.6 0 1-.4 1-1s-.4-1-1-1z" />
+									</svg>
+									{__('Customize', 'blocksy')}
+								</a>
+							</div>
+						</li>
 
-						<h4>{__('Footer Options', 'blocksy')}</h4>
+						<li>
+							<h4>{__('Posts Options', 'blocksy')}</h4>
 
-						<p>
-							{__(
-								'Set the footer type, number of columns, spacing and colors.',
-								'blocksy'
-							)}
-						</p>
+							<p>
+								{__(
+									'Set the footer type, number of columns, spacing and colors.',
+									'blocksy'
+								)}
+							</p>
 
-						<a
-							href={`${
-								ctDashboardLocalizations.customizer_url
-							}${encodeURI('[section]=footer')}`}
-							className="ct-button"
-							data-hover="white">
-							{__('Go to option', 'blocksy')}
-						</a>
-					</li>
-				</ul>
+							<div className="ct-shortcut-actions">
+								<DocumentationButton href="https://creativethemes.com/blocksy/docs/post-types/single-posts/" />
 
-				{is_companion_active !== 'active' && (
-					<Fragment>
-						<h2 className="ct-downloads-heading">
-							{__('Downloads', 'blocksy')}
-						</h2>
+								<a
+									href={`${
+										ctDashboardLocalizations.customizer_url
+									}${encodeURI(
+										'[section]=single_blog_posts'
+									)}`}
+									target="_blank">
+									<svg
+										width="15px"
+										height="15px"
+										viewBox="0 0 24 24"
+										fill="currentColor">
+										<path d="M4 11c.6 0 1-.4 1-1V3c0-.6-.4-1-1-1s-1 .4-1 1v7c0 .6.4 1 1 1zM12 11c-.6 0-1 .4-1 1v9c0 .6.4 1 1 1s1-.4 1-1v-9c0-.6-.4-1-1-1zM20 13c.6 0 1-.4 1-1V3c0-.6-.4-1-1-1s-1 .4-1 1v9c0 .6.4 1 1 1zM7 13H1c-.6 0-1 .4-1 1s.4 1 1 1h2v6c0 .6.4 1 1 1s1-.4 1-1v-6h2c.6 0 1-.4 1-1s-.4-1-1-1zM15 7h-2V3c0-.6-.4-1-1-1s-1 .4-1 1v4H9c-.6 0-1 .4-1 1s.4 1 1 1h6c.6 0 1-.4 1-1s-.4-1-1-1zM23 15h-6c-.6 0-1 .4-1 1s.4 1 1 1h2v4c0 .6.4 1 1 1s1-.4 1-1v-4h2c.6 0 1-.4 1-1s-.4-1-1-1z" />
+									</svg>
+									{__('Customize', 'blocksy')}
+								</a>
+							</div>
+						</li>
 
-						<ul className="ct-downloads">
+						<li>
+							<h4>{__('Page Options', 'blocksy')}</h4>
+
+							<p>
+								{__(
+									'Set the page container width, spacing, sidebar and more.',
+									'blocksy'
+								)}
+							</p>
+
+							<div className="ct-shortcut-actions">
+								<DocumentationButton href="https://creativethemes.com/blocksy/docs/post-types/pages/" />
+
+								<a
+									href={`${
+										ctDashboardLocalizations.customizer_url
+									}${encodeURI('[section]=single_pages')}`}
+									target="_blank">
+									<svg
+										width="15px"
+										height="15px"
+										viewBox="0 0 24 24"
+										fill="currentColor">
+										<path d="M4 11c.6 0 1-.4 1-1V3c0-.6-.4-1-1-1s-1 .4-1 1v7c0 .6.4 1 1 1zM12 11c-.6 0-1 .4-1 1v9c0 .6.4 1 1 1s1-.4 1-1v-9c0-.6-.4-1-1-1zM20 13c.6 0 1-.4 1-1V3c0-.6-.4-1-1-1s-1 .4-1 1v9c0 .6.4 1 1 1zM7 13H1c-.6 0-1 .4-1 1s.4 1 1 1h2v6c0 .6.4 1 1 1s1-.4 1-1v-6h2c.6 0 1-.4 1-1s-.4-1-1-1zM15 7h-2V3c0-.6-.4-1-1-1s-1 .4-1 1v4H9c-.6 0-1 .4-1 1s.4 1 1 1h6c.6 0 1-.4 1-1s-.4-1-1-1zM23 15h-6c-.6 0-1 .4-1 1s.4 1 1 1h2v4c0 .6.4 1 1 1s1-.4 1-1v-4h2c.6 0 1-.4 1-1s-.4-1-1-1z" />
+									</svg>
+									{__('Customize', 'blocksy')}
+								</a>
+							</div>
+						</li>
+
+						<li>
+							<h4>{__('Sidebar Options', 'blocksy')}</h4>
+
+							<p>
+								{__(
+									'Change the sidebar behaviour and style with a nice set of options that come in handy.',
+									'blocksy'
+								)}
+							</p>
+
+							<div className="ct-shortcut-actions">
+								<DocumentationButton href="https://creativethemes.com/blocksy/docs/general-options/sidebar/" />
+
+								<a
+									href={`${
+										ctDashboardLocalizations.customizer_url
+									}${encodeURI('[section]=sidebar')}`}
+									target="_blank">
+									<svg
+										width="15px"
+										height="15px"
+										viewBox="0 0 24 24"
+										fill="currentColor">
+										<path d="M4 11c.6 0 1-.4 1-1V3c0-.6-.4-1-1-1s-1 .4-1 1v7c0 .6.4 1 1 1zM12 11c-.6 0-1 .4-1 1v9c0 .6.4 1 1 1s1-.4 1-1v-9c0-.6-.4-1-1-1zM20 13c.6 0 1-.4 1-1V3c0-.6-.4-1-1-1s-1 .4-1 1v9c0 .6.4 1 1 1zM7 13H1c-.6 0-1 .4-1 1s.4 1 1 1h2v6c0 .6.4 1 1 1s1-.4 1-1v-6h2c.6 0 1-.4 1-1s-.4-1-1-1zM15 7h-2V3c0-.6-.4-1-1-1s-1 .4-1 1v4H9c-.6 0-1 .4-1 1s.4 1 1 1h6c.6 0 1-.4 1-1s-.4-1-1-1zM23 15h-6c-.6 0-1 .4-1 1s.4 1 1 1h2v4c0 .6.4 1 1 1s1-.4 1-1v-4h2c.6 0 1-.4 1-1s-.4-1-1-1z" />
+									</svg>
+									{__('Customize', 'blocksy')}
+								</a>
+							</div>
+						</li>
+					</ul>
+				</section>
+
+				{!ctDashboardLocalizations.plugin_data.hide_support_section && (
+					<aside>
+						<h4>{__('Need help or advice?', 'blocksy')}</h4>
+
+						<ul
+							className="ct-support-container"
+							data-placement="sidebar">
 							<li>
-								<svg
-									width="20"
-									height="20"
-									viewBox="0 0 20 20">
-									<path d="M3.1,0c-0.4,0-0.8,0.2-1,0.6L0.2,3.9C0.1,4.1,0,4.2,0,4.4v13.3C0,19,1,20,2.2,20h15.6c1.2,0,2.2-1,2.2-2.2V4.4c0-0.2-0.1-0.4-0.2-0.6l-1.9-3.3c-0.2-0.3-0.6-0.6-1-0.6H3.1z M3.7,2.2h12.6l1.3,2.2H2.4L3.7,2.2z M2.2,6.7h15.6v11.1H2.2V6.7zM8.9,8.3v3.3H5.6l4.4,4.4l4.4-4.4h-3.3V8.3H8.9z"></path>
-								</svg>
+								<h4>
+									<span>
+										<svg
+											width="12"
+											height="12"
+											viewBox="0 0 24 24"
+											fill="currentColor">
+											<path d="M8.6 6.7c0-1.9 1.5-3.5 3.4-3.5s3.4 1.5 3.4 3.5-1.5 3.5-3.4 3.5-3.4-1.6-3.4-3.5zM22 11.3h-3.9c.5.5.7 1.2.7 2v5.9c0 .6-.2 1.2-.3 1.7H22c1.2-.8 2-2.2 2-3.8v-3.7c0-1.2-.9-2.1-2-2.1zm.8-4.1c0-1.6-1.3-2.9-2.9-2.9-1.6 0-2.9 1.3-2.9 2.9 0 1.6 1.3 2.9 2.9 2.9 1.7 0 2.9-1.3 2.9-2.9zM5.2 13c.1-.7.3-1.3.7-1.8H1.8c-1 .1-1.8.9-1.8 2V17c0 1.6.8 2.9 2 3.8h3.5c-.2-.6-.3-1.3-.3-2.1V13zM4 4.4c-1.6 0-2.9 1.3-2.9 2.9 0 1.6 1.3 2.9 2.9 2.9s2.9-1.3 2.9-2.9c0-1.7-1.3-2.9-2.9-2.9zm11.2 6.9H8.8c-1.1 0-2 .9-2 2v5.5c0 .7.2 1.4.4 2.1h9.5c.3-.6.4-1.3.4-2.1v-5.5c.1-1.1-.8-2-1.9-2z" />
+										</svg>
+									</span>
+									{__('Facebook Community', 'blocksy')}
+								</h4>
 
-								<h3>
+								<p>
+									{__(
+										'Share ideas, help others, ask questions and discuss your next project in our friendly community.',
+										'blocksy'
+									)}
+								</p>
+
+								<a
+									href="https://www.facebook.com/groups/blocksy.community"
+									className="ct-button"
+									data-hover="blue"
+									target="_blank">
+									{__(
+										'Join Our Facebook Community',
+										'blocksy'
+									)}
+								</a>
+							</li>
+
+							<li>
+								<h4>
+									<span>
+										<svg
+											width="10"
+											height="10"
+											viewBox="0 0 24 24"
+											fill="currentColor">
+											<path d="M13.3 3.7 8.5.4C7.4-.3 5.9-.1 5.2 1c-.3.4-.5.9-.5 1.4v19.1c0 1.3 1.1 2.4 2.4 2.4.5 0 1-.2 1.4-.4l4.7-3.3 9-6.3c1.1-.8 1.4-2.3.6-3.4l-.6-.6-8.9-6.2z" />
+										</svg>
+									</span>
+									{__('Video Tutorials', 'blocksy')}
+								</h4>
+
+								<p>
+									{__(
+										'Learn how to do just about anything within Blocksy by following our byte-sized video tutorials.',
+										'blocksy'
+									)}
+								</p>
+
+								<a
+									href="https://creativethemes.com/blocksy/video-tutorials/"
+									className="ct-button"
+									data-hover="blue"
+									target="_blank">
+									{__('Watch Tutorials', 'blocksy')}
+								</a>
+							</li>
+
+							<li>
+								<h4>
+									<span>
+										<svg
+											width="12"
+											height="12"
+											viewBox="0 0 24 24"
+											fill="currentColor">
+											<path d="M24 4.1v13.8c0 .7-.5 1.2-1.2 1.3-2 .1-6.1.5-8.9 1.9-.4.2-.9-.1-.9-.6V5.7c0-.2.1-.4.3-.5 2.7-1.7 7.2-2.1 9.4-2.3.7-.1 1.3.5 1.3 1.2zM1.4 2.9C.6 2.8 0 3.4 0 4.1v13.8c0 .7.5 1.2 1.2 1.3 2 .1 6.1.5 8.9 1.9.4.2.9-.1.9-.5V5.7c0-.2-.1-.4-.3-.5C8.1 3.5 3.6 3 1.4 2.9z" />
+										</svg>
+									</span>
+									{__('Knowledge Base', 'blocksy')}
+								</h4>
+
+								<p>
+									{__(
+										'Dive in deeper with our documentation and learn advanced tips and tricks about Blocksy and its components.',
+										'blocksy'
+									)}
+								</p>
+
+								<a
+									href="https://creativethemes.com/blocksy/docs/"
+									className="ct-button"
+									data-hover="blue"
+									target="_blank">
+									{__('View Documentation', 'blocksy')}
+								</a>
+							</li>
+
+							<li>
+								<h4>
+									<span>
+										<svg
+											width="14"
+											height="14"
+											viewBox="0 0 24 24"
+											fill="currentColor">
+											<path d="M8.3 7.3 4.1 3C6.2 1.1 9 0 12 0s5.8 1.1 7.9 3l-4.3 4.3C14.6 6.5 13.4 6 12 6s-2.6.5-3.7 1.3zM12 18c-1.4 0-2.6-.5-3.7-1.3L4.1 21c2.1 1.9 4.9 3 7.9 3s5.8-1.1 7.9-3l-4.3-4.3c-1 .8-2.2 1.3-3.6 1.3zm9-13.9-4.3 4.3c.8 1 1.3 2.3 1.3 3.7s-.5 2.6-1.3 3.7l4.3 4.3c1.9-2.1 3-4.9 3-7.9s-1.1-6-3-8.1zM6 12c0-1.4.5-2.6 1.3-3.7L3 4.1C1.1 6.2 0 9 0 12s1.1 5.8 3 7.9l4.3-4.3C6.5 14.6 6 13.4 6 12z" />
+										</svg>
+									</span>
+									{__('Support', 'blocksy')}
+								</h4>
+
+								<p>
+									{__(
+										'If your questions that have not been answered by our documentation or video tutorials, just drop us a line.',
+										'blocksy'
+									)}
+								</p>
+
+								<a
+									href={ctDashboardLocalizations.support_url}
+									className="ct-button"
+									data-hover="blue"
+									target="_blank">
+									{__('Submit a Ticket', 'blocksy')}
+								</a>
+							</li>
+						</ul>
+					</aside>
+				)}
+			</div>
+
+			{afterContent.content}
+
+			{is_companion_active !== 'active' && (
+				<Fragment>
+					<div className="ct-dashboard-home-downloads">
+						<ul>
+							<li>
+								<h4>
+									<svg
+										width="16"
+										height="16"
+										fill="currentColor"
+										viewBox="0 0 20 20">
+										<path d="M3.1,0c-0.4,0-0.8,0.2-1,0.6L0.2,3.9C0.1,4.1,0,4.2,0,4.4v13.3C0,19,1,20,2.2,20h15.6c1.2,0,2.2-1,2.2-2.2V4.4c0-0.2-0.1-0.4-0.2-0.6l-1.9-3.3c-0.2-0.3-0.6-0.6-1-0.6H3.1z M3.7,2.2h12.6l1.3,2.2H2.4L3.7,2.2z M2.2,6.7h15.6v11.1H2.2V6.7zM8.9,8.3v3.3H5.6l4.4,4.4l4.4-4.4h-3.3V8.3H8.9z"></path>
+									</svg>
+
 									{__('Blocksy Companion', 'blocksy')}
-								</h3>
+								</h4>
 
 								<p>
 									{__(
@@ -217,15 +476,13 @@ const Home = () => {
 										$.ajax(ajaxurl, {
 											type: 'POST',
 											data: {
-												action:
-													'blocksy_notice_button_click',
+												action: 'blocksy_notice_button_click',
+												nonce: ct_localizations.nonce,
 											},
 										}).then(({ success, data }) => {
 											if (success) {
 												setCustomStatus(data.status)
-												if (
-													data.status === 'active'
-												) {
+												if (data.status === 'active') {
 													location.assign(
 														data.pluginUrl
 													)
@@ -257,17 +514,18 @@ const Home = () => {
 								</a>
 							</li>
 
-							<li>								
-								<svg
-									width="20"
-									height="20"
-									viewBox="0 0 20 20">
-									<path d="M3.1,0c-0.4,0-0.8,0.2-1,0.6L0.2,3.9C0.1,4.1,0,4.2,0,4.4v13.3C0,19,1,20,2.2,20h15.6c1.2,0,2.2-1,2.2-2.2V4.4c0-0.2-0.1-0.4-0.2-0.6l-1.9-3.3c-0.2-0.3-0.6-0.6-1-0.6H3.1z M3.7,2.2h12.6l1.3,2.2H2.4L3.7,2.2z M2.2,6.7h15.6v11.1H2.2V6.7zM8.9,8.3v3.3H5.6l4.4,4.4l4.4-4.4h-3.3V8.3H8.9z"></path>
-								</svg>
+							<li>
+								<h4>
+									<svg
+										width="16"
+										height="16"
+										fill="currentColor"
+										viewBox="0 0 20 20">
+										<path d="M3.1,0c-0.4,0-0.8,0.2-1,0.6L0.2,3.9C0.1,4.1,0,4.2,0,4.4v13.3C0,19,1,20,2.2,20h15.6c1.2,0,2.2-1,2.2-2.2V4.4c0-0.2-0.1-0.4-0.2-0.6l-1.9-3.3c-0.2-0.3-0.6-0.6-1-0.6H3.1z M3.7,2.2h12.6l1.3,2.2H2.4L3.7,2.2z M2.2,6.7h15.6v11.1H2.2V6.7zM8.9,8.3v3.3H5.6l4.4,4.4l4.4-4.4h-3.3V8.3H8.9z"></path>
+									</svg>
 
-								<h3>
 									{__('Blocksy Child Theme', 'blocksy')}
-								</h3>
+								</h4>
 
 								<p>
 									{__(
@@ -275,7 +533,6 @@ const Home = () => {
 										'blocksy'
 									)}
 								</p>
-
 
 								<a
 									className="ct-button"
@@ -285,13 +542,9 @@ const Home = () => {
 								</a>
 							</li>
 						</ul>
-					</Fragment>
-				)}
-			</div>
-
-			{afterContent.content}
-
-			<SubmitSupport />
+					</div>
+				</Fragment>
+			)}
 		</section>
 	)
 }

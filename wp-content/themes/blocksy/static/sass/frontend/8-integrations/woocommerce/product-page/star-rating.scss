@@ -6,7 +6,7 @@
 	.woocommerce-review-link {
 		margin-inline-start: 10px;
 		font-size: 12px;
-		--linkInitialColor: var(--color);
+		--theme-link-initial-color: var(--theme-text-color);
 	}
 }
 
@@ -17,9 +17,9 @@
 	align-items: center;
 
 	label {
-		--fontSize: 11px;
-		--fontWeight: 500;
 		margin-bottom: 0;
+		font-size: 12px;
+		font-weight: 500;
 		text-transform: uppercase;
 	}
 
@@ -39,7 +39,6 @@
 			text-indent: -999em;
 			text-decoration: none;
 			color: currentColor;
-			// margin-left: 8px;
 			margin-inline-start: 8px;
 
 			&:before {

@@ -1,20 +1,20 @@
 <?php
 
-if (get_theme_mod($prefix . '_has_comments', 'yes') !== 'yes') {
+if (blocksy_get_theme_mod($prefix . '_has_comments', 'yes') !== 'yes') {
 	return;
 }
 
-$comments_narrow_width = get_theme_mod($prefix. '_comments_narrow_width', 750);
+$comments_narrow_width = blocksy_get_theme_mod($prefix. '_comments_narrow_width', 750);
 
 if ($comments_narrow_width !== 750) {
 	$css->put(
 		blocksy_prefix_selector('.ct-comments-container', $prefix),
-		'--narrow-container-max-width: ' . $comments_narrow_width . 'px'
+		'--theme-narrow-container-max-width: ' . $comments_narrow_width . 'px'
 	);
 }
 
 blocksy_output_colors([
-	'value' => get_theme_mod(
+	'value' => blocksy_get_theme_mod(
 		$prefix . '_comments_font_color',
 		[
 			'default' => [ 'color' => Blocksy_Css_Injector::get_skip_rule_keyword('DEFAULT') ],
@@ -29,12 +29,12 @@ blocksy_output_colors([
 	'variables' => [
 		'default' => [
 			'selector' => blocksy_prefix_selector('.ct-comments', $prefix),
-			'variable' => 'color'
+			'variable' => 'theme-text-color'
 		],
 
 		'hover' => [
 			'selector' => blocksy_prefix_selector('.ct-comments', $prefix),
-			'variable' => 'linkHoverColor'
+			'variable' => 'theme-link-hover-color'
 		],
 	],
 ]);
@@ -42,7 +42,7 @@ blocksy_output_colors([
 blocksy_output_background_css([
 	'selector' => blocksy_prefix_selector('.ct-comments-container', $prefix),
 	'css' => $css,
-	'value' => get_theme_mod(
+	'value' => blocksy_get_theme_mod(
 		$prefix . '_comments_background',
 		blocksy_background_default_value([
 			'backgroundColor' => [

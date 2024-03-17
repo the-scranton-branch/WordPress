@@ -113,22 +113,14 @@
 			> h3 {
 				color: lighten($background, 80%);
 
-				&:hover {
-					color: lighten($accent, 7%);
-					background-color: $background_light;
-
-					&:after {
-						color: inherit;
-					}
-				}
-
 				&:focus {
-					color: lighten($accent, 7%);
-					background: $background_light !important;
+					background-color: $background_light !important;
+				}
+			}
 
-					&:after {
-						color: inherit;
-					}
+			&:hover {
+				> h3.accordion-section-title {
+					background-color: $background_light !important;
 				}
 			}
 		}
@@ -307,30 +299,18 @@
 		background: darken($background_light, 1.5%);
 	}
 
-	.block-editor-button-block-appender {
-		color: $light;
-		box-shadow: inset 0 0 0 1px var(--optionBorderColor);
+	// .block-editor-button-block-appender {
+	// 	color: $light;
+	// 	box-shadow: inset 0 0 0 1px var(--optionBorderColor);
 
-		&:hover {
-			box-shadow: inset 0 0 0 1px var(--accentColor);
-		}
-	}
+	// 	&:hover {
+	// 		box-shadow: inset 0 0 0 1px var(--ui-accent-color);
+	// 	}
+	// }
 }
 
 
-// outer section	
-// .outer-section-open.ct-dark-mode #customize-controls {
-// 	#customize-sidebar-outer-content {
-// 		background: $background;
-// 		border-right-color: $border;
-// 		border-left-color: $border;
-// 	}
-
-// 	.wp-full-overlay-sidebar-content {
-// 		background: $background;
-// 	}
-// }
-
+// outer section
 .ct-dark-mode #customize-outer-theme-controls {
 	.customize-control-title {
 		color: lighten($background, 50%);

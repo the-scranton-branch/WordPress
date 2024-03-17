@@ -48,17 +48,34 @@ blocksy_output_colors([
 	'variables' => [
 		'default' => [
 			'selector' => blocksy_assemble_selector($root_selector),
-			'variable' => 'color'
+			'variable' => 'theme-text-color'
 		],
 
 		'link_initial' => [
 			'selector' => blocksy_assemble_selector($root_selector),
-			'variable' => 'linkInitialColor'
+			'variable' => 'theme-link-initial-color'
 		],
 
 		'link_hover' => [
 			'selector' => blocksy_assemble_selector($root_selector),
-			'variable' => 'linkHoverColor'
+			'variable' => 'theme-link-hover-color'
+		],
+	],
+	'responsive' => true
+]);
+
+blocksy_output_colors([
+	'value' => blocksy_akg('headerTextHeadingColor', $atts),
+	'default' => [
+		'default' => [ 'color' => Blocksy_Css_Injector::get_skip_rule_keyword('DEFAULT') ],
+	],
+	'css' => $css,
+	'tablet_css' => $tablet_css,
+	'mobile_css' => $mobile_css,
+	'variables' => [
+		'default' => [
+			'selector' => blocksy_assemble_selector($root_selector),
+			'variable' => 'theme-heading-color'
 		],
 	],
 	'responsive' => true
@@ -72,10 +89,9 @@ blocksy_output_spacing([
 	'selector' => blocksy_assemble_selector($root_selector),
 	'important' => true,
 	'value' => blocksy_default_akg(
-		'headerTextMargin', $atts,
-		blocksy_spacing_value([
-			'linked' => true,
-		])
+		'headerTextMargin',
+		$atts,
+		blocksy_spacing_value()
 	)
 ]);
 
@@ -102,7 +118,7 @@ if (isset($has_transparent_header) && $has_transparent_header) {
 						'to_add' => '[data-transparent-row="yes"]'
 					])
 				),
-				'variable' => 'color'
+				'variable' => 'theme-text-color'
 			],
 
 			'link_initial' => [
@@ -113,7 +129,7 @@ if (isset($has_transparent_header) && $has_transparent_header) {
 						'to_add' => '[data-transparent-row="yes"]'
 					])
 				),
-				'variable' => 'linkInitialColor'
+				'variable' => 'theme-link-initial-color'
 			],
 
 			'link_hover' => [
@@ -124,7 +140,31 @@ if (isset($has_transparent_header) && $has_transparent_header) {
 						'to_add' => '[data-transparent-row="yes"]'
 					])
 				),
-				'variable' => 'linkHoverColor'
+				'variable' => 'theme-link-hover-color'
+			],
+		],
+		'responsive' => true
+	]);
+
+	blocksy_output_colors([
+		'value' => blocksy_akg('transparentHeaderTextHeadingColor', $atts),
+		'default' => [
+			'default' => [ 'color' => Blocksy_Css_Injector::get_skip_rule_keyword('DEFAULT') ],
+		],
+		'css' => $css,
+		'tablet_css' => $tablet_css,
+		'mobile_css' => $mobile_css,
+
+		'variables' => [
+			'default' => [
+				'selector' => blocksy_assemble_selector(
+					blocksy_mutate_selector([
+						'selector' => $root_selector,
+						'operation' => 'between',
+						'to_add' => '[data-transparent-row="yes"]'
+					])
+				),
+				'variable' => 'theme-heading-color'
 			],
 		],
 		'responsive' => true
@@ -154,7 +194,7 @@ if (isset($has_sticky_header) && $has_sticky_header) {
 						'to_add' => '[data-sticky*="yes"]'
 					])
 				),
-				'variable' => 'color'
+				'variable' => 'theme-text-color'
 			],
 
 			'link_initial' => [
@@ -165,7 +205,7 @@ if (isset($has_sticky_header) && $has_sticky_header) {
 						'to_add' => '[data-sticky*="yes"]'
 					])
 				),
-				'variable' => 'linkInitialColor'
+				'variable' => 'theme-link-initial-color'
 			],
 
 			'link_hover' => [
@@ -176,7 +216,31 @@ if (isset($has_sticky_header) && $has_sticky_header) {
 						'to_add' => '[data-sticky*="yes"]'
 					])
 				),
-				'variable' => 'linkHoverColor'
+				'variable' => 'theme-link-hover-color'
+			],
+		],
+		'responsive' => true
+	]);
+
+	blocksy_output_colors([
+		'value' => blocksy_akg('stickyHeaderTextHeadingColor', $atts),
+		'default' => [
+			'default' => [ 'color' => Blocksy_Css_Injector::get_skip_rule_keyword('DEFAULT') ],
+		],
+		'css' => $css,
+		'tablet_css' => $tablet_css,
+		'mobile_css' => $mobile_css,
+
+		'variables' => [
+			'default' => [
+				'selector' => blocksy_assemble_selector(
+					blocksy_mutate_selector([
+						'selector' => $root_selector,
+						'operation' => 'between',
+						'to_add' => '[data-sticky*="yes"]'
+					])
+				),
+				'variable' => 'theme-heading-color'
 			],
 		],
 		'responsive' => true

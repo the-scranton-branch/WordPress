@@ -1,24 +1,18 @@
 import { createElement } from '@wordpress/element'
 
-const Text = ({ value, option, onChange }) => (
-	<div className="ct-option-input">
-		<input
-			type="text"
-			value={value}
-			{...{
-				...(option.field_attr ? option.field_attr : {}),
-				...(option.attr && option.attr.placeholder
-					? {
-							placeholder: option.attr.placeholder,
-					  }
-					: {}),
-			}}
-			onChange={({ target: { value } }) => onChange(value)}
-			{...(option.select_on_focus
-				? { onFocus: ({ target }) => target.select() }
-				: {})}
-		/>
-	</div>
-)
+import BlocksyText from './text/BlocksyText'
+import GutenbergText from './text/GutenbergText'
+
+const Text = (props) => {
+	const { purpose } = props
+
+	if (purpose === 'gutenberg') {
+		return <GutenbergText {...props} />
+	}
+
+	return <BlocksyText {...props} />
+}
+
+Text.supportedPurposes = ['default', 'gutenberg']
 
 export default Text

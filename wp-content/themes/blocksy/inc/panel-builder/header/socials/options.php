@@ -29,13 +29,13 @@ $options = [
 				],
 
 				'settings' => apply_filters(
-					'blocksy:header:socials:options:icon', 
+					'blocksy:socials:options:icon',
 					blocksy_get_social_networks_list()
 				),
-				'desc' => sprintf(
+				'desc' => blocksy_safe_sprintf(
 					// translators: placeholder here means the actual URL.
 					__( 'Configure the social links in General ➝ %sSocial Network Accounts%s.', 'blocksy' ),
-					sprintf(
+					blocksy_safe_sprintf(
 						'<a data-trigger-section="general:social_section_options" href="%s">',
 						admin_url('/customize.php?autofocus[section]=general&ct_autofocus=general:social_section_options')
 					),
@@ -119,13 +119,13 @@ $options = [
 					'socialsFillType' => [
 						'label' => __('Shape Fill Type', 'blocksy'),
 						'type' => 'ct-radio',
-						'value' => 'solid',
+						'value' => 'outline',
 						'view' => 'text',
 						'design' => 'block',
 						'setting' => [ 'transport' => 'postMessage' ],
 						'choices' => [
-							'solid' => __( 'Solid', 'blocksy' ),
 							'outline' => __( 'Outline', 'blocksy' ),
+							'solid' => __( 'Solid', 'blocksy' ),
 						],
 					],
 
@@ -268,13 +268,13 @@ $options = [
 									[
 										'title' => __( 'Initial', 'blocksy' ),
 										'id' => 'default',
-										'inherit' => 'var(--color)'
+										'inherit' => 'var(--theme-text-color)'
 									],
 
 									[
 										'title' => __( 'Hover', 'blocksy' ),
 										'id' => 'hover',
-										'inherit' => 'var(--linkHoverColor)'
+										'inherit' => 'var(--theme-link-hover-color)'
 									],
 								],
 							],
@@ -371,7 +371,7 @@ $options = [
 							'headerSocialsColor' => 'custom',
 							'builderSettings/has_sticky_header' => 'yes',
 						],
-					],	
+					],
 				],
 				'options' => [
 
@@ -397,13 +397,13 @@ $options = [
 							[
 								'title' => __( 'Initial', 'blocksy' ),
 								'id' => 'default',
-								'inherit' => 'var(--color)'
+								'inherit' => 'var(--theme-text-color)'
 							],
 
 							[
 								'title' => __( 'Hover', 'blocksy' ),
 								'id' => 'hover',
-								'inherit' => 'var(--paletteColor2)'
+								'inherit' => 'var(--theme-palette-color-2)'
 							],
 						],
 					],
@@ -490,7 +490,7 @@ $options = [
 					[
 						'id' => 'headerSocialsIconBackground',
 						'label' => __('Default State', 'blocksy'),
-						'condition' => [ 
+						'condition' => [
 							'headerSocialsColor' => 'custom',
 							'socialsType' => '!simple'
 						],
@@ -542,7 +542,7 @@ $options = [
 							],
 
 							'hover' => [
-								'color' => 'var(--paletteColor1)',
+								'color' => 'var(--theme-palette-color-1)',
 							],
 						],
 
@@ -644,9 +644,7 @@ $options = [
 				'label' => __( 'Margin', 'blocksy' ),
 				'type' => 'ct-spacing',
 				'setting' => [ 'transport' => 'postMessage' ],
-				'value' => blocksy_spacing_value([
-					'linked' => true,
-				]),
+				'value' => blocksy_spacing_value(),
 				'responsive' => true,
 				'divider' => 'top:full',
 			],

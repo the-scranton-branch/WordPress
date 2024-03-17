@@ -1,7 +1,6 @@
-// products price
-.price {
-	--fontWeight: 600;
-	color: var(--color);
+.price,
+.ct-product-sku {
+	color: var(--theme-text-color);
 }
 
 .sale-price {
@@ -17,8 +16,6 @@
 	}
 }
 
-
-// clear
 .clear {
 	clear: both;
 }

@@ -6,19 +6,18 @@ article > .entry-content .wp-block-post-content.entry-content {
 .wp-block-post-content {	
 	
 	> * {
-		margin-left: var(--default-editor, auto);
-		margin-right: var(--default-editor, auto);
+		margin-inline: var(--theme-default-editor, auto);
 
-		&:not(.alignfull) {
-			width: var(--default-editor, var(--block-width));
+		&:where(:not(.alignfull)) {
+			width: var(--theme-default-editor, var(--theme-block-width));
 		}
 
-		&:not(.alignwide):not(.alignfull) {
-			max-width: var(--default-editor, var(--block-max-width));
+		&:where(:not(.alignwide):not(.alignfull)) {
+			max-width: var(--theme-default-editor, var(--theme-block-max-width));
 		}
 	}
 
 	> .alignwide {
-		max-width: var(--default-editor, var(--block-wide-max-width));
+		max-width: var(--theme-default-editor, var(--theme-block-wide-max-width));
 	}
 }

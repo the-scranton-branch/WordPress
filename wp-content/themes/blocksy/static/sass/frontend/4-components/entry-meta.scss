@@ -14,15 +14,15 @@
 
 		svg,
 		&:after,
-		[class*='ct-image-container'] {
+		[class*='ct-media-container'] {
 			position: relative;
 			top: -0.1em;
 			vertical-align: var(--vertical-align, middle);
 		}
 
-		[class*='ct-image-container'] {
+		[class*='ct-media-container'] {
 			border-radius: 100%;
-			margin-inline-end: 10px;
+			margin-inline-end: 0.5em;
 
 			+ svg {
 				display: none;
@@ -35,7 +35,7 @@
 		}
 
 		> span {
-			margin-inline-end: 5px;
+			margin-inline-end: 0.27em;
 		}
 	}
 
@@ -84,17 +84,17 @@
 		min-height: 25px;
 		padding: 0 8px;
 		border-radius: 3px;
-		background: var(--buttonInitialColor);
+		background: var(--theme-button-background-initial-color);
 
-		--linkInitialColor: var(--buttonTextInitialColor);
-		--linkHoverColor: var(--buttonTextHoverColor);
+		--theme-link-initial-color: var(--theme-button-text-initial-color);
+		--theme-link-hover-color: var(--theme-button-text-hover-color);
 
 		&:not(:last-of-type) {
 			margin-inline-end: 4px;
 		}
 
 		&:hover {
-			background: var(--buttonHoverColor);
+			background: var(--theme-button-background-hover-color);
 		}
 	}
 
@@ -117,15 +117,5 @@
 				opacity: 1;
 			}
 		}
-	}
-}
-
-// dynamic layer
-.ct-dynamic-data {
-	color: var(--color);
-	--linkInitialColor: var(--color);
-	
-	> span {
-		margin-inline-end: 5px;
 	}
 }

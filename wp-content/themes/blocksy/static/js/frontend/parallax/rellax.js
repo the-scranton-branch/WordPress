@@ -51,9 +51,11 @@ const createBlock = ({
 
 		heightWeWantToIncrease = Math.abs(heightWeWantToIncrease) * 2
 
-		el.parentNode.style.height = !isVisible
-			? '100%'
-			: `calc(100% + ${heightWeWantToIncrease}px)`
+		if (!isVisible) {
+			el.parentNode.removeAttribute('style')
+		} else {
+			el.parentNode.style.height = `calc(100% + ${heightWeWantToIncrease}px)`
+		}
 	}
 
 	// initializing at scrollY = 0 (top of browser)
@@ -142,22 +144,34 @@ export class Rellax {
 									  blockEl === el
 						)
 
-						blocks.map((block) => {
-							block.isVisible =
-								isIntersecting &&
-								block.parallaxBehavior.indexOf(
-									getCurrentScreen({ withTablet: true })
-								) > -1
+						let hasNewBlock = false
 
-							this.blocks = this.blocks.map((nestedBlock) =>
-								nestedBlock.el === block.el
-									? block
-									: nestedBlock
-							)
+						this.blocks = this.blocks.map((block) => {
+							const isThisBlock = block.el.closest('svg')
+								? block.el.closest('svg') === el
+								: block.fitInsideContainer === el ||
+								  block.el === el
 
-							if (!block.isVisible)
-								block.el.removeAttribute('style')
+							if (!isThisBlock) {
+								return block
+							}
+
+							hasNewBlock = true
+
+							return createBlock({
+								...block,
+								isVisible:
+									isIntersecting &&
+									block.parallaxBehavior.indexOf(
+										getCurrentScreen({ withTablet: true })
+									) > -1,
+							})
 						})
+
+						if (hasNewBlock) {
+							this.oldPosY = false
+							this.animate()
+						}
 					}
 				)
 			},
@@ -165,25 +179,6 @@ export class Rellax {
 				rootMargin: '450px',
 			}
 		)
-
-		window.addEventListener('resize', () => {
-			this.oldPosY = false
-			this.blocks = this.blocks.map((block) =>
-				createBlock({
-					...block,
-					isVisible:
-						elementInViewport(
-							block.fitInsideContainer
-								? block.fitInsideContainer
-								: block.el
-						) &&
-						block.parallaxBehavior.indexOf(
-							getCurrentScreen({ withTablet: true })
-						) > -1,
-				})
-			)
-			this.animate()
-		})
 
 		// Start the loop
 		this.update()
@@ -269,9 +264,10 @@ export class Rellax {
 			)
 
 			if (!height) {
-				height = (block.fitInsideContainer
-					? block.fitInsideContainer
-					: block.el
+				height = (
+					block.fitInsideContainer
+						? block.fitInsideContainer
+						: block.el
 				).getBoundingClientRect().height
 			}
 

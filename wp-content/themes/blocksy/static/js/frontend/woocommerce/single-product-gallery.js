@@ -1,48 +1,62 @@
 import $ from 'jquery'
 import ctEvents from 'ct-events'
 
-function isTouchDevice() {
-	try {
-		document.createEvent('TouchEvent')
-		return true
-	} catch (e) {
-		return false
-	}
-}
+import { isTouchDevice } from '../helpers/is-touch-device'
+
+import { pauseVideo } from '../helpers/video'
 
 export const mount = (el, { event: mountEvent }) => {
+	const isGalleryEnabled =
+		window.PhotoSwipe && !!ct_localizations.has_product_single_lightbox
+
 	const openPhotoswipeFor = (el, index = null) => {
 		if (el.closest('.elementor-section-wrap')) {
 			return
 		}
 
-		var pswpElement = $('.pswp')[0],
-			eventTarget = $(el),
-			clicked = eventTarget
+		const pswpElement = $('.pswp')[0]
+		const clicked = $(el)
 
-		const items = [
+		let items = [
 			...el
 				.closest('.woocommerce-product-gallery')
-				.querySelectorAll(
-					'.flexy-items .ct-image-container img:not(.zoomImg), .woocommerce-product-gallery > .ct-image-container img:not(.zoomImg), .flexy-items .ct-image-container video, .woocommerce-product-gallery > .ct-image-container video, .flexy-items .ct-image-container iframe, .woocommerce-product-gallery > .ct-image-container iframe'
-				),
-		].map((img) => {
-			if (img.matches('video') || img.matches('iframe')) {
+				.querySelectorAll('.ct-media-container'),
+		].filter((el) => !el.closest('.flexy-pills'))
+
+		items = items.map((mediaContainer) => {
+			if (mediaContainer.matches('[data-media-id]')) {
 				return {
-					html: `<div class="ct-lightbox-video-container">${img.outerHTML}</div>`,
+					mediaContainer,
+					html: `<div class="ct-lightbox-video-container" data-media-id="${mediaContainer.dataset.mediaId}"></div>`,
 				}
 			}
 
+			const videoOrIframe = mediaContainer.querySelector('video,iframe')
+
+			if (videoOrIframe) {
+				return {
+					mediaContainer,
+					html: `<div class="ct-lightbox-video-container">${videoOrIframe.outerHTML}</div>`,
+				}
+			}
+
+			const img = mediaContainer.querySelector('img:not(.zoomImg)')
+
 			return {
+				mediaContainer,
 				img,
-				src: img.closest('a') ? img.closest('a').href : img.src,
+				src: img.closest('[data-src]')
+					? img.closest('[data-src]').dataset.src ||
+					  img.closest('[data-src]').href ||
+					  img.src
+					: img.src,
 				w:
-					(img.closest('a')
-						? img.closest('a').dataset.width
+					(img.closest('[data-width]')
+						? img.closest('[data-width]').dataset.width
 						: img.width) || img.width,
 				h:
-					(img.closest('a')
-						? img.closest('a').dataset.height
+					(img.closest('[data-height]')
+						? img.closest('[data-height]').dataset.height
 						: img.width) || img.width,
 				title: img.getAttribute('data-caption'),
 			}
@@ -50,8 +64,10 @@ export const mount = (el, { event: mountEvent }) => {
 
 		if (
 			items.length === 1 &&
+			items[0].img &&
 			items[0].img.closest('a') &&
-			!items[0].img.closest('a').getAttribute('href')
+			!items[0].img.closest('a').getAttribute('data-src') &&
+			items[0].img.title === 'woocommerce-placeholder'
 		) {
 			return
 		}
@@ -70,8 +86,10 @@ export const mount = (el, { event: mountEvent }) => {
 			},
 			{
 				shareEl: false,
+				fullscreenEl: true,
 				closeOnScroll: false,
 				history: false,
+				showHideOpacity: false,
 				hideAnimationDuration: 0,
 				showAnimationDuration: 0,
 			}
@@ -87,17 +105,54 @@ export const mount = (el, { event: mountEvent }) => {
 
 		photoswipe.init()
 
-		document.body.classList.add('ct-photoswipe-open')
+		const pauseAllVideos = () => {
+			photoswipe.currItem.container
+				.closest('.pswp')
+				.querySelectorAll('video,iframe')
+				.forEach((videoOrIframe) => pauseVideo(videoOrIframe))
+		}
 
-		photoswipe.listen('close', () => {
-			setTimeout(() => {
-				document.body.classList.remove('ct-photoswipe-open')
-				;[
-					...document.querySelectorAll(
-						'.ct-lightbox-video-container'
-					),
-				].map((el) => el.remove())
-			}, 300)
+		photoswipe.listen('close', () => pauseAllVideos())
+
+		const loadVideoForCurrentSlide = () => {
+			const videoContainer =
+				photoswipe.currItem.container.querySelector('[data-media-id]')
+
+			if (
+				!videoContainer ||
+				videoContainer.querySelector('video,iframe')
+			) {
+				return
+			}
+
+			const preloader = videoContainer
+				.closest('.pswp')
+				.querySelector('.pswp__preloader')
+
+			if (preloader) {
+				preloader.classList.add('pswp__preloader--active')
+			}
+
+			import('../lazy/video-on-click').then(({ fetchVideoBy }) => {
+				fetchVideoBy(videoContainer.dataset.mediaId, {
+					ignoreVideoOptions: true,
+				}).then((data) => {
+					videoContainer.innerHTML = data.html
+
+					if (preloader) {
+						preloader.classList.remove('pswp__preloader--active')
+					}
+				})
+			})
+		}
+
+		setTimeout(() => {
+			loadVideoForCurrentSlide()
+		}, 300)
+
+		photoswipe.listen('afterChange', () => {
+			pauseAllVideos()
+			loadVideoForCurrentSlide()
 		})
 	}
 
@@ -110,97 +165,111 @@ export const mount = (el, { event: mountEvent }) => {
 
 		;[
 			...document.querySelectorAll(
-				'.single-product .flexy-items .ct-image-container, .single-product .woocommerce-product-gallery > .ct-image-container'
+				'.woocommerce-product-gallery .ct-media-container'
 			),
-		].map((el) => {
-			if (
-				((window.wp &&
-					wp.customize &&
-					wp.customize('has_product_single_lightbox') &&
-					wp.customize('has_product_single_lightbox')() === 'yes') ||
-					!window.wp ||
-					!window.wp.customize) &&
-				!onlyZoom
-			) {
-				if (!el.hasPhotoswipeListener) {
-					el.hasPhotoswipeListener = true
-					el.addEventListener('click', (e) => {
-						e.preventDefault()
-
-						if (maybeTrigger.length > 0) {
-							return
-						}
-
-						let activeIndex = 0
-
-						activeIndex = [
-							...el.parentNode.querySelectorAll(
-								'.ct-image-container'
-							),
-						].indexOf(el)
-
-						if (el.closest('.flexy-items')) {
-							activeIndex = [
-								...el.closest('.flexy-items').children,
-							].indexOf(el.parentNode)
-						}
-
-						window.PhotoSwipe && openPhotoswipeFor(el, activeIndex)
-					})
-				}
-			}
-
-			if ($.fn.zoom) {
+		]
+			.filter((el) => !el.closest('.flexy-pills'))
+			.map((el) => {
 				if (
-					(window.wp &&
+					((window.wp &&
 						wp.customize &&
-						wp.customize('has_product_single_zoom') &&
-						wp.customize('has_product_single_zoom')() === 'yes') ||
-					!window.wp ||
-					!window.wp.customize
+						wp.customize('has_product_single_lightbox') &&
+						wp.customize('has_product_single_lightbox')() ===
+							'yes') ||
+						!window.wp ||
+						!window.wp.customize) &&
+					!onlyZoom &&
+					!el.matches('[data-media-id]')
 				) {
-					const rect = el.getBoundingClientRect()
+					if (!el.hasPhotoswipeListener) {
+						el.hasPhotoswipeListener = true
+						el.addEventListener('click', (e) => {
+							if (!isGalleryEnabled) {
+								return
+							}
 
-					if (el.closest('.elementor-section-wrap')) {
-						return
-					}
+							if (maybeTrigger.length > 0) {
+								return
+							}
 
-					if (el.querySelector('iframe')) {
-						return
-					}
+							e.preventDefault()
 
-					if (el.querySelector('video')) {
-						return
-					}
+							let activeIndex = 0
 
-					if (
-						parseFloat(el.getAttribute('data-width')) >
-						el
-							.closest('.woocommerce-product-gallery')
-							.getBoundingClientRect().width
-					) {
-						$(el).zoom({
-							url: el.href,
-							touch: false,
-							duration: 50,
+							activeIndex = [
+								...el.parentNode.querySelectorAll(
+									'.ct-media-container'
+								),
+							].indexOf(el)
 
-							...(rect.width > parseFloat(el.dataset.width) ||
-							rect.height > parseFloat(el.dataset.height)
-								? {
-										magnify: 2,
-								  }
-								: {}),
+							if (el.closest('.flexy-items')) {
+								activeIndex = [
+									...el.closest('.flexy-items').children,
+								].indexOf(el.parentNode)
+							}
 
-							...(isTouchDevice()
-								? {
-										on: 'toggle',
-								  }
-								: {}),
+							isGalleryEnabled &&
+								openPhotoswipeFor(el, activeIndex)
 						})
 					}
 				}
-			}
-		})
+
+				if ($.fn.zoom) {
+					if (
+						(window.wp &&
+							wp.customize &&
+							wp.customize('has_product_single_zoom') &&
+							wp.customize('has_product_single_zoom')() ===
+								'yes') ||
+						!window.wp ||
+						!window.wp.customize
+					) {
+						const rect = el.getBoundingClientRect()
+
+						if (el.closest('.elementor-section-wrap')) {
+							return
+						}
+
+						if (el.closest('.ct-quick-view-card')) {
+							return
+						}
+
+						if (el.querySelector('iframe')) {
+							return
+						}
+
+						if (el.querySelector('video')) {
+							return
+						}
+
+						if (
+							parseFloat(el.getAttribute('data-width')) >
+							el
+								.closest('.woocommerce-product-gallery')
+								.getBoundingClientRect().width
+						) {
+							$(el).zoom({
+								url: el.dataset.src,
+								touch: false,
+								duration: 50,
+
+								...(rect.width > parseFloat(el.dataset.width) ||
+								rect.height > parseFloat(el.dataset.height)
+									? {
+											magnify: 2,
+									  }
+									: {}),
+
+								...(isTouchDevice()
+									? {
+											on: 'toggle',
+									  }
+									: {}),
+							})
+						}
+					}
+				}
+			})
 
 		if ($.fn.zoom) {
 			if (
@@ -222,15 +291,15 @@ export const mount = (el, { event: mountEvent }) => {
 
 					if (
 						mountEvent.target.closest('.flexy-items') ||
-						(mountEvent.target.closest('.ct-image-container') &&
+						(mountEvent.target.closest('.ct-media-container') &&
 							mountEvent.target
-								.closest('.ct-image-container')
+								.closest('.ct-media-container')
 								.parentNode.classList.contains(
-									'woocommerce-product-gallery'
+									'ct-stacked-gallery-container'
 								))
 					) {
 						$(
-							mountEvent.target.closest('.ct-image-container')
+							mountEvent.target.closest('.ct-media-container')
 						).trigger(
 							isTouchDevice() ? 'click.zoom' : 'mouseenter.zoom'
 						)
@@ -250,32 +319,36 @@ export const mount = (el, { event: mountEvent }) => {
 				e.preventDefault()
 				e.stopPropagation()
 
+				const galleryWrapper = maybeTrigger.closest(
+					'.woocommerce-product-gallery'
+				)
+
 				if (
-					maybeTrigger.closest('.ct-image-container') &&
-					!maybeTrigger.closest('.flexy-items')
+					galleryWrapper.querySelector('.ct-media-container') &&
+					!galleryWrapper.querySelector('.flexy-items')
 				) {
-					window.PhotoSwipe &&
+					isGalleryEnabled &&
 						openPhotoswipeFor(
-							maybeTrigger.closest('.ct-image-container')
+							galleryWrapper.querySelector('.ct-media-container')
 						)
 
 					return
 				}
 
 				if (
-					maybeTrigger.closest('.ct-image-container') &&
+					maybeTrigger.closest('.ct-media-container') &&
 					maybeTrigger.closest('.flexy-items') &&
 					maybeTrigger.closest('.ct-columns-top-gallery')
 				) {
-					window.PhotoSwipe &&
+					isGalleryEnabled &&
 						openPhotoswipeFor(
-							maybeTrigger.closest('.ct-image-container'),
+							maybeTrigger.closest('.ct-media-container'),
 
 							[
-								...maybeTrigger.closest('.ct-image-container')
+								...maybeTrigger.closest('.ct-media-container')
 									.parentNode.parentNode.children,
 							].indexOf(
-								maybeTrigger.closest('.ct-image-container')
+								maybeTrigger.closest('.ct-media-container')
 									.parentNode
 							)
 						)
@@ -285,20 +358,20 @@ export const mount = (el, { event: mountEvent }) => {
 
 				if (
 					document.querySelector(
-						'.single-product .woocommerce-product-gallery > .ct-image-container'
+						'.single-product .ct-stacked-gallery-container > .ct-media-container'
 					)
 				) {
-					window.PhotoSwipe &&
+					isGalleryEnabled &&
 						openPhotoswipeFor(
 							document.querySelector(
-								'.single-product .woocommerce-product-gallery > .ct-image-container'
+								'.single-product .ct-stacked-gallery-container > .ct-media-container'
 							)
 						)
 				}
 
 				if (
 					document.querySelector(
-						'.single-product .flexy-items .ct-image-container'
+						'.single-product .flexy-items .ct-media-container'
 					)
 				) {
 					let pills = document.querySelector(
@@ -312,7 +385,7 @@ export const mount = (el, { event: mountEvent }) => {
 							pills.firstElementChild
 					)
 
-					window.PhotoSwipe &&
+					isGalleryEnabled &&
 						openPhotoswipeFor(
 							document.querySelector(
 								'.single-product .flexy-items'

@@ -1,17 +1,12 @@
 <?php
-/**
- * Dynamic CSS helpers
- *
- * @copyright 2019-present Creative Themes
- * @license   http://www.gnu.org/copyleft/gpl.html GNU General Public License
- * @package   Blocksy
- */
 
-class Blocksy_Dynamic_Css {
-	private $has_enqueued_backend_styles = false;
+namespace Blocksy;
+
+class ThemeDynamicCss {
+	private $allow_styles_for_customize_preview = false;
 
 	public function get_css_version() {
-		return 5;
+		return 6;
 	}
 
 	public function __construct() {
@@ -26,6 +21,8 @@ class Blocksy_Dynamic_Css {
 		add_filter(
 			'customize_render_partials_response',
 			function ($response, $obj, $partials) {
+				$this->allow_styles_for_customize_preview = true;
+
 				$css_output = blocksy_get_all_dynamic_styles_for([
 					'context' => 'inline'
 				]);
@@ -51,9 +48,11 @@ class Blocksy_Dynamic_Css {
 				if (is_singular()) {
 					$single_styles_descriptor = $this->maybe_get_single_post_styles_descriptor();
 
-					$desktop_css .= $single_styles_descriptor['styles']['desktop'];
-					$tablet_css .= $single_styles_descriptor['styles']['tablet'];
-					$mobile_css .= $single_styles_descriptor['styles']['mobile'];
+					if ($single_styles_descriptor) {
+						$desktop_css .= $single_styles_descriptor['styles']['desktop'];
+						$tablet_css .= $single_styles_descriptor['styles']['tablet'];
+						$mobile_css .= $single_styles_descriptor['styles']['mobile'];
+					}
 				}
 
 				$final_css = '';
@@ -72,6 +71,8 @@ class Blocksy_Dynamic_Css {
 
 				$response['ct_dynamic_css'] = $final_css;
 
+				$this->allow_styles_for_customize_preview = true;
+
 				return $response;
 			},
 			10, 3
@@ -82,13 +83,24 @@ class Blocksy_Dynamic_Css {
 				return;
 			}
 
-			if ($this->has_enqueued_backend_styles) {
+			if (
+				function_exists('get_current_screen')
+				&&
+				get_current_screen()
+				&&
+				get_current_screen()->is_block_editor()
+				&&
+				get_current_screen()->base === 'post'
+			) {
 				return;
 			}
 
-			$this->has_enqueued_backend_styles = true;
 			$this->load_backend_dynamic_css();
 		});
+	}
+
+	public function is_customize_preview() {
+		return $this->allow_styles_for_customize_preview;
 	}
 
 	public function load_frontend_css($args = []) {
@@ -151,9 +163,9 @@ class Blocksy_Dynamic_Css {
 		$google_fonts = $global_styles_descriptor['google_fonts'];
 
 		// Inline styles
-		$css = new Blocksy_Css_Injector();
-		$tablet_css = new Blocksy_Css_Injector();
-		$mobile_css = new Blocksy_Css_Injector();
+		$css = new \Blocksy_Css_Injector();
+		$tablet_css = new \Blocksy_Css_Injector();
+		$mobile_css = new \Blocksy_Css_Injector();
 
 		blocksy_theme_get_dynamic_styles([
 			'name' => 'global-inline',
@@ -173,22 +185,24 @@ class Blocksy_Dynamic_Css {
 		if (is_singular()) {
 			$single_styles_descriptor = $this->maybe_get_single_post_styles_descriptor();
 
-			$styles['desktop'] .= $single_styles_descriptor['styles']['desktop'];
-			$styles['tablet'] .= $single_styles_descriptor['styles']['tablet'];
-			$styles['mobile'] .= $single_styles_descriptor['styles']['mobile'];
+			if ($single_styles_descriptor) {
+				$styles['desktop'] .= $single_styles_descriptor['styles']['desktop'];
+				$styles['tablet'] .= $single_styles_descriptor['styles']['tablet'];
+				$styles['mobile'] .= $single_styles_descriptor['styles']['mobile'];
 
-			if (isset($single_styles_descriptor['google_fonts'])) {
-				foreach ($single_styles_descriptor['google_fonts'] as $single_gf => $v) {
-					foreach ($v as $variation) {
-						if (! isset($google_fonts[$single_gf])) {
-							$google_fonts[$single_gf] = [$variation];
-						} else {
-							$google_fonts[$single_gf][] = $variation;
+				if (isset($single_styles_descriptor['google_fonts'])) {
+					foreach ($single_styles_descriptor['google_fonts'] as $single_gf => $v) {
+						foreach ($v as $variation) {
+							if (! isset($google_fonts[$single_gf])) {
+								$google_fonts[$single_gf] = [$variation];
+							} else {
+								$google_fonts[$single_gf][] = $variation;
+							}
+
+							$google_fonts[$single_gf] = array_unique(
+								$google_fonts[$single_gf]
+							);
 						}
-
-						$google_fonts[$single_gf] = array_unique(
-							$google_fonts[$single_gf]
-						);
 					}
 				}
 			}
@@ -210,29 +224,30 @@ class Blocksy_Dynamic_Css {
 
 		$styles_descriptor = blocksy_akg('styles_descriptor', $post_atts, null);
 
-		$current_saved_version = 1;
+		$current_saved_version = $this->get_css_version();
 
 		if ($styles_descriptor && isset($styles_descriptor['version'])) {
 			$current_saved_version = intval($styles_descriptor['version']);
 		}
 
-		if (
-			! $styles_descriptor
-			||
-			$current_saved_version !== $this->get_css_version()
-		) {
+		if ($current_saved_version !== $this->get_css_version()) {
 			$styles_descriptor = $this->maybe_set_single_post_styles_descriptor([
 				'post_id' => $post_id,
-				'atts' => $post_atts
+				'atts' => $post_atts,
+				'force_persist' => $current_saved_version > 1
 			]);
 
-			$post_atts['styles_descriptor'] = $styles_descriptor;
+			if ($styles_descriptor) {
+				$post_atts['styles_descriptor'] = $styles_descriptor;
+			}
 
-			update_post_meta(
-				$post_id,
-				'blocksy_post_meta_options',
-				$post_atts
-			);
+			if (! empty($post_atts)) {
+				update_post_meta(
+					$post_id,
+					'blocksy_post_meta_options',
+					$post_atts
+				);
+			}
 		}
 
 		return $styles_descriptor;
@@ -241,7 +256,8 @@ class Blocksy_Dynamic_Css {
 	public function maybe_set_single_post_styles_descriptor($args = []) {
 		$args = wp_parse_args($args, [
 			'post_id' => null,
-			'atts' => []
+			'atts' => [],
+			'force_persist' => false
 		]);
 
 		$descriptor = [
@@ -253,15 +269,15 @@ class Blocksy_Dynamic_Css {
 			'google_fonts' => []
 		];
 
-		$m = new Blocksy_Fonts_Manager();
+		$m = new FontsManager();
 
-		$css = new Blocksy_Css_Injector([
+		$css = new \Blocksy_Css_Injector([
 			'fonts_manager' => $m
 		]);
-		$tablet_css = new Blocksy_Css_Injector([
+		$tablet_css = new \Blocksy_Css_Injector([
 			'fonts_manager' => $m
 		]);
-		$mobile_css = new Blocksy_Css_Injector([
+		$mobile_css = new \Blocksy_Css_Injector([
 			'fonts_manager' => $m
 		]);
 
@@ -281,9 +297,13 @@ class Blocksy_Dynamic_Css {
 			'prefix' => blocksy_manager()->screen->get_admin_prefix($post_type)
 		]);
 
-		$descriptor['styles']['desktop'] .= $css->build_css_structure();
-		$descriptor['styles']['tablet'] .= $tablet_css->build_css_structure();
-		$descriptor['styles']['mobile'] .= $mobile_css->build_css_structure();
+		$descriptor['styles']['desktop'] .= trim($css->build_css_structure());
+		$descriptor['styles']['tablet'] .= trim(
+			$tablet_css->build_css_structure()
+		);
+		$descriptor['styles']['mobile'] .= trim(
+			$mobile_css->build_css_structure()
+		);
 
 		$descriptor['google_fonts'] = $m->get_matching_google_fonts();
 		$descriptor['version'] = $this->get_css_version();
@@ -301,11 +321,14 @@ class Blocksy_Dynamic_Css {
 		$doing_debug = false;
 
 		if (is_customize_preview()) {
+			$this->allow_styles_for_customize_preview = true;
 			$doing_debug = true;
 		}
 
 		if ($doing_debug) {
-			return $this->maybe_set_global_styles_descriptor();
+			$result = $this->maybe_set_global_styles_descriptor();
+			$this->allow_styles_for_customize_preview = false;
+			return $result;
 		}
 
 		if ($global_styles_descriptor !== false) {
@@ -336,7 +359,7 @@ class Blocksy_Dynamic_Css {
 			'styles' => null
 		];
 
-		$m = new Blocksy_Fonts_Manager();
+		$m = new FontsManager();
 
 		$inline_styles = blocksy_get_all_dynamic_styles_for([
 			'context' => 'global',
@@ -372,13 +395,18 @@ class Blocksy_Dynamic_Css {
 		return $global_styles_descriptor;
 	}
 
-	public function load_backend_dynamic_css() {
-		$css = new Blocksy_Css_Injector();
-		$tablet_css = new Blocksy_Css_Injector();
-		$mobile_css = new Blocksy_Css_Injector();
+	public function load_backend_dynamic_css($args = []) {
+		$args = wp_parse_args($args, [
+			'echo' => true,
+			'filename' => 'admin-global'
+		]);
+
+		$css = new \Blocksy_Css_Injector();
+		$tablet_css = new \Blocksy_Css_Injector();
+		$mobile_css = new \Blocksy_Css_Injector();
 
 		blocksy_theme_get_dynamic_styles([
-			'name' => 'admin-global',
+			'name' => $args['filename'],
 			'css' => $css,
 			'tablet_css' => $tablet_css,
 			'mobile_css' => $mobile_css,
@@ -396,13 +424,6 @@ class Blocksy_Dynamic_Css {
 
 		$css = $all_global_css;
 
-		$m = new Blocksy_Fonts_Manager();
-		$maybe_google_fonts_url = $m->load_editor_fonts();
-
-		if (! empty($maybe_google_fonts_url)) {
-			$css = "@import url('" . $maybe_google_fonts_url . "');\n" . $css;
-		}
-
 		if (! empty($all_tablet_css)) {
 			$css .= "\n@media (max-width: 800px) {\n";
 			$css .= $all_tablet_css;
@@ -415,192 +436,13 @@ class Blocksy_Dynamic_Css {
 			$css .= "}\n";
 		}
 
-		echo '<style id="ct-main-styles-inline-css">';
-		echo $css;
-		echo "</style>\n";
-	}
-}
-
-if (! function_exists('blocksy_has_css_in_files')) {
-	function blocksy_has_css_in_files() {
-		return apply_filters('blocksy:dynamic-css:has_files_cache', false);
-	}
-}
-
-if (! function_exists('blocksy_get_all_dynamic_styles_for')) {
-	function blocksy_get_all_dynamic_styles_for($args = []) {
-		$args = wp_parse_args(
-			$args,
-			[
-				'context' => null,
-				'fonts_manager' => null
-			]
-		);
-
-		$css = new Blocksy_Css_Injector([
-			'fonts_manager' => $args['fonts_manager']
-		]);
-		$mobile_css = new Blocksy_Css_Injector([
-			'fonts_manager' => $args['fonts_manager']
-		]);
-		$tablet_css = new Blocksy_Css_Injector([
-			'fonts_manager' => $args['fonts_manager']
-		]);
-
-		blocksy_theme_get_dynamic_styles([
-			'name' => 'global',
-			'css' => $css,
-			'mobile_css' => $mobile_css,
-			'tablet_css' => $tablet_css,
-			'context' => $args['context'],
-			'chunk' => 'global',
-			'forced_call' => true
-		]);
-
-		do_action(
-			'blocksy:global-dynamic-css:enqueue',
-			[
-				'context' => $args['context'],
-				'css' => $css,
-				'tablet_css' => $tablet_css,
-				'mobile_css' => $mobile_css
-			]
-		);
-
-		return [
-			'css' => $css,
-			'tablet_css' => $tablet_css,
-			'mobile_css' => $mobile_css
-		];
-	}
-}
-
-if (! function_exists('blocksy_get_dynamic_css_file_content')) {
-	function blocksy_get_dynamic_css_file_content($args = []) {
-		$args = wp_parse_args(
-			$args,
-			[
-				'context' => null,
-			]
-		);
-
-		$css_output = blocksy_get_all_dynamic_styles_for([
-			'context' => $args['context']
-		]);
-
-		$css = $css_output['css'];
-		$tablet_css = $css_output['tablet_css'];
-		$mobile_css = $css_output['mobile_css'];
-
-		// $content = "/* Desktop CSS */";
-		$content = '';
-		$content .= trim($css->build_css_structure());
-
-		// $content .= "\n\n/* Tablet CSS */\n";
-		$content .= "@media (max-width: 999.98px) {";
-		$content .= "  " . trim($tablet_css->build_css_structure());
-		$content .= "}";
-
-		// $content .= "\n\n/* Mobile CSS */\n";
-		$content .= "@media (max-width: 689.98px) {";
-		$content .= trim($mobile_css->build_css_structure());
-		$content .= "}";
-
-		return $content;
-	}
-}
-
-if (! function_exists('blocksy_dynamic_styles_should_call')) {
-	function blocksy_dynamic_styles_should_call($args = []) {
-		$args = wp_parse_args(
-			$args,
-			[
-				'context' => null,
-				'chunk' => null,
-				'forced_call' => false
-			]
-		);
-
-		if (! $args['context']) {
-			throw new Error('$context not provided. This is required!');
+		if ($args['echo']) {
+			echo '<style id="ct-main-styles-inline-css">';
+			echo $css;
+			echo "</style>\n";
 		}
 
-		if (! $args['chunk']) {
-			throw new Error('$chunk not provided. This is required!');
-		}
-
-		if (!$args['forced_call'] && blocksy_has_css_in_files()) {
-			if ($args['context'] === 'inline') {
-				if ($args['chunk'] === 'global' || $args['chunk'] === 'woocommerce') {
-					return false;
-				}
-			}
-
-			if ($args['context'] === 'files:global') {
-				if ($args['chunk'] === 'woocommerce') {
-					if (! class_exists('WooCommerce')) {
-						return false;
-					}
-				} else {
-					if ($args['chunk'] !== 'global') {
-						return false;
-					}
-				}
-			}
-		}
-
-		return true;
-	}
-}
-
-/**
- * Evaluate a file with dynamic styles.
- *
- * @param string $name Name of dynamic CSS file.
- * @param array $variables list of data to pass in file.
- * @throws Error When $css not provided.
- */
-if (! function_exists('blocksy_theme_get_dynamic_styles')) {
-	function blocksy_theme_get_dynamic_styles($args = []) {
-		$args = wp_parse_args(
-			$args,
-			[
-				'path' => null,
-				'name' => '',
-				'css' => null,
-
-				'context' => null,
-				'chunk' => null,
-				'forced_call' => false,
-				'prefixes' => null
-			]
-		);
-
-		if (! isset($args['css'])) {
-			throw new Error('$css instance not provided. This is required!');
-		}
-
-		if (! blocksy_dynamic_styles_should_call($args)) {
-			return;
-		}
-
-		if (! $args['path']) {
-			$args['path'] = get_template_directory() . '/inc/dynamic-styles/' . $args['name'] . '.php';
-		}
-
-		if (! $args['prefixes']) {
-			blocksy_get_variables_from_file($args['path'], [], $args);
-		} else {
-			foreach ($args['prefixes'] as $prefix) {
-				blocksy_get_variables_from_file(
-					$args['path'],
-					[],
-					array_merge($args, [
-						'prefix' => $prefix
-					])
-				);
-			}
-		}
+		return $css;
 	}
 }
 

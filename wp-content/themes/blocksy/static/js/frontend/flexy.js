@@ -3,6 +3,8 @@ import { Flexy, adjustContainerHeightFor } from 'flexy'
 import ctEvents from 'ct-events'
 import { getCurrentScreen } from '../frontend/helpers/current-screen'
 
+import { pauseVideo, maybePlayAutoplayedVideo } from './helpers/video'
+
 export const mount = (sliderEl, args) => {
 	// sliderEl = sliderEl.parentNode
 
@@ -27,9 +29,9 @@ export const mount = (sliderEl, args) => {
 
 		...(sliderEl.querySelector('.flexy-pills')
 			? {
-					pillsContainerSelector: sliderEl.querySelector(
-						'.flexy-pills'
-					).firstElementChild,
+					pillsContainerSelector:
+						sliderEl.querySelector('.flexy-pills')
+							.firstElementChild,
 			  }
 			: {}),
 		leftArrow: sliderEl.querySelector('.flexy .flexy-arrow-prev'),
@@ -57,6 +59,13 @@ export const mount = (sliderEl, args) => {
 					pillsFlexyInstance: maybePillsSlider,
 			  }
 			: {}),
+
+		onSlideChange: (instance, payload) => {
+			ctEvents.trigger('blocksy:frontend:flexy:slide-change', {
+				instance,
+				payload,
+			})
+		},
 	})
 
 	if (maybePillsSlider) {
@@ -68,12 +77,10 @@ export const mount = (sliderEl, args) => {
 					? 'viewport'
 					: 'container',
 
-			leftArrow: maybePillsSlider.parentNode.querySelector(
-				'.flexy-arrow-prev'
-			),
-			rightArrow: maybePillsSlider.parentNode.querySelector(
-				'.flexy-arrow-next'
-			),
+			leftArrow:
+				maybePillsSlider.parentNode.querySelector('.flexy-arrow-prev'),
+			rightArrow:
+				maybePillsSlider.parentNode.querySelector('.flexy-arrow-next'),
 			hasDragAndDrop: false,
 
 			...(maybePillsSlider.closest('.thumbs-left') &&

@@ -50,13 +50,29 @@ export { default as Panel, PanelMetaWrapper } from './options/options/ct-panel'
 export { DeviceManagerProvider } from './customizer/components/useDeviceManager'
 export { default as PanelLevel } from './options/components/PanelLevel'
 export { default as Switch } from './options/options/ct-switch'
+export { default as Checkboxes } from './options/options/ct-checkboxes'
 export { default as ImageUploader } from './options/options/ct-image-uploader'
 export { default as Select } from './options/options/ct-select'
 export { default as OutsideClickHandler } from './options/options/react-outside-click-handler'
+export { default as DateTimePicker } from './options/options/date-time-picker'
 
 export { Transition, animated } from 'react-spring/renderprops'
 export { default as bezierEasing } from 'bezier-easing'
 export { default as usePopoverMaker } from './options/helpers/usePopoverMaker'
+
+export { default as ToolsWithOptionsPanel } from './editor/components/ToolsWithOptionsPanel'
+
+// gutenberg blocks
+export { default as useDynamicPreview } from './editor/hooks/useDynamicPreview'
+export { default as ColorsPanel } from './editor/components/ColorsPanel'
+
+export {
+	getAttributesFromOptions,
+	getDefaultsFromOptions,
+	getOptionsForBlock,
+} from './editor/utils'
+
+export { getColorsDefaults } from './editor/utils/colors'
 
 export const onDocumentLoaded = (cb) => {
 	if (/comp|inter|loaded/.test(document.readyState)) {

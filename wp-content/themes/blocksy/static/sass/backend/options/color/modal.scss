@@ -1,20 +1,17 @@
 $top-offset: 12px;
 
-.ct-color-modal-wrapper {
-	display: flex;
-	justify-content: center;
-	position: relative;
-	width: 100%;
-	z-index: 20;
+.ct-background-modal,
+.ct-color-picker-modal {
+	--cpm-pv: 20px;
+	--cpm-ph: 16px;
 }
+
 
 .ct-color-picker-modal {
 	width: var(--modalWidth, 295px);
 	border-radius: 8px;
-}
 
-// modal arrow
-.ct-color-picker-modal {
+	// modal arrow
 	&[data-position='bottom'] {
 		.ct-arrow {
 			top: -12px;
@@ -36,4 +33,12 @@ $top-offset: 12px;
 		border-width: 0 6px 7px 6px;
 		border-color: transparent transparent red transparent;
 	}
+}
+
+.ct-color-modal-wrapper {
+	display: flex;
+	justify-content: center;
+	position: relative;
+	width: 100%;
+	z-index: 20;
 }

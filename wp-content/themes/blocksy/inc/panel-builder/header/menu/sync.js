@@ -16,6 +16,12 @@ export const handleMenuVariables = ({ itemId }) => ({
 		unit: 'px',
 	},
 
+	headerMenuItemsGap: {
+		selector: assembleSelector(getRootSelectorFor({ itemId })),
+		variable: 'menu-items-gap',
+		unit: 'px',
+	},
+
 	headerMenuItemsHeight: {
 		selector: assembleSelector(
 			mutateSelector({
@@ -111,7 +117,7 @@ export const handleMenuVariables = ({ itemId }) => ({
 			mutateSelector({
 				selector: getRootSelectorFor({ itemId }),
 				operation: 'suffix',
-				to_add: '.sub-menu',
+				to_add: '.sub-menu .ct-menu-link',
 			})
 		),
 	}),
@@ -190,7 +196,7 @@ export const handleMenuVariables = ({ itemId }) => ({
 			})
 		),
 		type: 'box-shadow',
-		variable: 'box-shadow',
+		variable: 'theme-box-shadow',
 		responsive: true,
 	},
 
@@ -203,7 +209,7 @@ export const handleMenuVariables = ({ itemId }) => ({
 			})
 		),
 		type: 'spacing',
-		variable: 'border-radius',
+		variable: 'theme-border-radius',
 		responsive: true,
 	},
 
@@ -217,7 +223,7 @@ export const handleMenuVariables = ({ itemId }) => ({
 					to_add: '> ul > li > a',
 				})
 			),
-			variable: 'linkInitialColor',
+			variable: 'theme-link-initial-color',
 			type: 'color:default',
 		},
 
@@ -229,7 +235,7 @@ export const handleMenuVariables = ({ itemId }) => ({
 					to_add: '> ul > li > a',
 				})
 			),
-			variable: 'linkHoverColor',
+			variable: 'theme-link-hover-color',
 			type: 'color:hover',
 		},
 
@@ -241,7 +247,7 @@ export const handleMenuVariables = ({ itemId }) => ({
 					to_add: '> ul > li > a',
 				})
 			),
-			variable: 'linkActiveColor',
+			variable: 'theme-link-active-color',
 			type: 'color:active',
 		},
 
@@ -253,7 +259,7 @@ export const handleMenuVariables = ({ itemId }) => ({
 					to_add: '[data-menu*="type-3"] > ul > li > a',
 				})
 			),
-			variable: 'linkHoverColor',
+			variable: 'theme-link-hover-color',
 			type: 'color:hover-type-3',
 		},
 
@@ -265,17 +271,26 @@ export const handleMenuVariables = ({ itemId }) => ({
 					to_add: '[data-menu*="type-3"] > ul > li > a',
 				})
 			),
-			variable: 'linkActiveColor',
+			variable: 'theme-link-active-color',
 			type: 'color:active-type-3',
 		},
 	],
 
-	menuIndicatorColor: {
-		selector: assembleSelector(getRootSelectorFor({ itemId })),
-		variable: 'menu-indicator-active-color',
-		type: 'color:active',
-		responsive: true,
-	},
+	menuIndicatorColor: [
+		{
+			selector: assembleSelector(getRootSelectorFor({ itemId })),
+			variable: 'menu-indicator-hover-color',
+			type: 'color:hover',
+			responsive: true,
+		},
+
+		{
+			selector: assembleSelector(getRootSelectorFor({ itemId })),
+			variable: 'menu-indicator-active-color',
+			type: 'color:active',
+			responsive: true,
+		},
+	],
 
 	headerDropdownFontColor: [
 		{
@@ -283,10 +298,10 @@ export const handleMenuVariables = ({ itemId }) => ({
 				mutateSelector({
 					selector: getRootSelectorFor({ itemId }),
 					operation: 'suffix',
-					to_add: '.sub-menu',
+					to_add: '.sub-menu .ct-menu-link',
 				})
 			),
-			variable: 'linkInitialColor',
+			variable: 'theme-link-initial-color',
 			type: 'color:default',
 		},
 
@@ -295,10 +310,10 @@ export const handleMenuVariables = ({ itemId }) => ({
 				mutateSelector({
 					selector: getRootSelectorFor({ itemId }),
 					operation: 'suffix',
-					to_add: '.sub-menu',
+					to_add: '.sub-menu .ct-menu-link',
 				})
 			),
-			variable: 'linkHoverColor',
+			variable: 'theme-link-hover-color',
 			type: 'color:hover',
 		},
 
@@ -307,10 +322,10 @@ export const handleMenuVariables = ({ itemId }) => ({
 				mutateSelector({
 					selector: getRootSelectorFor({ itemId }),
 					operation: 'suffix',
-					to_add: '.sub-menu',
+					to_add: '.sub-menu .ct-menu-link',
 				})
 			),
-			variable: 'linkActiveColor',
+			variable: 'theme-link-active-color',
 			type: 'color:active',
 		},
 	],
@@ -355,7 +370,7 @@ export const handleMenuVariables = ({ itemId }) => ({
 					to_add: '[data-transparent-row="yes"]',
 				})
 			),
-			variable: 'linkInitialColor',
+			variable: 'theme-link-initial-color',
 			type: 'color:default',
 		},
 
@@ -371,7 +386,7 @@ export const handleMenuVariables = ({ itemId }) => ({
 					to_add: '[data-transparent-row="yes"]',
 				})
 			),
-			variable: 'linkHoverColor',
+			variable: 'theme-link-hover-color',
 			type: 'color:hover',
 		},
 
@@ -387,7 +402,7 @@ export const handleMenuVariables = ({ itemId }) => ({
 					to_add: '[data-transparent-row="yes"]',
 				})
 			),
-			variable: 'linkActiveColor',
+			variable: 'theme-link-active-color',
 			type: 'color:active',
 		},
 
@@ -404,7 +419,7 @@ export const handleMenuVariables = ({ itemId }) => ({
 				})
 			),
 
-			variable: 'linkHoverColor',
+			variable: 'theme-link-hover-color',
 			type: 'color:hover-type-3',
 		},
 
@@ -421,24 +436,40 @@ export const handleMenuVariables = ({ itemId }) => ({
 				})
 			),
 
-			variable: 'linkActiveColor',
+			variable: 'theme-link-active-color',
 			type: 'color:active-type-3',
 		},
 	],
 
-	transparentMenuIndicatorColor: {
-		selector: assembleSelector(
-			mutateSelector({
-				selector: getRootSelectorFor({ itemId }),
-				operation: 'between',
-				to_add: '[data-transparent-row="yes"]',
-			})
-		),
+	transparentMenuIndicatorColor: [
+		{
+			selector: assembleSelector(
+				mutateSelector({
+					selector: getRootSelectorFor({ itemId }),
+					operation: 'between',
+					to_add: '[data-transparent-row="yes"]',
+				})
+			),
 
-		variable: 'menu-indicator-active-color',
-		type: 'color:active',
-		responsive: true,
-	},
+			variable: 'menu-indicator-hover-color',
+			type: 'color:hover',
+			responsive: true,
+		},
+
+		{
+			selector: assembleSelector(
+				mutateSelector({
+					selector: getRootSelectorFor({ itemId }),
+					operation: 'between',
+					to_add: '[data-transparent-row="yes"]',
+				})
+			),
+
+			variable: 'menu-indicator-active-color',
+			type: 'color:active',
+			responsive: true,
+		},
+	],
 
 	transparentHeaderDropdownFontColor: [
 		{
@@ -447,13 +478,13 @@ export const handleMenuVariables = ({ itemId }) => ({
 					selector: mutateSelector({
 						selector: getRootSelectorFor({ itemId }),
 						operation: 'suffix',
-						to_add: '.sub-menu',
+						to_add: '.sub-menu .ct-menu-link',
 					}),
 					operation: 'between',
 					to_add: '[data-transparent-row="yes"]',
 				})
 			),
-			variable: 'linkInitialColor',
+			variable: 'theme-link-initial-color',
 			type: 'color:default',
 		},
 
@@ -463,13 +494,13 @@ export const handleMenuVariables = ({ itemId }) => ({
 					selector: mutateSelector({
 						selector: getRootSelectorFor({ itemId }),
 						operation: 'suffix',
-						to_add: '.sub-menu',
+						to_add: '.sub-menu .ct-menu-link',
 					}),
 					operation: 'between',
 					to_add: '[data-transparent-row="yes"]',
 				})
 			),
-			variable: 'linkHoverColor',
+			variable: 'theme-link-hover-color',
 			type: 'color:hover',
 		},
 
@@ -479,13 +510,13 @@ export const handleMenuVariables = ({ itemId }) => ({
 					selector: mutateSelector({
 						selector: getRootSelectorFor({ itemId }),
 						operation: 'suffix',
-						to_add: '.sub-menu',
+						to_add: '.sub-menu .ct-menu-link',
 					}),
 					operation: 'between',
 					to_add: '[data-transparent-row="yes"]',
 				})
 			),
-			variable: 'linkActiveColor',
+			variable: 'theme-link-active-color',
 			type: 'color:active',
 		},
 	],
@@ -538,7 +569,7 @@ export const handleMenuVariables = ({ itemId }) => ({
 					to_add: '[data-sticky*="yes"]',
 				})
 			),
-			variable: 'linkInitialColor',
+			variable: 'theme-link-initial-color',
 			type: 'color:default',
 		},
 
@@ -554,7 +585,7 @@ export const handleMenuVariables = ({ itemId }) => ({
 					to_add: '[data-sticky*="yes"]',
 				})
 			),
-			variable: 'linkHoverColor',
+			variable: 'theme-link-hover-color',
 			type: 'color:hover',
 		},
 
@@ -570,7 +601,7 @@ export const handleMenuVariables = ({ itemId }) => ({
 					to_add: '[data-sticky*="yes"]',
 				})
 			),
-			variable: 'linkActiveColor',
+			variable: 'theme-link-active-color',
 			type: 'color:active',
 		},
 
@@ -586,7 +617,7 @@ export const handleMenuVariables = ({ itemId }) => ({
 					to_add: '[data-sticky*="yes"]',
 				})
 			),
-			variable: 'linkHoverColor',
+			variable: 'theme-link-hover-color',
 			type: 'color:hover-type-3',
 		},
 
@@ -602,23 +633,38 @@ export const handleMenuVariables = ({ itemId }) => ({
 					to_add: '[data-sticky*="yes"]',
 				})
 			),
-			variable: 'linkActiveColor',
+			variable: 'theme-link-active-color',
 			type: 'color:active-type-3',
 		},
 	],
 
-	stickyMenuIndicatorColor: {
-		selector: assembleSelector(
-			mutateSelector({
-				selector: getRootSelectorFor({ itemId }),
-				operation: 'between',
-				to_add: '[data-sticky*="yes"]',
-			})
-		),
-		variable: 'menu-indicator-active-color',
-		type: 'color:active',
-		responsive: true,
-	},
+	stickyMenuIndicatorColor: [
+		{
+			selector: assembleSelector(
+				mutateSelector({
+					selector: getRootSelectorFor({ itemId }),
+					operation: 'between',
+					to_add: '[data-sticky*="yes"]',
+				})
+			),
+			variable: 'menu-indicator-hover-color',
+			type: 'color:hover',
+			responsive: true,
+		},
+
+		{
+			selector: assembleSelector(
+				mutateSelector({
+					selector: getRootSelectorFor({ itemId }),
+					operation: 'between',
+					to_add: '[data-sticky*="yes"]',
+				})
+			),
+			variable: 'menu-indicator-active-color',
+			type: 'color:active',
+			responsive: true,
+		},
+	],
 
 	stickyHeaderDropdownFontColor: [
 		{
@@ -627,13 +673,13 @@ export const handleMenuVariables = ({ itemId }) => ({
 					selector: mutateSelector({
 						selector: getRootSelectorFor({ itemId }),
 						operation: 'suffix',
-						to_add: '.sub-menu',
+						to_add: '.sub-menu .ct-menu-link',
 					}),
 					operation: 'between',
 					to_add: '[data-sticky*="yes"]',
 				})
 			),
-			variable: 'linkInitialColor',
+			variable: 'theme-link-initial-color',
 			type: 'color:default',
 		},
 
@@ -643,13 +689,13 @@ export const handleMenuVariables = ({ itemId }) => ({
 					selector: mutateSelector({
 						selector: getRootSelectorFor({ itemId }),
 						operation: 'suffix',
-						to_add: '.sub-menu',
+						to_add: '.sub-menu .ct-menu-link',
 					}),
 					operation: 'between',
 					to_add: '[data-sticky*="yes"]',
 				})
 			),
-			variable: 'linkHoverColor',
+			variable: 'theme-link-hover-color',
 			type: 'color:hover',
 		},
 
@@ -659,13 +705,13 @@ export const handleMenuVariables = ({ itemId }) => ({
 					selector: mutateSelector({
 						selector: getRootSelectorFor({ itemId }),
 						operation: 'suffix',
-						to_add: '.sub-menu',
+						to_add: '.sub-menu .ct-menu-link',
 					}),
 					operation: 'between',
 					to_add: '[data-sticky*="yes"]',
 				})
 			),
-			variable: 'linkActiveColor',
+			variable: 'theme-link-active-color',
 			type: 'color:active',
 		},
 	],
@@ -724,7 +770,7 @@ export const handleMenuOptions = ({
 
 	if (optionId === 'headerMenuItemsSpacing') {
 		ctEvents.trigger('ct:header:update')
-		ctEvents.trigger('ct:header:render-frame')
+		ctEvents.trigger('ct:general:device-change')
 	}
 
 	if (

@@ -3,6 +3,8 @@ import classnames from 'classnames'
 import { __ } from 'ct-i18n'
 import _ from 'underscore'
 
+import { applyFilters } from '@wordpress/hooks'
+
 const ALLOWED_MEDIA_TYPES = ['image']
 
 export default class MultiImageUploader extends Component {
@@ -33,6 +35,27 @@ export default class MultiImageUploader extends Component {
 			: null
 
 	render() {
+		const actions = applyFilters(
+			'blocksy.options.ct-multi-image-uploader.actions',
+			[
+				({ props, attachment: { attachment_id } }) => (
+					<button
+						title="Remove"
+						type="button"
+						className="button remove-button"
+						onClick={(e) => {
+							e.stopPropagation()
+
+							props.onChange(
+								props.value.filter(
+									(a) => a.attachment_id !== attachment_id
+								)
+							)
+						}}></button>
+				),
+			]
+		)
+
 		return (
 			<div
 				className={classnames('ct-attachment-multi', {})}
@@ -58,7 +81,11 @@ export default class MultiImageUploader extends Component {
 								this.props.value.length > 0 && (
 									<div className="ct-thumbnails-list">
 										{this.props.value.map(
-											({ url, attachment_id }) => (
+											({
+												url,
+												attachment_id,
+												...attachment
+											}) => (
 												<div
 													key={attachment_id}
 													className="thumbnail thumbnail-image"
@@ -72,27 +99,24 @@ export default class MultiImageUploader extends Component {
 														alt=""
 													/>
 
-													<div className="actions">
-														<button
-															type="button"
-															className="button edit-button control-focus"
-															title="Edit"></button>
-														<button
-															title="Remove"
-															type="button"
-															className="button remove-button"
-															onClick={(e) => {
-																e.stopPropagation()
-
-																this.props.onChange(
-																	this.props.value.filter(
-																		(a) =>
-																			a.attachment_id !==
-																			attachment_id
-																	)
-																)
-															}}></button>
-													</div>
+													<ul className="actions">
+														{actions.map(
+															(a, index) => (
+																<li key={index}>
+																	{a({
+																		props: this
+																			.props,
+																		attachment:
+																			{
+																				...attachment,
+																				url,
+																				attachment_id,
+																			},
+																	})}
+																</li>
+															)
+														)}
+													</ul>
 												</div>
 											)
 										)}

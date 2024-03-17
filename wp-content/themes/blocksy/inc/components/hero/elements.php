@@ -14,7 +14,6 @@ if (function_exists('tutor_utils') && $prefix === 'courses_single') {
 
 $is_page = blocksy_is_page();
 
-
 $default_hero_elements = [];
 
 $default_hero_elements[] = [
@@ -39,6 +38,14 @@ if (
 			get_post_type() === 'topic'
 			||
 			get_post_type() === 'reply'
+			||
+			get_query_var('post_type') === 'forum'
+			||
+			bbp_is_topic_tag()
+			||
+			bbp_is_topic_tag_edit()
+			||
+			is_bbpress()
 		)
 	) && ! (get_post_type() === 'elementor_library')
 ) {
@@ -99,8 +106,21 @@ foreach ($hero_elements as $index => $single_hero_element) {
 	do_action('blocksy:hero:element:render', $single_hero_element);
 
 	if ($single_hero_element['id'] === 'breadcrumbs') {
-		$breadcrumbs_builder = new Blocksy_Breadcrumbs_Builder();
-		echo $breadcrumbs_builder->render();
+		$breadcrumbs_builder = new \Blocksy\BreadcrumbsBuilder();
+
+		echo $breadcrumbs_builder->render([
+			'class' => blocksy_visibility_classes(
+				blocksy_akg(
+					'breadcrumbs_visibility',
+					$single_hero_element,
+					[
+						'desktop' => true,
+						'tablet' => true,
+						'mobile' => true,
+					]
+				)
+			)
+		]);
 	}
 
 	if ($single_hero_element['id'] === 'custom_title') {
@@ -134,7 +154,7 @@ foreach ($hero_elements as $index => $single_hero_element) {
 
 		if (
 			(
-				is_singular() || blocksy_is_page()
+				is_singular() || blocksy_is_page() || $prefix === 'bbpress_single'
 			) && ! is_search()
 		) {
 			if (! $post_id) {
@@ -144,49 +164,43 @@ foreach ($hero_elements as $index => $single_hero_element) {
 			if (! empty(get_the_title($post_id))) {
 				$title = get_the_title($post_id);
 			}
-
 		} else {
 			if (! is_search()) {
 				if (! empty(get_the_archive_title())) {
-					$title = wp_strip_all_tags(get_the_archive_title());
+					$archive_title_renderer = new \Blocksy\ArchiveTitleRenderer([
+						'has_label' => $has_category_label === 'yes'
+					]);
 
-					$divider_symbol = ':';
+					add_filter(
+						'get_the_archive_title',
+						[$archive_title_renderer, 'render_title'],
+						10, 3
+					);
 
-					if (strpos($title, '：') !== false) {
-						$divider_symbol = '：';
-					}
+					$title = get_the_archive_title();
 
-					if (function_exists('is_shop') && is_shop()) {
-						if (strpos($title, $divider_symbol) !== false) {
-							$title_pieces = explode($divider_symbol, $title, 2);
-							$title = $title_pieces[1];
-						}
-					}
-
-					if (strpos($title, $divider_symbol) !== false) {
-						$title_pieces = explode($divider_symbol, $title, 2);
-
-						$title = '<span class="ct-title-label">' . $title_pieces[0] . '</span>' . $title_pieces[1];
-
-						if ($has_category_label !== 'yes') {
-							$title = $title_pieces[1];
-						}
-					}
+					remove_filter(
+						'get_the_archive_title',
+						[$archive_title_renderer, 'render_title'],
+						10, 3
+					);
 				}
 
 				if (is_author()) {
-					$title = get_the_author_meta('display_name', blocksy_get_author_id());
+					$title = blocksy_get_the_author_meta(
+						'display_name',
+						blocksy_get_author_id()
+					);
 				}
 			} else {
-				$title = sprintf(
-					// translators: %s is the number of results
-					__( '<span>Search Results for</span> %s', 'blocksy' ),
+				$title = blocksy_safe_sprintf(
+					// translators: 1: the search query
+					__(
+						'Search Results for %1$s',
+						'blocksy'
+					),
 					get_search_query()
 				);
-			}
-
-			if (!have_posts()) {
-				// $title = __('Nothing Found', 'blocksy');
 			}
 		}
 
@@ -227,12 +241,7 @@ foreach ($hero_elements as $index => $single_hero_element) {
 			$title = blocksy_simple_image(
 				apply_filters(
 					'blocksy:hero:title:author:author-avatar-url',
-					get_avatar_url(
-						blocksy_get_author_id(),
-						[
-							'size' => $avatar_size
-						]
-					)
+					blocksy_get_avatar_url(['size' => $avatar_size])
 				),
 				[
 					'tag_name' => 'span',
@@ -244,7 +253,7 @@ foreach ($hero_elements as $index => $single_hero_element) {
 						'style' => 'height:' . (
 							intval($avatar_size) / 2
 						) . 'px',
-						'alt' => blocksy_get_avatar_alt_for(get_the_author_meta('ID'))
+						'alt' => blocksy_get_avatar_alt_for(blocksy_get_the_author_meta('ID'))
 					],
 				]
 			) . $title;
@@ -281,7 +290,7 @@ foreach ($hero_elements as $index => $single_hero_element) {
 
 		if (
 			(
-				is_singular() || $is_page
+				is_singular() || $is_page || $prefix === 'bbpress_single'
 			) && ! is_search()
 		) {
 			if (! $post_id) {
@@ -296,11 +305,11 @@ foreach ($hero_elements as $index => $single_hero_element) {
 			}
 
 			if (has_excerpt($post_id)) {
-				$description = blocksy_entry_excerpt(
-					40,
-					$description_class,
-					$post_id
-				);
+				$description = blocksy_entry_excerpt([
+					'length' => 40,
+					'class' => $description_class,
+					'post_id' => $post_id
+				]);
 			}
 		} else {
 			if (! is_search()) {
@@ -309,29 +318,25 @@ foreach ($hero_elements as $index => $single_hero_element) {
 				}
 
 				if (is_author()) {
-					if (! empty(trim(get_the_author_meta('description', blocksy_get_author_id())))) {
-						$description = '<div class="' . $description_class . '">' . wp_kses_post(get_the_author_meta('description', blocksy_get_author_id())) . '</div>';
+					if (! empty(trim(blocksy_get_the_author_meta('description', blocksy_get_author_id())))) {
+						$description = '<div class="' . $description_class . '">' . wp_kses_post(blocksy_get_the_author_meta('description', blocksy_get_author_id())) . '</div>';
 					}
 				}
-
-				if (empty($description) && ! have_posts()) {
-					$description = __(
-						"It seems we can't find what you're looking for. Perhaps searching can help.",
-						'blocksy'
-					);
-
-					$description = '<div class="' . $description_class . '">' . $description . '</div>';
-				}
 			} else {
-				$title = sprintf(
-					// translators: %s is the number of results
-					__( '<span>Search Results for</span> %s', 'blocksy' ),
+				$title = blocksy_safe_sprintf(
+					// translators: 1: span opening 2: span closing 3: the number of results
+					__(
+						'%1$sSearch Results for%2$s %3$s',
+						'blocksy'
+					),
+					'<span>',
+					'</span>',
 					get_search_query()
 				);
 
 				if (! have_posts()) {
 					// translators: %s are the opening and closing of the html tags
-					$description = sprintf(
+					$description = blocksy_safe_sprintf(
 						__('%sSorry, but nothing matched your search terms. Please try again with some different keywords.%s', 'blocksy'),
 						'<div class="' . $description_class . '">',
 						'</div>'
@@ -441,6 +446,7 @@ foreach ($hero_elements as $index => $single_hero_element) {
 			'no'
 		) === 'yes';
 
+
 		$single_meta_elements = null;
 
 		if (is_singular() || $is_page) {
@@ -471,21 +477,41 @@ foreach ($hero_elements as $index => $single_hero_element) {
 				])
 			);
 
+			$has_term_accent_color = 'yes';
+
+			foreach ($single_meta_elements as $single_meta_element) {
+				if ($single_meta_element['id'] === 'categories') {
+					$has_term_accent_color = blocksy_akg(
+						'has_term_accent_color',
+						$single_meta_element,
+						'yes'
+					);
+				}
+			}
+
+			$attr = apply_filters(
+				'blocksy:hero:meta:container-attr',
+				$attr
+			);
+
+			$meta_input = [
+				'attr' => $attr,
+				'meta_type' => $meta_type,
+				'meta_divider' => $meta_divider,
+				'force_icons' => $force_icons,
+				'prefix' => $prefix . '_hero_meta'
+			];
+
+			if ($has_term_accent_color === 'no') {
+				$meta_input['has_term_class'] = false;
+			}
+
 			/**
 			 * Note to code reviewers: This line doesn't need to be escaped.
 			 * Function blocksy_post_meta() used here escapes the value properly.
 			 * Mainly because the function outputs SVG.
 			 */
-			echo blocksy_post_meta(
-				$single_meta_elements,
-				[
-					'attr' => $attr,
-					'meta_type' => $meta_type,
-					'meta_divider' => $meta_divider,
-					'force_icons' => $force_icons,
-					'prefix' => $prefix . '_hero_meta'
-				]
-			);
+			echo blocksy_post_meta($single_meta_elements, $meta_input);
 		}
 
 		if (

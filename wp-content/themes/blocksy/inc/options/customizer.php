@@ -162,7 +162,7 @@ $options = [
 				'container' => [
 					'priority' => 3
 				],
-				'options' => blocksy_get_options( 'posts/woo-general' ),
+				'options' => blocksy_get_options( 'woocommerce/general-main' ),
 			],
 
 			'woocommerce_posts_archives' => [
@@ -170,30 +170,16 @@ $options = [
 				'container' => [
 					'priority' => 3
 				],
-				'options' => blocksy_get_options( 'posts/woo-categories' ),
+				'options' => blocksy_get_options( 'woocommerce/archive-main' ),
 			],
 
 			'woocommerce_single' => [
 				'title' => __( 'Single Product', 'blocksy' ),
 				'container' => [
 					'priority' => 3,
-					// 'type' => 'child'
 				],
-				// 'only_if_exists' => true,
-				'options' => blocksy_get_options( 'posts/woo-single' ),
+				'options' => blocksy_get_options( 'woocommerce/single-main' ),
 			],
-
-            /*
-			'woocommerce_checkout' => [
-				'title' => __('Checkout Page', 'blocksy'),
-				'container' => [
-					'priority' => 3,
-					// 'type' => 'child'
-				],
-				'only_if_exists' => true,
-				'options' => []
-			],
-             */
 
 			apply_filters(
 				'blocksy_customizer_options:woocommerce:end',

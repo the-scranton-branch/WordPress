@@ -56,41 +56,17 @@ const FooterBuilder = ({
 	}
 
 	useEffect(() => {
-		let {
-			__forced_static_footer__,
-			__should_refresh__,
-			...old
-		} = wp.customize('footer_placements')()
-
-		Object.keys(old).map((key) => {
-			if (parseFloat(key)) {
-				delete old[key]
-			}
-		})
-
-		try {
-			wp.customize('footer_placements')({
-				...old,
-				__forced_static_footer__: (
-					allBuilderSections.sections.find(
-						({ id }) => id.indexOf(fetchCurrentFooter()) > -1
-					) || allBuilderSections.sections[0]
-				).id,
-			})
-		} catch (e) {
-			console.error(e)
-		}
-
 		return () => {
-			const { __forced_static_footer__, ...old } = wp.customize(
-				'footer_placements'
-			)()
+			const { __forced_static_footer__, ...old } =
+				wp.customize('footer_placements')()
 
-			wp.customize('footer_placements')({
-				__should_refresh__: true,
-				[Math.random()]: 'update',
-				...old,
-			})
+			if (__forced_static_footer__) {
+				wp.customize('footer_placements')({
+					__should_refresh__: true,
+					[Math.random()]: 'update',
+					...old,
+				})
+			}
 		}
 	}, [])
 

@@ -2,7 +2,7 @@
 	
 	label {
 		display: block;
-		--fontWeight: 500;
+		font-weight: 500;
 	}
 	
 	.required {
@@ -13,6 +13,10 @@
 
 	textarea {
 		display: block;
+	}
+
+	select {
+		width: 100%;
 	}
 
 	&:before, &:after {

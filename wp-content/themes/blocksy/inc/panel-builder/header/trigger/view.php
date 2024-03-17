@@ -6,9 +6,12 @@ if (! isset($device)) {
 
 $trigger_type = blocksy_default_akg('mobile_menu_trigger_type', $atts, 'type-1');
 $trigger_design = blocksy_default_akg('trigger_design', $atts, 'simple');
-$trigger_label = blocksy_expand_responsive_value(
-	blocksy_default_akg('trigger_label', $atts, __('Menu', 'blocksy'))
-)[$device];
+$trigger_label = blocksy_translate_dynamic(
+	blocksy_expand_responsive_value(
+		blocksy_default_akg('trigger_label', $atts, __('Menu', 'blocksy'))
+	)[$device],
+	$panel_type . ':' . $section_id . ':' . $item_id . ':trigger_label'
+);
 
 $class = 'ct-header-trigger ct-toggle';
 
@@ -40,7 +43,7 @@ $trigger_label_alignment = blocksy_expand_responsive_value(
 	class="<?php echo esc_attr($class) ?>"
 	data-design="<?php echo $trigger_design ?>"
 	data-label="<?php echo $trigger_label_alignment[$device] ?>"
-	aria-label="<?php echo __('Open off canvas', 'blocksy') ?>"
+	aria-label="<?php echo $trigger_label ?>"
 	<?php echo blocksy_attr_to_html($attr) ?>>
 
 	<span class="<?php echo $label_class ?>"><?php echo $trigger_label ?></span>

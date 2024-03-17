@@ -1,20 +1,16 @@
 .entry-content {
 	> #brz-ed-root,
 	> .brz-root__container {
-		--default-editor: var(--false);
+		--theme-default-editor: var(--false);
 	}
 }
 
 .brz-section--boxed {
-	--brz-section-container-width: var(--block-width, var(--container-width));
-	--brz-section-container-max-width: var(--block-max-width, var(--normal-container-max-width));
+	--brz-section-container-width: var(--theme-block-width, var(--theme-container-width));
+	--brz-section-container-max-width: var(--theme-block-max-width, var(--theme-normal-container-max-width));
 }
 
 // menu and mega menu
-.brz-menu {
-	--listItemSpacing: 0;
-}
-
 .sub-menu > .menu-item .brz-reset-all {
 	pointer-events: inherit;
 }

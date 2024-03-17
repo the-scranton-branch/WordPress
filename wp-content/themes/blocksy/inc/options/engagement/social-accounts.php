@@ -13,7 +13,7 @@ foreach (blocksy_get_social_networks_list() as $id => $network) {
 	$social_section_options[$id] = [
 		'label' => $network['label'],
 		'type' => 'text',
-		'design' => 'inline',
+		'design' => 'block',
 		'value' => '',
 		'setting' => [ 'transport' => 'postMessage' ],
 	];

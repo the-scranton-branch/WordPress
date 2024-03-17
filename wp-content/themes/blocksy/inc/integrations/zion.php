@@ -9,14 +9,14 @@ add_action('init', function () {
 			if ($route === '/zionbuilder/v1/options') {
 				$data = $response->get_data();
 
-				$data['local_colors'][] = 'var(--paletteColor1)';
-				$data['local_colors'][] = 'var(--paletteColor2)';
-				$data['local_colors'][] = 'var(--paletteColor3)';
-				$data['local_colors'][] = 'var(--paletteColor4)';
-				$data['local_colors'][] = 'var(--paletteColor5)';
-				$data['local_colors'][] = 'var(--paletteColor6)';
-				$data['local_colors'][] = 'var(--paletteColor7)';
-				$data['local_colors'][] = 'var(--paletteColor8)';
+				$data['local_colors'][] = 'var(--theme-palette-color-1)';
+				$data['local_colors'][] = 'var(--theme-palette-color-2)';
+				$data['local_colors'][] = 'var(--theme-palette-color-3)';
+				$data['local_colors'][] = 'var(--theme-palette-color-4)';
+				$data['local_colors'][] = 'var(--theme-palette-color-5)';
+				$data['local_colors'][] = 'var(--theme-palette-color-6)';
+				$data['local_colors'][] = 'var(--theme-palette-color-7)';
+				$data['local_colors'][] = 'var(--theme-palette-color-8)';
 
 				$response->set_data($data);
 			}
@@ -26,4 +26,3 @@ add_action('init', function () {
 		1000, 3
 	);
 });
-

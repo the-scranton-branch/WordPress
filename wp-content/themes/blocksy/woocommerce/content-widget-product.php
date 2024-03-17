@@ -30,7 +30,7 @@ if ( ! is_a( $product, 'WC_Product' ) ) {
 
 		<?php
 
-			echo blocksy_image([
+			echo blocksy_media([
 				'no_image_type' => 'woo',
 				'attachment_id' => $product->get_image_id(),
 				'post_id' => $product->get_id(),

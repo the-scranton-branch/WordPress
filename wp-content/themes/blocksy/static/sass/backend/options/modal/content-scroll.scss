@@ -24,6 +24,6 @@
 	.ct-current-tab {
 		overflow-y: auto;
 		overflow-x: hidden;
-		padding: 15px var(--modal-padding) 35px var(--modal-padding);
+		--tabs-content-padding: 15px var(--modal-padding) 35px var(--modal-padding);
 	}
 }

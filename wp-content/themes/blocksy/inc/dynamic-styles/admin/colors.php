@@ -4,109 +4,122 @@ if (! isset($selector)) {
     $selector = ':root';
 }
 
+if (! isset($only_palette)) {
+    $only_palette = false;
+}
+
+// WP Color palette
+$current_color = get_user_option('admin_color');
+
+global $_wp_admin_css_colors;
+
+if (
+	$_wp_admin_css_colors
+	&&
+	$current_color
+	&&
+	isset($_wp_admin_css_colors[$current_color])
+) {
+	$colors = $_wp_admin_css_colors[$current_color]->colors;
+
+
+	if (! empty($colors)) {
+		$ui_accent_color = $colors[count($colors) - 1];
+
+		if (count($colors) > 2) {
+			$ui_accent_color = $colors[2];
+		}
+
+		if ($current_color === 'light') {
+			$ui_accent_color = $colors[3];
+		}
+
+		if ($current_color === 'modern') {
+			$ui_accent_color = $colors[1];
+		}
+
+		if ($current_color === 'blue') {
+			$ui_accent_color = $colors[1];
+		}
+
+		if ($current_color === 'midnight') {
+			$ui_accent_color = $colors[3];
+		}
+
+		$css->put(
+			$selector,
+			'--ui-accent-color: ' . $ui_accent_color
+		);
+
+		$css->put(
+			$selector,
+			'--ui-accent-hover-color: ' . blocksy_adjust_color_lightness(
+				$ui_accent_color,
+				-0.15
+			)
+		);
+	}
+}
+
 // Color palette
-$colorPalette = blocksy_get_colors(
-	get_theme_mod('colorPalette'),
-	[
-		'color1' => ['color' => '#2872fa'],
-		'color2' => ['color' => '#1559ed'],
-		'color3' => ['color' => '#3A4F66'],
-		'color4' => ['color' => '#192a3d'],
-		'color5' => ['color' => '#e1e8ed'],
-		'color6' => ['color' => '#f2f5f7'],
-		'color7' => ['color' => '#FAFBFC'],
-		'color8' => ['color' => '#ffffff'],
-	]
-);
-
-$css->put(
-	$selector,
-	"--paletteColor1: {$colorPalette['color1']}"
-);
-
-$css->put(
-	$selector,
-	"--paletteColor2: {$colorPalette['color2']}"
-);
-
-$css->put(
-	$selector,
-	"--paletteColor3: {$colorPalette['color3']}"
-);
-
-$css->put(
-	$selector,
-	"--paletteColor4: {$colorPalette['color4']}"
-);
-
-$css->put(
-	$selector,
-	"--paletteColor5: {$colorPalette['color5']}"
-);
-
-$css->put(
-	$selector,
-	"--paletteColor6: {$colorPalette['color6']}"
-);
-
-$css->put(
-	$selector,
-	"--paletteColor7: {$colorPalette['color7']}"
-);
-
-$css->put(
-	$selector,
-	"--paletteColor8: {$colorPalette['color8']}"
-);
-
+foreach (blocksy_manager()->colors->get_color_palette() as $paletteKey => $paletteValue) {
+	$css->put(
+		$selector,
+		"--" . $paletteValue['variable'] . ": {$paletteValue['color']}"
+	);
+}
 
 // body font color
 blocksy_output_colors([
-	'value' => get_theme_mod('fontColor'),
+	'value' => blocksy_get_theme_mod('fontColor'),
 	'default' => [
-		'default' => [ 'color' => 'var(--paletteColor3)' ],
+		'default' => [ 'color' => 'var(--theme-palette-color-3)' ],
 	],
 	'css' => $css,
 	'variables' => [
 		'default' => [
-			'variable' => 'color',
+			'variable' => 'theme-text-color',
 			'selector' => $selector
 		],
 	],
 ]);
-
 
 // link color
 blocksy_output_colors([
-	'value' => get_theme_mod('linkColor'),
+	'value' => blocksy_get_theme_mod('linkColor'),
 	'default' => [
-		'default' => [ 'color' => 'var(--paletteColor1)' ],
-		'hover' => [ 'color' => 'var(--paletteColor2)' ],
+		'default' => [ 'color' => 'var(--theme-palette-color-1)' ],
+		'hover' => [ 'color' => 'var(--theme-palette-color-2)' ],
 	],
 	'css' => $css,
 	'variables' => [
 		'default' => [
-			'variable' => 'linkInitialColor',
+			'variable' => 'theme-link-initial-color',
 			'selector' => $selector
 		],
 		'hover' => [
-			'variable' => 'linkHoverColor',
+			'variable' => 'theme-link-hover-color',
 			'selector' => $selector
 		],
 	],
 ]);
+
+if ($only_palette) {
+	return;
+}
+
 
 
 // border color
 blocksy_output_colors([
-	'value' => get_theme_mod('border_color'),
+	'value' => blocksy_get_theme_mod('border_color'),
 	'default' => [
-		'default' => [ 'color' => 'var(--paletteColor5)' ],
+		'default' => [ 'color' => 'var(--theme-palette-color-5)' ],
 	],
 	'css' => $css,
 	'variables' => [
 		'default' => [
-			'variable' => 'border-color',
+			'variable' => 'theme-border-color',
 			'selector' => $selector
 		],
 	],
@@ -115,21 +128,21 @@ blocksy_output_colors([
 
 // headins
 blocksy_output_colors([
-	'value' => get_theme_mod('headingColor'),
+	'value' => blocksy_get_theme_mod('headingColor'),
 	'default' => [
-		'default' => [ 'color' => 'var(--paletteColor4)' ],
+		'default' => [ 'color' => 'var(--theme-palette-color-4)' ],
 	],
 	'css' => $css,
 	'variables' => [
 		'default' => [
-			'variable' => 'headings-color',
+			'variable' => 'theme-headings-color',
 			'selector' => $selector
 		],
 	],
 ]);
 
 blocksy_output_colors([
-	'value' => get_theme_mod('heading_1_color'),
+	'value' => blocksy_get_theme_mod('heading_1_color'),
 	'default' => [
 		'default' => [ 'color' => Blocksy_Css_Injector::get_skip_rule_keyword('DEFAULT') ],
 	],
@@ -137,13 +150,13 @@ blocksy_output_colors([
 	'variables' => [
 		'default' => [
 			'selector' => $selector,
-			'variable' => 'heading-1-color'
+			'variable' => 'theme-heading-1-color'
 		],
 	]
 ]);
 
 blocksy_output_colors([
-	'value' => get_theme_mod('heading_2_color'),
+	'value' => blocksy_get_theme_mod('heading_2_color'),
 	'default' => [
 		'default' => [ 'color' => Blocksy_Css_Injector::get_skip_rule_keyword('DEFAULT') ],
 	],
@@ -151,13 +164,13 @@ blocksy_output_colors([
 	'variables' => [
 		'default' => [
 			'selector' => $selector,
-			'variable' => 'heading-2-color'
+			'variable' => 'theme-heading-2-color'
 		],
 	],
 ]);
 
 blocksy_output_colors([
-	'value' => get_theme_mod('heading_3_color'),
+	'value' => blocksy_get_theme_mod('heading_3_color'),
 	'default' => [
 		'default' => [ 'color' => Blocksy_Css_Injector::get_skip_rule_keyword('DEFAULT') ],
 	],
@@ -165,13 +178,13 @@ blocksy_output_colors([
 	'variables' => [
 		'default' => [
 			'selector' => $selector,
-			'variable' => 'heading-3-color'
+			'variable' => 'theme-heading-3-color'
 		],
 	],
 ]);
 
 blocksy_output_colors([
-	'value' => get_theme_mod('heading_4_color'),
+	'value' => blocksy_get_theme_mod('heading_4_color'),
 	'default' => [
 		'default' => [ 'color' => Blocksy_Css_Injector::get_skip_rule_keyword('DEFAULT') ],
 	],
@@ -179,13 +192,13 @@ blocksy_output_colors([
 	'variables' => [
 		'default' => [
 			'selector' => $selector,
-			'variable' => 'heading-4-color'
+			'variable' => 'theme-heading-4-color'
 		],
 	],
 ]);
 
 blocksy_output_colors([
-	'value' => get_theme_mod('heading_5_color'),
+	'value' => blocksy_get_theme_mod('heading_5_color'),
 	'default' => [
 		'default' => [ 'color' => Blocksy_Css_Injector::get_skip_rule_keyword('DEFAULT') ],
 	],
@@ -193,13 +206,13 @@ blocksy_output_colors([
 	'variables' => [
 		'default' => [
 			'selector' => $selector,
-			'variable' => 'heading-5-color'
+			'variable' => 'theme-heading-5-color'
 		],
 	],
 ]);
 
 blocksy_output_colors([
-	'value' => get_theme_mod('heading_6_color'),
+	'value' => blocksy_get_theme_mod('heading_6_color'),
 	'default' => [
 		'default' => [ 'color' => Blocksy_Css_Injector::get_skip_rule_keyword('DEFAULT') ],
 	],
@@ -207,7 +220,7 @@ blocksy_output_colors([
 	'variables' => [
 		'default' => [
 			'selector' => $selector,
-			'variable' => 'heading-6-color'
+			'variable' => 'theme-heading-6-color'
 		],
 	],
 ]);
@@ -215,7 +228,7 @@ blocksy_output_colors([
 
 // forms
 blocksy_output_colors([
-	'value' => get_theme_mod('formTextColor'),
+	'value' => blocksy_get_theme_mod('formTextColor'),
 	'default' => [
 		'default' => [ 'color' => Blocksy_Css_Injector::get_skip_rule_keyword('DEFAULT') ],
 		'focus' => [ 'color' => Blocksy_Css_Injector::get_skip_rule_keyword('DEFAULT') ],
@@ -224,38 +237,38 @@ blocksy_output_colors([
 	'variables' => [
 		'default' => [
 			'selector' => $selector,
-			'variable' => 'form-text-initial-color'
+			'variable' => 'theme-form-text-initial-color'
 		],
 
 		'focus' => [
 			'selector' => $selector,
-			'variable' => 'form-text-focus-color'
+			'variable' => 'theme-form-text-focus-color'
 		],
 	],
 ]);
 
 blocksy_output_colors([
-	'value' => get_theme_mod('formBorderColor'),
+	'value' => blocksy_get_theme_mod('formBorderColor'),
 	'default' => [
-		'default' => [ 'color' => 'var(--border-color)' ],
-		'focus' => [ 'color' => 'var(--paletteColor1)' ],
+		'default' => [ 'color' => 'var(--theme-border-color)' ],
+		'focus' => [ 'color' => 'var(--theme-palette-color-1)' ],
 	],
 	'css' => $css,
 	'variables' => [
 		'default' => [
 			'selector' => $selector,
-			'variable' => 'form-field-border-initial-color'
+			'variable' => 'theme-form-field-border-initial-color'
 		],
 
 		'focus' => [
 			'selector' => $selector,
-			'variable' => 'form-field-border-focus-color'
+			'variable' => 'theme-form-field-border-focus-color'
 		],
 	],
 ]);
 
 blocksy_output_colors([
-	'value' => get_theme_mod('formBackgroundColor'),
+	'value' => blocksy_get_theme_mod('formBackgroundColor'),
 	'default' => [
 		'default' => [ 'color' => Blocksy_Css_Injector::get_skip_rule_keyword() ],
 		'focus' => [ 'color' => Blocksy_Css_Injector::get_skip_rule_keyword() ],
@@ -264,19 +277,19 @@ blocksy_output_colors([
 	'variables' => [
 		'default' => [
 			'selector' => $selector,
-			'variable' => 'form-field-initial-background'
+			'variable' => 'theme-form-field-background-initial-color'
 		],
 
 		'focus' => [
 			'selector' => $selector,
-			'variable' => 'form-field-focus-background'
+			'variable' => 'theme-form-field-background-focus-color'
 		],
 	],
 ]);
 
 
 // buttons
-$buttonTextColor = blocksy_get_colors( get_theme_mod('buttonTextColor'),
+$buttonTextColor = blocksy_get_colors( blocksy_get_theme_mod('buttonTextColor'),
 	[
 		'default' => [ 'color' => '#ffffff' ],
 		'hover' => [ 'color' => '#ffffff' ],
@@ -285,33 +298,33 @@ $buttonTextColor = blocksy_get_colors( get_theme_mod('buttonTextColor'),
 
 $css->put(
 	$selector,
-	"--buttonTextInitialColor: {$buttonTextColor['default']}"
+	"--theme-button-text-initial-color: {$buttonTextColor['default']}"
 );
 
 $css->put(
 	$selector,
-	"--buttonTextHoverColor: {$buttonTextColor['hover']}"
+	"--theme-button-text-hover-color: {$buttonTextColor['hover']}"
 );
 
-$button_color = blocksy_get_colors( get_theme_mod('buttonColor'),
+$button_color = blocksy_get_colors( blocksy_get_theme_mod('buttonColor'),
 	[
-		'default' => [ 'color' => 'var(--paletteColor1)' ],
-		'hover' => [ 'color' => 'var(--paletteColor2)' ],
+		'default' => [ 'color' => 'var(--theme-palette-color-1)' ],
+		'hover' => [ 'color' => 'var(--theme-palette-color-2)' ],
 	]
 );
 
 $css->put(
 	$selector,
-	"--buttonInitialColor: {$button_color['default']}"
+	"--theme-button-background-initial-color: {$button_color['default']}"
 );
 
 $css->put(
 	$selector,
-	"--buttonHoverColor: {$button_color['hover']}"
+	"--theme-button-background-hover-color: {$button_color['hover']}"
 );
 
 blocksy_output_colors([
-	'value' => get_theme_mod('global_quantity_color'),
+	'value' => blocksy_get_theme_mod('global_quantity_color'),
 	'default' => [
 		'default' => [ 'color' => Blocksy_Css_Injector::get_skip_rule_keyword('DEFAULT') ],
 		'hover' => [ 'color' => Blocksy_Css_Injector::get_skip_rule_keyword('DEFAULT') ],
@@ -331,14 +344,20 @@ blocksy_output_colors([
 ]);
 
 blocksy_output_colors([
-	'value' => get_theme_mod('global_quantity_arrows'),
+	'value' => blocksy_get_theme_mod('global_quantity_arrows'),
 	'default' => [
 		'default' => [ 'color' => Blocksy_Css_Injector::get_skip_rule_keyword('DEFAULT') ],
+		'default_type_2' => [ 'color' => 'var(--theme-text-color)' ],
 		'hover' => [ 'color' => Blocksy_Css_Injector::get_skip_rule_keyword('DEFAULT') ],
 	],
 	'css' => $css,
 	'variables' => [
 		'default' => [
+			'selector' => $selector,
+			'variable' => 'quantity-arrows-initial-color'
+		],
+
+		'default_type_2' => [
 			'selector' => $selector,
 			'variable' => 'quantity-arrows-initial-color'
 		],
@@ -349,4 +368,3 @@ blocksy_output_colors([
 		],
 	],
 ]);
-

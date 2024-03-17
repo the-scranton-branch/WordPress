@@ -1,4 +1,4 @@
-import { createElement, Component } from '@wordpress/element'
+import { useRef, createElement, Component } from '@wordpress/element'
 import DashboardContext, { Provider, getDefaultValue } from './context'
 import Heading from './Heading'
 import {
@@ -20,7 +20,6 @@ import Home from './screens/Home'
 import RecommendedPlugins from './screens/RecommendedPlugins'
 import Changelog from './screens/Changelog'
 import windowHashSource from './window-hash-source'
-import ProTable from './screens/ProTable'
 
 let history = createHistory(windowHashSource())
 /*
@@ -32,44 +31,74 @@ ctEvents.on('ct:dashboard:routes', r =>
 )
 */
 
-const SpringRouter = ({ children }) => (
-	<Location>
-		{({ location, navigate, history }) => (
-			<Transition
-				items={location}
-				initial={null}
-				immediate={(location.state || {}).hasNoChange}
-				keys={(location) => location.pathname}
-				from={{ opacity: 0 }}
-				enter={[{ opacity: 1 }]}
-				leave={[{ opacity: 0 }]}
-				config={(key, phase) => {
-					return phase === 'leave'
-						? {
-								duration: 300,
-						  }
-						: {
-								delay: 300,
-								duration: 300,
-						  }
-				}}>
-				{(location) => (props) => (
-					<animated.div
-						style={{
-							...props,
+const SpringRouter = ({ children }) => {
+	const transitionRef = useRef()
+
+	return (
+		<Location>
+			{({ location, navigate, history, ...rest }) => {
+				const nonAnimatedChildren = (location) => (
+					<Router
+						primary={false}
+						location={location}
+						navigate={navigate}>
+						{children}
+					</Router>
+				)
+
+				return (
+					<Transition
+						ref={(r) => {
+							transitionRef.current = r
+						}}
+						items={location}
+						initial={null}
+						immediate={(location.state || {}).hasNoChange}
+						keys={(location) => location.pathname}
+						from={{ opacity: 0 }}
+						enter={[{ opacity: 1 }]}
+						leave={[{ opacity: 0 }]}
+						config={(key, phase) => {
+							return phase === 'leave'
+								? {
+										duration: 300,
+								  }
+								: {
+										delay: 300,
+										duration: 300,
+								  }
 						}}>
-						<Router
-							primary={false}
-							location={location}
-							navigate={navigate}>
-							{children}
-						</Router>
-					</animated.div>
-				)}
-			</Transition>
-		)}
-	</Location>
-)
+						{(location, state, i) => {
+							if (
+								(location.state || {}).hasNoChange &&
+								transitionRef.current.state.transitions
+									.length === 2 &&
+								transitionRef.current.state.transitions.every(
+									(t) =>
+										t.item.pathname.indexOf('extensions') >
+										-1
+								)
+							) {
+								return () => nonAnimatedChildren(location)
+							}
+
+							return (props) => {
+								return (
+									<animated.div
+										style={{
+											...props,
+										}}>
+										{nonAnimatedChildren(location)}
+									</animated.div>
+								)
+							}
+						}}
+					</Transition>
+				)
+			}}
+		</Location>
+	)
+}
 
 const FadeTransitionRouter = (props) => (
 	<Location>
@@ -122,7 +151,6 @@ export default class Dashboard extends Component {
 							<Home path="/" />
 							<RecommendedPlugins path="plugins" />
 							<Changelog path="changelog" />
-							<ProTable path="pro" />
 
 							{userRoutes.map(
 								({ Component, key, path, ...props }) => (

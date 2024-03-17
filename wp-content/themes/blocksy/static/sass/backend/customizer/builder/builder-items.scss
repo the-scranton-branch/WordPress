@@ -49,6 +49,11 @@
 	&[data-id*="mobile-menu"] {
 		width: #{$builder-item-width + 15px};
 	}
+
+	// not registered items
+	&.ct-builder-item-not-registered {
+		display: none;
+	}
 }
 
 
@@ -59,14 +64,14 @@
 					box-shadow 0.2s ease;
 
 		&:hover {
-			border-color: var(--accentColor);
+			border-color: var(--ui-accent-color);
 		}
 
 		// custumizing item
 		&.ct-customizing:not(.sortable-ghost) {
-			border-color: var(--accentColor);
+			border-color: var(--ui-accent-color);
 			box-shadow: 0 1px 2px 1px rgba(0, 0, 0, 0.05),
-						0px 0px 0px 1px var(--accentColor);
+						0px 0px 0px 1px var(--ui-accent-color);
 		}
 
 		// ghost item

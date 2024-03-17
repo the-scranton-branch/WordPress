@@ -1,35 +1,37 @@
 <?php
 
-function blocksy_get_json_translation_files($domain) {
-	$cached_mofiles = [];
+if (! function_exists('blocksy_get_json_translation_files')) {
+	function blocksy_get_json_translation_files($domain) {
+		$cached_mofiles = [];
 
-	$locations = [
-		WP_LANG_DIR . '/themes'
-	];
+		$locations = [
+			WP_LANG_DIR . '/themes'
+		];
 
-	foreach ($locations as $location) {
-		$mofiles = glob($location . '/*.json');
+		foreach ($locations as $location) {
+			$mofiles = glob($location . '/*.json');
 
-		if (! $mofiles) {
-			continue;
+			if (! $mofiles) {
+				continue;
+			}
+
+			$cached_mofiles = array_merge($cached_mofiles, $mofiles);
 		}
 
-		$cached_mofiles = array_merge($cached_mofiles, $mofiles);
-	}
+		$locale = determine_locale();
 
-	$locale = determine_locale();
+		$result = [];
 
-	$result = [];
+		foreach ($cached_mofiles as $single_file) {
+			if (strpos($single_file, $locale) === false) {
+				continue;
+			}
 
-	foreach ($cached_mofiles as $single_file) {
-		if (strpos($single_file, $locale) === false) {
-			continue;
+			$result[] = $single_file;
 		}
 
-		$result[] = $single_file;
+		return $result;
 	}
-
-	return $result;
 }
 
 if (! function_exists('blocksy_get_jed_locale_data')) {
@@ -45,7 +47,7 @@ if (! function_exists('blocksy_get_jed_locale_data')) {
 		$locale[$domain] = [
 			'' => [
 				'domain' => $domain,
-				'lang' => is_admin() ? get_user_locale() : get_locale(),
+				'lang' => get_user_locale(),
 			]
 		];
 

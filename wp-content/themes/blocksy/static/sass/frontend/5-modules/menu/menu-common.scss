@@ -1,48 +1,29 @@
 nav[class*="menu"] {
 
-	li {
-		a {
-			color: var(--linkInitialColor);
-			--icon-color: var(--linkInitialColor);
-		}
+	.ct-menu-link {
+		color: var(--theme-link-initial-color);
+		--theme-icon-color: var(--theme-link-initial-color);
 	}
 
 	li:hover {
-		> a,
+		> .ct-menu-link,
 		> .ct-sub-menu-parent {
-			color: var(--linkHoverColor);
+			color: var(--theme-link-hover-color);
 
 			svg {
-				fill: var(--icon-hover-color, var(--linkHoverColor));
+				fill: var(--theme-icon-hover-color, var(--theme-link-hover-color));
 			}
 		}
 	}
 
 	li[class*="current-menu-"] {
-		> a,
+		> .ct-menu-link,
 		> .ct-sub-menu-parent {
-			color: var(--linkActiveColor, var(--linkHoverColor));
+			color: var(--theme-link-active-color, var(--theme-link-hover-color));
 
 			svg {
-				fill: var(--icon-active-color, var(--icon-hover-color, var(--linkActiveColor, var(--linkHoverColor))));
+				fill: var(--theme-icon-active-color, var(--theme-icon-hover-color, var(--theme-link-active-color, var(--theme-link-hover-color))));
 			}
 		}
 	}
 }
-
-
-// old CSS
-// nav[class*="menu"] {
-	
-// 	li > a:hover,
-// 	> ul > li:hover > a {
-// 		color: var(--linkHoverColor);
-// 		--icon-color: var(--icon-hover-color, var(--linkHoverColor));
-// 	}
-
-// 	li > a.ct-highlight,
-// 	li[class*="current-menu-"] > a {
-// 		color: var(--linkActiveColor, var(--linkHoverColor));
-// 		--icon-color: var(--icon-active-color, var(--icon-hover-color, var(--linkActiveColor, var(--linkHoverColor))));
-// 	}
-// }

@@ -7,7 +7,7 @@
 			position: absolute;
 			content: '';
 			top: -11px;
-			left: -12px;
+			inset-inline-start: -12px;
 			width: calc(100% + 24px);
 			height: 42px;
 		}
@@ -34,7 +34,7 @@
 
 	&[data-panel='only-arrow'] {
 		.ct-customizer-panel-option button {
-			right: -10px;
+			inset-inline-end: -10px;
 		}
 	}
 }
@@ -53,7 +53,7 @@
 		width: 25px;
 		height: 20px;
 		top: calc(50% - 10px);
-		right: -24px;
+		inset-inline-end: -24px;
 		padding: 0;
 		cursor: pointer;
 		border: none;
@@ -90,19 +90,13 @@
 	overflow-y: auto;
 	z-index: 99;
 	background: #f0f0f1;
-	top: 0;
-	left: 0;
-	right: 0;
-	bottom: 0;
+	inset: 0;
 	border-top: 1px solid #ddd;
 	border-bottom: 1px solid #ddd;
 
 	> * {
 		position: absolute;
-		top: 0;
-		bottom: 0;
-		left: 0;
-		width: 100%;
+		inset: 0;
 	}
 
 	> *:nth-child(2) {
@@ -118,7 +112,7 @@
 		}
 
 		> *:last-child {
-			left: 50%;
+			inset-inline-start: 50%;
 			display: block;
 		}
 	}
@@ -131,6 +125,15 @@
 }
 
 // panel actions
+.wp-core-ui {
+	.customize-panel-back:focus, 
+	.customize-panel-back:hover, 
+	.customize-section-back:focus, 
+	.customize-section-back:hover {
+		color: var(--ui-accent-color);
+	}
+}
+
 .customize-panel-actions {
 	display: flex;
 	background: #fff;
@@ -138,7 +141,6 @@
 
 	button {
 		width: 48px;
-		// padding: 0 24px 0 0;
 		padding-inline-end: 24px;
 		background: #fff;
 		cursor: pointer;
@@ -150,7 +152,7 @@
 			font: normal 20px/48px dashicons;
 			content: '\f341';
 			position: relative;
-			left: 9px;
+			inset-inline-start: 9px;
 		}
 
 		&:focus {
@@ -169,7 +171,8 @@
 		color: #555d66;
 		width: 100%;
 		margin: 0;
-		padding: 10px 10px 12px 14px;
+		padding: 10px;
+		padding-inline-start: 14px;
 
 		span {
 			font-size: 13px;
@@ -197,23 +200,9 @@
 	}
 
 	> form {
-		margin-left: -12px;
-		margin-right: -12px;
+		margin-inline: -12px;
 	}
 }
-
-// #customize-controls {
-
-// 	.wp-full-overlay-sidebar-content {
-// 		overflow-x: initial;
-// 		overflow-y: initial;
-// 	}
-
-// 	.ct-customizer-panel {
-// 		overflow-x: initial;
-// 		overflow-y: initial;
-// 	}
-// }
 
 .ct-tmp-panel-actions {
 	z-index: 999999;

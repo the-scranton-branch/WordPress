@@ -1,11 +1,11 @@
 @import 'general';
 @import 'alignment';
-@import 'inner-container';
 
 // blocks
 @import 'image';
 @import 'button';
 @import 'embeds';
+@import 'calendar';
 @import 'drop-cap';
 @import 'instagram';
 @import 'figcaption';
@@ -17,10 +17,12 @@
 @import 'separator-block';
 @import 'inner-pagination';
 @import 'media-text-block';
-@import 'password-protected';
+@import 'post-title-block';
 @import 'post-content-block';
+@import 'password-protected';
 
 @import 'quote-block';
 @import 'pullquote-block';
 
+@import 'sticky-position';
 @import 'block-has-background';

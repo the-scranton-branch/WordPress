@@ -37,10 +37,6 @@ class Blocksy_Header_Builder_Elements {
 				continue;
 			}
 
-			if ($render->is_row_empty($row)) {
-				// return '';
-			}
-
 			$mobile_content .= $render->render_items_collection(
 				$row['placements'][0]['items'],
 				[
@@ -107,7 +103,7 @@ class Blocksy_Header_Builder_Elements {
 					'data-location' => $render->get_customizer_location_for('offcanvas')
 				] : []
 			),
-			$desktop_content
+			'<div class="ct-panel-content-inner">' . $desktop_content . '</div>'
 		) . blocksy_html_tag(
 			'div',
 			array_merge(
@@ -120,7 +116,7 @@ class Blocksy_Header_Builder_Elements {
 					'data-location' => $render->get_customizer_location_for('offcanvas')
 				] : []
 			),
-			$mobile_content
+			'<div class="ct-panel-content-inner">' . $mobile_content . '</div>'
 		);
 
 		$close_type = blocksy_akg('menu_close_button_type', $atts, 'type-1');
@@ -130,8 +126,15 @@ class Blocksy_Header_Builder_Elements {
 			'<svg class="ct-icon" width="12" height="12" viewBox="0 0 15 15"><path d="M1 15a1 1 0 01-.71-.29 1 1 0 010-1.41l5.8-5.8-5.8-5.8A1 1 0 011.7.29l5.8 5.8 5.8-5.8a1 1 0 011.41 1.41l-5.8 5.8 5.8 5.8a1 1 0 01-1.41 1.41l-5.8-5.8-5.8 5.8A1 1 0 011 15z"/></svg>'
 		);
 
+		$heading = '';
+
+		if (blocksy_akg('has_offcanvas_heading', $atts, 'no') === 'yes') {
+			$heading = '<span class="ct-panel-heading">' . blocksy_akg('offcanvas_heading', $atts, __( 'Menu', 'blocksy' )) . '</span>';
+		}
+
 		$without_container = '
 		<div class="ct-panel-actions">
+			'. $heading .'
 			<button class="ct-toggle-close" data-type="' . $close_type . '" aria-label="'. __('Close drawer', 'blocksy') . '">
 				'. $main_offcanvas_close_icon . '
 			</button>
@@ -211,7 +214,7 @@ class Blocksy_Header_Builder_Elements {
 
 		foreach ($all_cpts as $single_cpt) {
 			if (! isset($search_through[$single_cpt])) {
-				$search_through[$single_cpt] = true;
+				$search_through[$single_cpt] = false;
 			}
 		}
 
@@ -241,6 +244,10 @@ class Blocksy_Header_Builder_Elements {
 			$post_type[] = $single_post_type;
 		}
 
+		if (count(array_keys($search_through)) === count($post_type)) {
+			$post_type = [];
+		}
+
 		$search_modal_close_icon = apply_filters(
 			'blocksy:search:modal:close:icon',
 			'<svg class="ct-icon" width="12" height="12" viewBox="0 0 15 15"><path d="M1 15a1 1 0 01-.71-.29 1 1 0 010-1.41l5.8-5.8-5.8-5.8A1 1 0 011.7.29l5.8 5.8 5.8-5.8a1 1 0 011.41 1.41l-5.8 5.8 5.8 5.8a1 1 0 01-1.41 1.41l-5.8-5.8-5.8 5.8A1 1 0 011 15z"/></svg>'
@@ -250,7 +257,10 @@ class Blocksy_Header_Builder_Elements {
 			'enable_search_field_class' => true,
 			'ct_post_type' => $post_type,
 			'search_placeholder' => $search_placeholder,
-			'search_live_results' => 'no'
+			'search_live_results' => 'no',
+
+			'override_html_atts' => [],
+			'button_type' => 'icon'
 		];
 
 		if (blocksy_akg('enable_live_results', $atts, 'yes') === 'yes') {
@@ -263,176 +273,27 @@ class Blocksy_Header_Builder_Elements {
 			$search_form_args['ct_product_price'] = blocksy_akg(
 				'searchHeaderProductPrice', $atts, 'no'
 			) === 'yes';
+
+			$search_form_args['ct_product_status'] = blocksy_akg(
+				'searchHeaderProductStatus', $atts, 'no'
+			) === 'yes';
 		}
+
 
 		?>
 
 		<div id="search-modal" class="ct-panel" data-behaviour="modal">
 			<div class="ct-panel-actions">
-				<button class="ct-toggle-close" data-type="<?php echo $search_close_button_type ?>" aria-label="Close search modal">
+				<button class="ct-toggle-close" data-type="<?php echo $search_close_button_type ?>" aria-label="<?php echo __('Close search modal', 'blocksy') ?>">
 					<?php echo $search_modal_close_icon ?>
 				</button>
 			</div>
 
 			<div class="ct-panel-content">
-				<?php get_search_form($search_form_args); ?>
+				<?php blocksy_isolated_get_search_form($search_form_args); ?>
 			</div>
 		</div>
 
 		<?php
-	}
-
-	public function render_cart_offcanvas($args = []) {
-		$args = wp_parse_args($args, [
-			'has_container' => true,
-			'device' => 'mobile',
-			'force_output' => false
-		]);
-
-		$render = new Blocksy_Header_Builder_Render([
-			'current_section_id' => $this->current_section_id
-		]);
-
-		if (! $args['force_output']) {
-			if (! $render->contains_item('cart')) {
-				return '';
-			}
-		}
-
-		if (! function_exists('woocommerce_mini_cart')) {
-			return '';
-		}
-
-		$atts = $render->get_item_data_for('cart');
-
-		$has_cart_dropdown = blocksy_default_akg(
-			'has_cart_dropdown',
-			$atts,
-			'yes'
-		) === 'yes';
-
-		$cart_drawer_type = blocksy_default_akg('cart_drawer_type', $atts, 'dropdown');
-		$cart_panel_close_button_type = blocksy_default_akg(
-			'cart_panel_close_button_type',
-			$atts,
-			'type-1'
-		);
-
-		if (! $has_cart_dropdown) {
-			return;
-		}
-
-		if ($cart_drawer_type !== 'offcanvas' && ! $args['force_output']) {
-			return;
-		}
-
-		if (blocksy_default_akg('has_cart_panel_quantity', $atts, 'no') === 'yes') {
-			add_filter(
-				'woocommerce_widget_cart_item_quantity',
-				[$this, 'add_minicart_quantity_fields'],
-				10, 3
-			);
-		}
-
-		global $blocksy_is_offcanvas_cart;
-		$blocksy_is_offcanvas_cart = true;
-
-		ob_start();
-		woocommerce_mini_cart();
-		$content = ob_get_clean();
-
-		remove_filter(
-			'woocommerce_widget_cart_item_quantity',
-			[$this, 'add_minicart_quantity_fields'],
-			10, 3
-		);
-
-		$class = 'ct-panel';
-		$behavior = 'modal';
-
-		$position_output = [];
-
-		if (blocksy_default_akg('offcanvas_behavior', $atts, 'panel') !== 'modal') {
-			$behavior = blocksy_default_akg(
-				'cart_panel_position',
-				$atts,
-				'right'
-			) . '-side';
-		}
-
-		$without_container = blocksy_html_tag(
-			'div',
-			array_merge([
-				'class' => 'ct-panel-content',
-			]),
-			$content
-		);
-
-		if (! $args['has_container']) {
-			return $without_container;
-		}
-
-		$cart_offcanvas_close_icon = apply_filters(
-			'blocksy:cart:offcanvas:close:icon',
-			'<svg class="ct-icon" width="12" height="12" viewBox="0 0 15 15"><path d="M1 15a1 1 0 01-.71-.29 1 1 0 010-1.41l5.8-5.8-5.8-5.8A1 1 0 011.7.29l5.8 5.8 5.8-5.8a1 1 0 011.41 1.41l-5.8 5.8 5.8 5.8a1 1 0 01-1.41 1.41l-5.8-5.8-5.8 5.8A1 1 0 011 15z"/></svg>'
-		);
-
-		return blocksy_html_tag(
-			'div',
-			array_merge(
-				[
-					'id' => 'woo-cart-panel',
-					'class' => $class,
-					'data-behaviour' => $behavior
-				],
-				$position_output
-			),
-
-			'<div class="ct-panel-inner">
-				<div class="ct-panel-actions">
-					<span class="ct-panel-heading">' . __('Shopping Cart', 'blocksy') . '</span>
-
-					<button class="ct-toggle-close" data-type="' . $cart_panel_close_button_type . '" aria-label="' . __('Close cart drawer', 'blocksy') . '">
-						'. $cart_offcanvas_close_icon . '
-					</button>
-				</div>
-			'
-			. $without_container .
-
-			'</div>'
-		);
-	}
-
-	public function add_minicart_quantity_fields($html, $cart_item, $cart_item_key) {
-		$_product = apply_filters(
-			'woocommerce_cart_item_product',
-			$cart_item['data'],
-			$cart_item,
-			$cart_item_key
-		);
-		$product_price = apply_filters(
-			'woocommerce_cart_item_price',
-			WC()->cart->get_product_price($cart_item['data']),
-			$cart_item,
-			$cart_item_key
-		);
-
-		if ($_product->is_sold_individually()) {
-			$product_quantity = sprintf( '1 <input type="hidden" name="cart[%s][qty]" value="1">', $cart_item_key );
-		} else {
-			$product_quantity = trim(woocommerce_quantity_input(
-				array(
-					'input_name'   => "cart[{$cart_item_key}][qty]",
-					'input_value'  => $cart_item['quantity'],
-					'max_value'    => $_product->get_max_purchase_quantity(),
-					'min_value'    => '0',
-					'product_name' => $_product->get_name(),
-				),
-				$_product,
-				false
-			));
-		}
-
-		return '<div class="ct-product-actions">' . $product_quantity . '<span class="multiply-symbol">×</span>' . $product_price . '</div>';
 	}
 }

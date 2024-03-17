@@ -5,7 +5,7 @@ const withPrefix = (value, prefix = '') => {
 		return value
 	}
 
-	return `${prefix}${value.charAt(0).toUpperCase()}${value.slice(1)}`
+	return value.replace('theme-', `theme-${prefix}-`)
 }
 
 const getWeightFor = ({ variation }) => {
@@ -92,7 +92,7 @@ export const typographyOption = ({
 }) => ({
 	[id]: [
 		{
-			variable: withPrefix('fontFamily', prefix),
+			variable: withPrefix('theme-font-family', prefix),
 			selector,
 			extractValue: (value) => {
 				value = extractValue(value)
@@ -127,7 +127,7 @@ export const typographyOption = ({
 		},
 
 		{
-			variable: withPrefix('fontWeight', prefix),
+			variable: withPrefix('theme-font-weight', prefix),
 			selector,
 			extractValue: (value) => {
 				value = extractValue(value)
@@ -142,7 +142,7 @@ export const typographyOption = ({
 		},
 
 		{
-			variable: withPrefix('fontStyle', prefix),
+			variable: withPrefix('theme-font-style', prefix),
 			selector,
 			extractValue: (value) => {
 				value = extractValue(value)
@@ -158,7 +158,7 @@ export const typographyOption = ({
 		},
 
 		{
-			variable: withPrefix('textTransform', prefix),
+			variable: withPrefix('theme-text-transform', prefix),
 			selector,
 			extractValue: (value) => {
 				value = extractValue(value)
@@ -167,7 +167,7 @@ export const typographyOption = ({
 		},
 
 		{
-			variable: withPrefix('textDecoration', prefix),
+			variable: withPrefix('theme-text-decoration', prefix),
 			selector,
 			extractValue: (value) => {
 				value = extractValue(value)
@@ -176,7 +176,7 @@ export const typographyOption = ({
 		},
 
 		{
-			variable: withPrefix('fontSize', prefix),
+			variable: withPrefix('theme-font-size', prefix),
 			selector,
 			unit: '',
 			responsive: true,
@@ -187,7 +187,7 @@ export const typographyOption = ({
 		},
 
 		{
-			variable: withPrefix('lineHeight', prefix),
+			variable: withPrefix('theme-line-height', prefix),
 			selector,
 			unit: '',
 			responsive: true,
@@ -198,7 +198,7 @@ export const typographyOption = ({
 		},
 
 		{
-			variable: withPrefix('letterSpacing', prefix),
+			variable: withPrefix('theme-letter-spacing', prefix),
 			selector,
 			unit: '',
 			responsive: true,
@@ -254,19 +254,22 @@ export const getTypographyVariablesFor = () => ({
 
 	...typographyOption({
 		id: 'quote',
-		selector:
-			'.wp-block-quote',
+		selector: '.wp-block-quote',
 	}),
 
 	...typographyOption({
 		id: 'pullquote',
-		selector:
-			'.wp-block-pullquote, .ct-quote-widget blockquote',
+		selector: '.wp-block-pullquote',
 	}),
 
 	...typographyOption({
 		id: 'pre',
 		selector: 'code, kbd, samp, pre',
+	}),
+
+	...typographyOption({
+		id: 'figcaption',
+		selector: '.entry-content figcaption',
 	}),
 
 	...typographyOption({
@@ -276,13 +279,7 @@ export const getTypographyVariablesFor = () => ({
 
 	...typographyOption({
 		id: 'sidebarWidgetsFont',
-		selector:
-			'.ct-sidebar .ct-widget > *:not(.widget-title):not(blockquote)',
-	}),
-
-	...typographyOption({
-		id: 'singleProductTitleFont',
-		selector: '.entry-summary .entry-title',
+		selector: '.ct-sidebar .ct-widget > *:not(.widget-title)',
 	}),
 
 	...typographyOption({
@@ -293,22 +290,6 @@ export const getTypographyVariablesFor = () => ({
 	...typographyOption({
 		id: 'quickViewProductPriceFont',
 		selector: '.ct-quick-view-card .entry-summary .price',
-	}),
-
-	...typographyOption({
-		id: 'singleProductPriceFont',
-		selector: '.entry-summary .price',
-	}),
-
-	...typographyOption({
-		id: 'cardProductTitleFont',
-		selector:
-			'[data-products] .woocommerce-loop-product__title, [data-products] .woocommerce-loop-category__title',
-	}),
-
-	...typographyOption({
-		id: 'cardProductExcerptFont',
-		selector: '[data-products] .entry-excerpt',
 	}),
 
 	...typographyOption({
