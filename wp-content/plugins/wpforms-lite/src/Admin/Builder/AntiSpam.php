@@ -88,6 +88,8 @@ class AntiSpam {
 		}
 
 		$this->akismet_settings();
+		$this->store_spam_entries_settings();
+		$this->time_limit_settings();
 		$this->captcha_settings();
 
 		/**
@@ -131,26 +133,27 @@ class AntiSpam {
 			return;
 		}
 
-		$recaptcha_types = [
-			'v2'        => __( 'Enable Google Checkbox v2 reCAPTCHA', 'wpforms-lite' ),
-			'invisible' => __( 'Enable Google Invisible v2 reCAPTCHA', 'wpforms-lite' ),
-			'v3'        => __( 'Enable Google v3 reCAPTCHA', 'wpforms-lite' ),
+		$captcha_types = [
+			'hcaptcha'  => __( 'Enable hCaptcha', 'wpforms-lite' ),
+			'turnstile' => __( 'Enable Cloudflare Turnstile', 'wpforms-lite' ),
+			'recaptcha' => [
+				'v2'        => __( 'Enable Google Checkbox v2 reCAPTCHA', 'wpforms-lite' ),
+				'invisible' => __( 'Enable Google Invisible v2 reCAPTCHA', 'wpforms-lite' ),
+				'v3'        => __( 'Enable Google v3 reCAPTCHA', 'wpforms-lite' ),
+			],
 		];
 
-		$lbl = '';
-
-		if ( array_key_exists( $captcha_settings['recaptcha_type'], $recaptcha_types ) ) {
-			$lbl = $recaptcha_types[ $captcha_settings['recaptcha_type'] ];
-		}
-
-		$lbl = $captcha_settings['provider'] === 'hcaptcha' ? __( 'Enable hCaptcha', 'wpforms-lite' ) : $lbl;
+		$is_recaptcha  = $captcha_settings['provider'] === 'recaptcha';
+		$captcha_types = $is_recaptcha ? $captcha_types['recaptcha'] : $captcha_types;
+		$captcha_key   = $is_recaptcha ? $captcha_settings['recaptcha_type'] : $captcha_settings['provider'];
+		$label         = ! empty( $captcha_types[ $captcha_key ] ) ? $captcha_types[ $captcha_key ] : '';
 
 		$recaptcha = wpforms_panel_field(
 			'toggle',
 			'settings',
 			'recaptcha',
 			$this->form_data,
-			$lbl,
+			$label,
 			[
 				'data'    => [
 					'provider' => $captcha_settings['provider'],
@@ -166,6 +169,70 @@ class AntiSpam {
 				'description' => __( 'Automated tests that help to prevent bots from submitting your forms.', 'wpforms-lite' ),
 				'title'       => __( 'CAPTCHA', 'wpforms-lite' ),
 				'borders'     => [ 'top' ],
+			]
+		);
+	}
+
+	/**
+	 * Output the Spam Entries Store settings.
+	 *
+	 * @since 1.8.3
+	 */
+	public function store_spam_entries_settings() {
+
+		if ( ! wpforms()->is_pro() ) {
+			return;
+		}
+
+		$disable_entries = $this->form_data['settings']['disable_entries'] ?? 0;
+
+		wpforms_panel_field(
+			'toggle',
+			'settings',
+			'store_spam_entries',
+			$this->form_data,
+			__( 'Store spam entries in the database', 'wpforms-lite' ),
+			[
+				'value' => $this->form_data['settings']['store_spam_entries'] ?? 0,
+				'class' => $disable_entries ? 'wpforms-hidden' : '',
+			]
+		);
+	}
+
+	/**
+	 * Output the Time Limit settings.
+	 *
+	 * @since 1.8.3
+	 */
+	private function time_limit_settings() {
+
+		wpforms_panel_field(
+			'toggle',
+			'anti_spam',
+			'enable',
+			$this->form_data,
+			__( 'Enable minimum time to submit', 'wpforms-lite' ),
+			[
+				'parent'      => 'settings',
+				'subsection'  => 'time_limit',
+				'tooltip'     => __( 'Set a minimum amount of time a user must spend on a form before submitting.', 'wpforms-lite' ),
+				'input_class' => 'wpforms-panel-field-toggle-next-field',
+			]
+		);
+
+		wpforms_panel_field(
+			'text',
+			'anti_spam',
+			'duration',
+			$this->form_data,
+			__( 'Minimum time to submit', 'wpforms-lite' ),
+			[
+				'parent'     => 'settings',
+				'subsection' => 'time_limit',
+				'type'       => 'number',
+				'min'        => 1,
+				'default'    => 3,
+				'after'      => sprintf( '<span class="wpforms-panel-field-after">%s</span>', __( 'seconds', 'wpforms-lite' ) ),
 			]
 		);
 	}
@@ -265,6 +332,14 @@ class AntiSpam {
 				'link'        => wpforms_utm_link( 'https://wpforms.com/docs/how-to-set-up-and-use-hcaptcha-in-wpforms/', $utm_medium, 'hCaptcha Feature' ),
 				'link_text'   => $get_started_button_text,
 				'show'        => $captcha_settings['provider'] !== 'hcaptcha',
+			],
+			'turnstile'      => [
+				'logo'        => WPFORMS_PLUGIN_URL . 'assets/images/anti-spam/cloudflare.svg',
+				'title'       => 'Cloudflare Turnstile',
+				'description' => __( 'Enable free, CAPTCHA-like spam protection that protects data privacy.','wpforms-lite' ),
+				'link'        => wpforms_utm_link( 'https://wpforms.com/docs/setting-up-cloudflare-turnstile/', $utm_medium, 'Cloudflare Turnstile Feature' ),
+				'link_text'   => $get_started_button_text,
+				'show'        => $captcha_settings['provider'] !== 'turnstile',
 			],
 			'akismet'        => [
 				'logo'        => WPFORMS_PLUGIN_URL . 'assets/images/anti-spam/akismet.svg',
