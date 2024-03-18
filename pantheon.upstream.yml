@@ -31,6 +31,12 @@ workflows:
       - description: "Configure Pantheon settings"
         script: private/scripts/pantheon/pantheon.php
         type: webphp
+      - description: "Sleep"
+        script: private/scripts/wakeup/sleep.php
+        type: webphp
+      - description: "Wakeup"
+        script: private/scripts/wakeup/wakeup.php
+        type: webphp
       - description: "Install WordPress core"
         script: private/scripts/wp/wp-site-install.php
         type: webphp
