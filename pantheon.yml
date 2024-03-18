@@ -5,12 +5,12 @@ api_version: 1
 # Quicksilver Platform Integration Hooks
 # https://pantheon.io/docs/pantheon-yml#quicksilver
 workflows:
-  # Clear CDN and app cache
-  clear_cache:
-    after:
-      - description: "Post to Slack after cache clear"
-        script: private/scripts/slack/slack-notification.php
-        type: webphp
+#  # Clear CDN and app cache
+#  clear_cache:
+#    after:
+#      - description: "Post to Slack after cache clear"
+#        script: private/scripts/slack/slack-notification.php
+#        type: webphp
 
   # Clone Database
   clone_database:
