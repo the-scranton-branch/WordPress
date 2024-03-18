@@ -10,12 +10,24 @@ if (isset ($_ENV['PANTHEON_ENVIRONMENT'])) {
 }
 
 // Choose demo and builder. For Gutenberg, leave $builder empty.
-$name = 'Tasty';
+$demo_name = 'Tasty';
 $builder = ' ';
-$demo = $name . ' ' . $builder;
+
+// Use site name to determine the demo and builder.
+$site_name = $_ENV['PANTHEON_SITE_NAME'];
+if (stripos($site_name, 'travel') !== false) {
+    $demo_name = 'Travel';
+} elseif (stripos($site_name, 'tasty') !== false) {
+    $demo_name = 'Tasty';
+} elseif (stripos($site_name, 'charity') !== false) {
+    $demo_name = 'Charity';
+} elseif (stripos($site_name, 'news') !== false) {
+    $demo_name = 'News';
+}
 
 // Import data into WordPress
 echo "Importing demo template...\n";
+$demo = $demo_name . ' ' . $builder;
 passthru("wp blocksy demo clean");
 passthru("wp blocksy demo import:start " . $demo);
 passthru("wp blocksy demo import:plugins " . $demo);
