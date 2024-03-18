@@ -16,5 +16,11 @@ $meta = json_decode($req['body'], true);
 echo "Installing WordPress core...\n";
 $title = $meta['label'];
 $email = $_POST['user_email'];
+
+// Check if the domain is 'getpantheon.com' and replace it with 'pantheon.io'
+if (strpos($email, '@getpantheon.com') !== false) {
+    $email = str_replace('@getpantheon.com', '@pantheon.io', $email);
+}
+
 passthru("wp core install --title='$title' --admin_user='superuser' --admin_email='$email'");
 echo "Installation complete.\n";
