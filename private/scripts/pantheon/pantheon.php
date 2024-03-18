@@ -25,6 +25,6 @@ if (isset($_POST['environment'])) {
 
   // If New Relic not detected, enable New Relic.
   if ($nr == false) {
-    $req = pantheon_curl('https://api.live.getpantheon.com/sites/self/workflows', '{"type":"enable_new_relic_for_site","params":{"converge":true}}', 8443, 'PUT');
+    $req = pantheon_curl('https://api.live.getpantheon.com/sites/self/workflows', '{"type":"enable_new_relic_for_site","params":{"converge":true}}', 8443, 'POST');
   }
 }
