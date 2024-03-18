@@ -77,6 +77,13 @@ if (!defined('WP_DEBUG')) {
 	define('WP_DEBUG', false);
 }
 
+/**
+ * Enable WP_CLI for Blocksy commands.
+ */
+if (!defined('WP_CLI') || !WP_CLI) {
+	define('WP_CLI', true);
+}
+
 /* That's all, stop editing! Happy Pressing. */
 
 
