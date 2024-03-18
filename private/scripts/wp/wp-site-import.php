@@ -14,20 +14,35 @@ $demo_name = 'Tasty';
 $builder = ' ';
 
 // Use site name to determine the demo and builder.
-$site_name = $_ENV['PANTHEON_SITE_NAME'];
-if (stripos($site_name, 'travel') !== false) {
-    $demo_name = 'Travel';
-} elseif (stripos($site_name, 'tasty') !== false) {
-    $demo_name = 'Tasty';
-} elseif (stripos($site_name, 'charity') !== false) {
-    $demo_name = 'Charity';
-} elseif (stripos($site_name, 'news') !== false) {
-    $demo_name = 'News';
+$req = pantheon_curl('https://api.live.getpantheon.com/sites/self/attributes', NULL, 8443);
+$meta = json_decode($req['body'], true);
+
+// Install from profile.
+$site_name = $meta['label'];
+
+// Define a mapping of keywords to demo names
+$demo_map = [
+    'travel' => 'Travel',
+    'tasty' => 'Tasty',
+    'charity' => 'Charity',
+    'news' => 'News',
+];
+
+// Default demo name if none of the keywords match
+$demo_name = 'Tasty';
+
+// Search for keywords in the site name and set the demo name accordingly
+foreach ($demo_map as $keyword => $name) {
+    if (stripos($site_name, $keyword) !== false) {
+        $demo_name = $name;
+        break; // Stop the loop once a match is found
+    }
 }
 
 // Import data into WordPress
 echo "Importing demo template...\n";
 $demo = $demo_name . ' ' . $builder;
+echo "Installing demo: " . $demo . "\n";
 passthru("wp blocksy demo clean");
 passthru("wp blocksy demo import:start " . $demo);
 passthru("wp blocksy demo import:plugins " . $demo);
