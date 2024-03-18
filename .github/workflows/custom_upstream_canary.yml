@@ -21,7 +21,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: "7.4"
+          php-version: "8.2"
 
       - name: Installing Terminus
         uses: kyletaylored/terminus-github-actions@CMSO-1538

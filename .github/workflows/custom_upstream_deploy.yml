@@ -18,7 +18,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: "7.4"
+          php-version: "8.2"
 
       - name: Installing Terminus
         uses: kyletaylored/terminus-github-actions@CMSO-1538
@@ -28,7 +28,7 @@ jobs:
       - name: Get Deployment Sites
         id: upstream-sites
         run: |
-          SITES=$(terminus org:site:list ${ORG_UUID} --format list --upstream ${UPSTREAM_UUID} --field name | sort -V | tr '\n' ',' | sed 's/,$//')
+          SITES=$(terminus org:site:list ${ORG_UUID} --format list --upstream ${UPSTREAM_UUID} --field name --tag group1 | sort -V | tr '\n' ',' | sed 's/,$//')
           JSON_SITES="[\"$(echo "$SITES" | sed 's/,/","/g')\"]"
           echo "sites=$JSON_SITES" >> "$GITHUB_OUTPUT"
         env:
@@ -49,7 +49,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: "7.4"
+          php-version: "8.2"
 
       - name: Installing Terminus
         uses: kyletaylored/terminus-github-actions@CMSO-1538
