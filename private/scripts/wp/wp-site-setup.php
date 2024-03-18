@@ -12,4 +12,4 @@ if (isset ($_ENV['PANTHEON_ENVIRONMENT'])) {
 // Enable Ocean theme and plugins
 echo "Enabling WP plugins and themes...\n";
 passthru("wp theme activate blocksy");
-passthru("wp plugin install pantheon-advanced-page-cache wp-native-php-sessions wordpress-importer blocksy-companion --activate");
+passthru("wp plugin install pantheon-advanced-page-cache wp-native-php-sessions blocksy-companion --activate");
