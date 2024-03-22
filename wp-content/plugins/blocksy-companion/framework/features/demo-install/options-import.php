@@ -320,7 +320,7 @@ class DemoInstallOptionsInstaller {
 		}
 	}
 
-	private function import_images($demo_content, $mods) {
+	private function import_images($demo_content, $mods = []) {
 		foreach ($mods as $key => $val) {
 			if ($this->is_image_url($val)) {
 				$data = $this->sideload_image($val);
