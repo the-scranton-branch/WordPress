@@ -129,34 +129,32 @@ class DemoInstallOptionsInstaller {
 
 		do_action('customize_save_after', $wp_customize);
 
-		if (!empty($options['options'])) {
-			foreach ($options['options'] as $key => $val) {
-				if ($key === 'blocksy_active_extensions') {
-					if ($val && is_array($val)) {
-						if ($this->has_streaming) {
-							Plugin::instance()->demo->emit_sse_message([
-								'action' => 'activate_required_extensions',
-								'error' => false,
-							]);
-						}
+		foreach ($options['options'] as $key => $val) {
+			if ($key === 'blocksy_active_extensions') {
+				if ($val && is_array($val)) {
+					if ($this->has_streaming) {
+						Plugin::instance()->demo->emit_sse_message([
+							'action' => 'activate_required_extensions',
+							'error' => false,
+						]);
+					}
 
-						foreach ($val as $single_extension) {
-							Plugin::instance()->extensions->activate_extension(
-								$single_extension
-							);
-						}
+					foreach ($val as $single_extension) {
+						Plugin::instance()->extensions->activate_extension(
+							$single_extension
+						);
 					}
+				}
+			} else {
+				if (
+					strpos($key, 'woocommerce') !== false
+					&&
+					$key !== 'woocommerce_thumbnail_cropping'
+				) {
+					add_option($key, $val);
+					update_option($key, $val);
 				} else {
-					if (
-						strpos($key, 'woocommerce') !== false
-						&&
-						$key !== 'woocommerce_thumbnail_cropping'
-					) {
-						add_option($key, $val);
-						update_option($key, $val);
-					} else {
-						update_option($key, $val);
-					}
+					update_option($key, $val);
 				}
 			}
 		}
@@ -322,7 +320,7 @@ class DemoInstallOptionsInstaller {
 		}
 	}
 
-	private function import_images($demo_content, $mods = []) {
+	private function import_images($demo_content, $mods) {
 		foreach ($mods as $key => $val) {
 			if ($this->is_image_url($val)) {
 				$data = $this->sideload_image($val);
