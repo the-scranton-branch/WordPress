@@ -40,14 +40,4 @@ foreach ($demo_map as $keyword => $name) {
 }
 
 // Import data into WordPress
-echo "Importing demo template...\n";
-$demo = $demo_name . ' ' . $builder;
-echo "Installing demo: " . $demo . "\n";
-passthru("wp blocksy demo clean");
-passthru("wp blocksy demo import:start " . $demo);
-passthru("wp blocksy demo import:plugins " . $demo);
-passthru("wp blocksy demo import:options " . $demo);
-passthru("wp blocksy demo import:widgets " . $demo);
-passthru("wp blocksy demo import:content " . $demo);
-passthru("wp blocksy demo import:finish");
-echo "Import complete.\n";
+passthru("wp blocksy demo install $demo_name $builder --clean --yes &");
