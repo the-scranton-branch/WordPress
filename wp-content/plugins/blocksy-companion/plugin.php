@@ -183,9 +183,15 @@ class Plugin {
 	}
 
 	public function check_if_blocksy_is_activated() {
-//		if (defined('WP_CLI') && WP_CLI) {
-//			return false;
-//		}
+		if (defined('WP_CLI') && WP_CLI) {
+			$theme = wp_get_theme(get_template());
+
+			if ($theme->parent() && $theme->parent()->exists()) {
+				$theme = $theme->parent();
+			}
+
+			return strpos($theme->get('Name'), 'Blocksy') !== false;
+		}
 
 		if ($this->is_blocksy === '__NOT_SET__') {
 			$theme = wp_get_theme(get_template());
